@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import Skeleton from '@mui/material/Skeleton';
+import { Table } from 'antd';
+import type { TableColumnsType } from 'antd';
+// import Skeleton from '@mui/material/Skeleton';
 
 type AlertItem = {
     id: string;
@@ -27,6 +29,65 @@ export async function GetApiTest() {
 }
 
 
+
+
+//===========================antd table title===================================
+
+const columns: TableColumnsType<AlertItem> = [
+    {
+        title: 'id',
+        dataIndex: 'id',
+    },
+    {
+        title: 'Service',
+        dataIndex: 'Type',
+    },
+    {
+        title: 'Alert',
+        dataIndex: 'Alert',
+        render: (value: boolean) => (value ? 'Yes' : 'No'),
+    },
+    {
+        title: 'Date',
+        dataIndex: 'Date',
+        render: (value: number) =>
+            new Date(value * 1000).toLocaleDateString('th-TH', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+            }),
+    },
+    {
+        title: 'Time',
+        dataIndex: 'Time',
+        render: (value: number) =>
+            new Date(value * 1000).toLocaleTimeString('th-TH', {
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+            }),
+    },
+    {
+        title: 'IP',
+        dataIndex: 'IP',
+    },
+    {
+        title: 'IP_Server',
+        dataIndex: 'IP_Server',
+    },
+    {
+        title: 'Protocol',
+        dataIndex: 'Protocol',
+    },
+    {
+        title: 'Comment',
+        dataIndex: 'Comment',
+    },
+];
+
+
+
 const AlertTable: React.FC = () => {
     const [data, setData] = useState<AlertItem[]>([]);
 
@@ -46,12 +107,15 @@ const AlertTable: React.FC = () => {
 
     return (
         <div>
-            <h2>Alert List</h2>
-            <div>
+            <h2 style={{fontWeight:'900',textAlign:'center'}}>Alert List</h2>
+            <div style={{margin:'0 30px'}}>
                 มีจำนวนทั้งสิ้น {data.length} รายการ
             </div>
-            <button onClick={handleFetchData}>Load Data</button>
-            <ul>
+            <div style={{ backgroundColor: '#fff', margin: '10px 30px' }}>
+                <Table<AlertItem> columns={columns} dataSource={data} size="middle" />
+            </div>
+            <button style={{margin: '10px 30px'}} onClick={handleFetchData}>Load Data</button>
+            {/* <ul>
                 {data ? (
                     data.map((item) => (
                         <li key={item.id}>
@@ -74,7 +138,7 @@ const AlertTable: React.FC = () => {
                         </div>
                     </>
                 )}
-            </ul>
+            </ul> */}
         </div>
     );
 };
