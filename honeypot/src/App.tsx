@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Sidebar from './components/Sidebar';
 import Header from './components/Header';
+import Chartbar from './components/Chart';
 import './App.css';
 
 const App: React.FC = () => {
@@ -15,7 +16,10 @@ const App: React.FC = () => {
       <Sidebar isOpen={isSidebarOpen} />
       <div className="main-content">
         <Header toggleSidebar={toggleSidebar} />
-        <div className="content">เนื้อหาหลักของ Dashboard</div>
+        <div className="content">
+          Overview
+          <Chartbar test1='test' test2='test' test3='test' test4='test' />
+        </div>
       </div>
     </div>
   );

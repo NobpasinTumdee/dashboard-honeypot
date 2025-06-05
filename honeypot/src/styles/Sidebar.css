@@ -1,8 +1,8 @@
 .sidebar {
-  width: 200px;
+  width: 220px;
   background-color: var(--dark-sub);
   color: white;
-  padding: 20px 15px;
+  padding: 20px 10px;
   height: 100vh;
   transition: width 0.3s ease;
 }
@@ -29,7 +29,7 @@
 
 .sidebarbutton{
   background-color: var(--dark-main);
-  padding: 1rem;
+  padding: 20px 1rem ;
   border-radius: 10px;
   color: var(--ligt);
   transition: 0.3s ease-in-out;
