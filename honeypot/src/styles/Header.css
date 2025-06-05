@@ -5,7 +5,8 @@
   display: flex;
   align-items: center;
   border-bottom: 2px solid var(--line);
-  box-shadow: 0 0px 15px var(--sut);
+  box-shadow: 0 5px 15px var(--line);
+  z-index: 100;
 }
 
 .toggle-button {

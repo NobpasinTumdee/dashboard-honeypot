@@ -35,9 +35,9 @@ const Chartbar: React.FC<ChartProps> = ({ }) => {
                         },
                     ]}
                     series={[
-                        { data: [1, 3, 3], color: '#FCEFCB', },
-                        { data: [2, 2, 1], color: '#E9A319', },
-                        { data: [3, 1, 2], color: '#F29C76', },
+                        { data: [1, 3, 3], color: '#E16428', },
+                        { data: [2, 2, 1], color: '#F6E9E9', },
+                        { data: [3, 1, 2], color: '#272121', },
                     ]}
                     height={400}
                     slotProps={{

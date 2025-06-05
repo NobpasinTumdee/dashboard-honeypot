@@ -9,7 +9,7 @@ const Header: React.FC<HeaderProps> = ({ toggleSidebar }) => {
   return (
     <div className="header">
       <button className="toggle-button" onClick={toggleSidebar}>☰</button>
-      <h1>Smart Tiny HoneyPot 🐝🍯</h1>
+      <h1 style={{fontSize:'24px'}}>Smart Tiny HoneyPot 🐝🍯</h1>
     </div>
   );
 };

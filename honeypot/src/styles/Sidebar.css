@@ -30,7 +30,7 @@
 .sidebarbutton{
   background-color: var(--dark-main);
   padding: 20px 1rem ;
-  border-radius: 10px;
+  border-radius: 5px;
   color: var(--ligt);
   transition: 0.3s ease-in-out;
 }
