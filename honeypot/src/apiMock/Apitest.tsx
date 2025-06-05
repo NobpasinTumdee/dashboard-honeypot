@@ -107,7 +107,7 @@ const AlertTable: React.FC = () => {
 
     return (
         <div>
-            <h2 style={{fontWeight:'900',textAlign:'center'}}>Alert List</h2>
+            {/* <h2 style={{fontWeight:'900',textAlign:'center'}}>Alert List</h2> */}
             <div style={{margin:'0 30px'}}>
                 มีจำนวนทั้งสิ้น {data.length} รายการ
             </div>
