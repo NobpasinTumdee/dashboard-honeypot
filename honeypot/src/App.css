@@ -1,0 +1,31 @@
+body {
+  margin: 0;
+  background-color: var(--dark-main);
+}
+:root {
+  --main: #A86523;
+  --sub: #E9A319;
+  --ligt-sub: #E9A319;
+  --ligt: #FCEFCB;
+
+  --dark-sub: #1A1A1A;
+  --dark-main: #0E0E0F;
+  --line: #1A1A1B;
+}
+.app-container {
+  display: flex;
+  height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+.main-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  padding: 20px;
+  background-color: var(--dark-main);
+  flex-grow: 1;
+}

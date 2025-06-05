@@ -1,12 +1,24 @@
-import './App.css'
+import React, { useState } from 'react';
+import Sidebar from './components/Sidebar';
+import Header from './components/Header';
+import './App.css';
 
-function App() {
+const App: React.FC = () => {
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  const toggleSidebar = () => {
+    setIsSidebarOpen(!isSidebarOpen);
+  };
 
   return (
-    <>
-      hello word!!
-    </>
-  )
-}
+    <div className="app-container">
+      <Sidebar isOpen={isSidebarOpen} />
+      <div className="main-content">
+        <Header toggleSidebar={toggleSidebar} />
+        <div className="content">เนื้อหาหลักของ Dashboard</div>
+      </div>
+    </div>
+  );
+};
 
-export default App
+export default App;
