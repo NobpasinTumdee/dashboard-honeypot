@@ -2,6 +2,7 @@ body {
   margin: 0;
   background-color: var(--dark-main);
 }
+
 :root {
   --main: #A86523;
   --sub: #E9A319;
@@ -15,8 +16,8 @@ body {
   --sut: #F4621C;
 }
 
-*::selection{
-    background-color: var(--main);
+*::selection {
+  background-color: var(--main);
 }
 
 
@@ -41,5 +42,28 @@ body {
 }
 
 .poster {
-  background: linear-gradient(68deg,rgba(237, 176, 21, 1) 0%, rgba(255, 224, 144, 1) 55%);
+  background: linear-gradient(68deg, rgba(237, 176, 21, 1) 0%, rgba(255, 224, 144, 1) 55%);
+}
+
+.chat-box {
+  position: fixed;
+  bottom: 30px;
+  right: 325px;
+  width: 20px;
+  height: 20px;
+  background-color: var(--dark-sub);
+  font-size: 15px;
+  z-index: 100;
+  border-radius: 100px;
+  padding: 10px;
+  box-shadow: 0 10px 15px var(--dark-main);
+  cursor: pointer;
+}
+
+.chat-box.wait {
+  bottom: 30px;
+  width: 40px;
+  height: 40px;
+  right: 30px;
+  font-size: 30px;
 }

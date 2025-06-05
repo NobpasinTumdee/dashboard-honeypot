@@ -4,12 +4,17 @@ import Header from './components/Header';
 import Chartbar from './components/Chart';
 import './App.css';
 import AlertTable from './apiMock/Apitest';
+import Aichatbot from './components/Aichatbot';
 
 const App: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isChatOpen, setChatOpen] = useState(false);
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);
+  };
+  const callChat = () => {
+    setChatOpen(!isChatOpen);
   };
 
   return (
@@ -28,6 +33,10 @@ const App: React.FC = () => {
         <div>
           <AlertTable />
         </div>
+        <div>
+          <Aichatbot toggleChat={isChatOpen} />
+        </div>
+        <div onClick={callChat} className={`chat-box ${isChatOpen ? 'open' : 'wait'}`}>{isChatOpen? '🚫' : '📫'}</div>
       </div>
     </div>
   );

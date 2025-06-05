@@ -111,7 +111,7 @@ const AlertTable: React.FC = () => {
             <div style={{margin:'0 30px'}}>
                 มีจำนวนทั้งสิ้น {data.length} รายการ
             </div>
-            <div style={{ backgroundColor: '#fff', margin: '10px 30px' }}>
+            <div style={{ backgroundColor: '#fff', margin: '10px 30px' ,borderRadius:'10px'}}>
                 <Table<AlertItem> columns={columns} dataSource={data} size="middle" />
             </div>
             <button style={{margin: '10px 30px'}} onClick={handleFetchData}>Load Data</button>
