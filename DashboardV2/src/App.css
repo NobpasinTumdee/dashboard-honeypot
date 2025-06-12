@@ -2,9 +2,11 @@
   --body_main_background: #F3F4F6;  /*พื้นหลังสุด*/
   --body_main_sidebar: #FFFFFF;     /*พื้นหลังของ side bar*/
   --body_sub_sidebar: #F8F7FF;      /*เมนู side bar*/
-  --body_text_color: #1F2937;       /*สีของข้อความหลัก*/
+  --body_text_color: #2a3749;       /*สีของข้อความหลัก*/
   --body_hover_text_color: #9183FF; /*สีของข้อความหลักเมื่อกดค้าง*/
   --text_side_bar:#82848F;          /*สีจางๆของข้อความที่ side bar*/
+
+  --line_header: #E7E9ED;
 }
 
 [data-theme="dark"] {
@@ -14,6 +16,7 @@
   --body_text_color: #F3F4F6;
   --body_hover_text_color: #7A6CF8;
   --text_side_bar:#82848F;
+  --line_header: #232C3C;
 }
 
 *::selection {
@@ -25,9 +28,14 @@ body{
   background-color: var(--body_main_background);
   color: var(--body_text_color);
   font-family: "Roboto", sans-serif;
+  transition: 0.2s ease-in-out;
 }
 
 .main {
   display: flex;
   justify-content: start;
+}
+
+.main-dashbord {
+  width: 100%;
 }
