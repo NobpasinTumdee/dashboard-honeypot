@@ -21,6 +21,13 @@
 }
 
 body{
+  margin: 0;
   background-color: var(--body_main_background);
   color: var(--body_text_color);
+  font-family: "Roboto", sans-serif;
+}
+
+.main {
+  display: flex;
+  justify-content: start;
 }
