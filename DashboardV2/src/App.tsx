@@ -7,7 +7,7 @@ import Logo from './assets/Honeypot-logo.png'
 import { BarChart, LineChart } from '@mui/x-charts'
 import CowriePage from './components/Cowrie'
 
-// hello ubuntu ,hi windows!!!!
+// hello ubuntu ,hi windows!!!
 function App() {
 
   //theme web
