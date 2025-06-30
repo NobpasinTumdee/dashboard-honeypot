@@ -6,7 +6,7 @@ import time
 # Path ไปยังไฟล์ cowrie.json 
 COWRIE_JSON_LOG_PATH = '/home/cowrie/cowrie/var/log/cowrie/cowrie.json'
 # Path ไปยังฐานข้อมูล SQLite ที่จะสร้าง
-SQLITE_DB_PATH = '/home/cowrie/cowrie/var/log/cowrie/cowrie.db'
+SQLITE_DB_PATH = '/home/os/dashbord/dashboard-honeypot/sever/API/CowrieAPI/cowrie.db'
 
 def create_table(conn):
     """สร้างตารางในฐานข้อมูล SQLite หากยังไม่มี"""
