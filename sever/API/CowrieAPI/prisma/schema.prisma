@@ -1,0 +1,28 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model honeypot_logs {
+  id        Int     @id @default(autoincrement())
+  timestamp String?
+  eventid   String?
+  session   String?
+  message   String?
+  protocol  String?
+  src_ip    String?
+  src_port  Int?
+  dst_ip    String?
+  dst_port  Int?
+  username  String?
+  password  String?
+  input     String?
+  command   String?
+  duration  Float?
+  ttylog    String?
+  json_data String?
+}

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import axios from 'axios';
 import { Table } from 'antd';
 import type { TableColumnsType } from 'antd';
+import { getCowrie } from '../serviceApi';
 
 interface CowrieProps {
     isCowrieOpen: boolean;
@@ -9,28 +9,35 @@ interface CowrieProps {
 
 
 type AlertItem = {
-    id: string;
-    createdAt: string;
-    Type: string;
-    Alert: boolean;
-    Date: number;
-    Time: number;
-    IP: string;
-    IP_Server: string;
-    Protocol: string;
-    Comment: string;
+    id: number;
+    timestamp: string;
+    eventid: string;
+    session: string;
+    message: string;
+    protocol: string;
+    src_ip: string;
+    src_port: number;
+    dst_ip: string;
+    dst_port: number;
+    username: string;
+    password: string;
+    input: string;
+    command: string;
+    duration: Float32Array;
+    ttylog: string;
+    json_data: string;
 };
 
 
 
-export async function GetApiTest() {
-    try {
-        const res = await axios.get('https://683ec1c61cd60dca33dcf91d.mockapi.io/api/test/mock');
-        return res;
-    } catch (e: any) {
-        return e.response;
-    }
-}
+// export async function GetApiTest() {
+//     try {
+//         const res = await axios.get('https://683ec1c61cd60dca33dcf91d.mockapi.io/api/test/mock');
+//         return res;
+//     } catch (e: any) {
+//         return e.response;
+//     }
+// }
 
 
 
@@ -41,53 +48,108 @@ const columns: TableColumnsType<AlertItem> = [
     {
         title: 'id',
         dataIndex: 'id',
+        width: 13,
     },
     {
-        title: 'Service',
-        dataIndex: 'Type',
+        title: 'timestamp',
+        dataIndex: 'timestamp',
+        render: (value: string) => {
+            const date = new Date(value);
+            return date.toISOString().slice(0, 16).replace("T", " ");
+        },
+        width: 60,
     },
     {
-        title: 'Alert',
-        dataIndex: 'Alert',
-        render: (value: boolean) => (value ? 'Yes' : 'No'),
+        title: 'eventid',
+        dataIndex: 'eventid',
+        render: (value) => (value != null ? value : (<p>null</p>)),
+        width: 40,
     },
     {
-        title: 'Date',
-        dataIndex: 'Date',
-        render: (value: number) =>
-            new Date(value * 1000).toLocaleDateString('th-TH', {
-                weekday: 'long',
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-            }),
+        title: 'session',
+        dataIndex: 'session',
+        render: (value) => (value != null ? value : (<p style={{ opacity: '0.3' }}>null</p>)),
+        width: 40,
     },
     {
-        title: 'Time',
-        dataIndex: 'Time',
-        render: (value: number) =>
-            new Date(value * 1000).toLocaleTimeString('th-TH', {
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit',
-            }),
+        title: 'message',
+        dataIndex: 'message',
+        width: 40,
+        fixed: 'right',
+        ellipsis: true,
+        render: (value) => value != null ? value : "Null",
     },
     {
-        title: 'IP',
-        dataIndex: 'IP',
+        title: 'protocol',
+        dataIndex: 'protocol',
+        render: (value) => (value != null ? value : (<p style={{ opacity: '0.3' }}>null</p>)),
+        width: 40,
     },
     {
-        title: 'IP_Server',
-        dataIndex: 'IP_Server',
+        title: 'src_ip',
+        dataIndex: 'src_ip',
+        render: (value) => (value != null ? value : (<p style={{ opacity: '0.3' }}>null</p>)),
+        width: 40,
     },
     {
-        title: 'Protocol',
-        dataIndex: 'Protocol',
+        title: 'src_port',
+        dataIndex: 'src_port',
+        render: (value) => (value != null ? value : (<p style={{ opacity: '0.3' }}>null</p>)),
+        width: 40,
     },
     {
-        title: 'Comment',
-        dataIndex: 'Comment',
+        title: 'dst_ip',
+        dataIndex: 'dst_ip',
+        render: (value) => (value != null ? value : (<p style={{ opacity: '0.3' }}>null</p>)),
+        width: 40,
     },
+    {
+        title: 'dst_port',
+        dataIndex: 'dst_port',
+        render: (value) => (value != null ? value : (<p style={{ opacity: '0.3' }}>null</p>)),
+        width: 35,
+    },
+    {
+        title: 'username',
+        dataIndex: 'username',
+        render: (value) => (value != null ? value : (<p style={{ opacity: '0.3' }}>null</p>)),
+        width: 30,
+    },
+    {
+        title: 'input',
+        dataIndex: 'input',
+        render: (value) => (value != null ? value : (<p style={{ opacity: '0.3' }}>null</p>)),
+        width: 30,
+    },
+    {
+        title: 'command',
+        dataIndex: 'command',
+        render: (value) => (value != null ? value : (<p style={{ opacity: '0.3' }}>null</p>)),
+        width: 30,
+    },
+    {
+        title: 'duration',
+        dataIndex: 'duration',
+        render: (value) => (value != null ? value : (<p style={{ opacity: '0.3' }}>null</p>)),
+        width: 30,
+    },
+    {
+        title: 'ttylog',
+        dataIndex: 'ttylog',
+        render: (value) => (value != null ? value : (<p style={{ opacity: '0.3' }}>null</p>)),
+        width: 30,
+    },
+    // {
+    //     title: 'json_data',
+    //     dataIndex: 'json_data',
+    //     width: 40,
+    //     render: (value) =>
+    //         value != null ? (
+    //             <span style={{ maxHeight: '40px', color: '#a78f48' }} title={value}>view more</span>
+    //         ) : (
+    //             <span style={{ maxHeight: '40px' }}>Null</span>
+    //         ),
+    // },
 ];
 
 
@@ -98,9 +160,13 @@ const CowriePage: React.FC<CowrieProps> = ({ isCowrieOpen }) => {
     const [data, setData] = useState<AlertItem[]>([]);
 
     const handleFetchData = async () => {
-        const res = await GetApiTest();
-        if (res && res.data) {
-            setData(res.data);
+        try {
+            const res = await getCowrie();
+            if (res && res.data) {
+                setData(res.data);
+            }
+        } catch (error) {
+            setData([])
         }
     };
 
@@ -109,6 +175,9 @@ const CowriePage: React.FC<CowrieProps> = ({ isCowrieOpen }) => {
             await handleFetchData();
         })();
     }, []);
+
+
+
 
     return (
         <>
