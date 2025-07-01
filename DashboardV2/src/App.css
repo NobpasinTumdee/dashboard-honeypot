@@ -31,9 +31,13 @@ body{
   transition: 0.2s ease-in-out;
 }
 
+*::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Opera */
+}
+
 .main {
   display: flex;
-  justify-content: start;
+  justify-content: center;
 }
 
 .main-dashbord {

@@ -1,12 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Table } from 'antd';
 import type { TableColumnsType } from 'antd';
 import { getCowrie } from '../serviceApi';
-
-interface CowrieProps {
-    isCowrieOpen: boolean;
-}
-
+import Aos from 'aos';
+import 'aos/dist/aos.css';
 
 type AlertItem = {
     id: number;
@@ -155,7 +152,7 @@ const columns: TableColumnsType<AlertItem> = [
 
 
 
-const CowriePage: React.FC<CowrieProps> = ({ isCowrieOpen }) => {
+const CowriePage = () => {
 
     const [data, setData] = useState<AlertItem[]>([]);
 
@@ -174,6 +171,10 @@ const CowriePage: React.FC<CowrieProps> = ({ isCowrieOpen }) => {
         (async () => {
             await handleFetchData();
         })();
+        Aos.init({
+            duration: 1000,
+            once: true,
+        });
     }, []);
 
 
@@ -181,20 +182,13 @@ const CowriePage: React.FC<CowrieProps> = ({ isCowrieOpen }) => {
 
     return (
         <>
-            {isCowrieOpen ?
-                <>
-                    <div style={{ margin: '0 30px' }}>
-                        มีจำนวนทั้งสิ้น {data.length} รายการ
-                    </div>
-                    <div style={{ backgroundColor: '#fff', margin: '10px 30px', borderRadius: '10px' }}>
-                        <Table<AlertItem> columns={columns} dataSource={data} size="middle" />
-                    </div>
-                    <button style={{ margin: '10px 30px' }} onClick={handleFetchData}>Load Data</button>
-                </>
-                :
-                <>
-                </>
-            }
+            <div style={{ margin: '10px 30px 20px', textAlign: 'center' }} data-aos="zoom-in-down">
+                <h1>Cowrie</h1>
+                มีจำนวนทั้งสิ้น {data.length} รายการ
+            </div>
+            <div style={{ backgroundColor: '#fff', margin: '10px 30px', borderRadius: '10px' }} data-aos="fade-up">
+                <Table<AlertItem> columns={columns} dataSource={data} size="middle" />
+            </div>
         </>
     );
 };

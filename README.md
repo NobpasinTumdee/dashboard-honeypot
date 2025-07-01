@@ -4,6 +4,7 @@
 <p>npm create vite@latest</p>
 <p>npm install</p>
 <p>npm i axios</p>
+<p>npm i react-router-dom</p>
 <p>npm install @mui/material @emotion/react @emotion/styled</p>
 <p>npm install @mui/x-charts</p>
 <p>npm i antd</p>
@@ -11,7 +12,6 @@
 <p>npm install react@latest react-dom@latest</p>
 <p>npm install aos --save</p>
 <p>npm install --save-dev @types/aos</p>
-<p></p>
 
 
 <h1>backend</h1>
