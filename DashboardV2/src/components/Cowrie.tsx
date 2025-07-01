@@ -107,8 +107,14 @@ const columns: TableColumnsType<AlertItem> = [
         width: 35,
     },
     {
-        title: 'username',
+        title: 'user',
         dataIndex: 'username',
+        render: (value) => (value != null ? value : (<p style={{ opacity: '0.3' }}>null</p>)),
+        width: 20,
+    },
+    {
+        title: 'password',
+        dataIndex: 'password',
         render: (value) => (value != null ? value : (<p style={{ opacity: '0.3' }}>null</p>)),
         width: 30,
     },
