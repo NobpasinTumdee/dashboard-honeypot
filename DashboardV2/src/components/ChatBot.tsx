@@ -1,8 +1,14 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import '../Styles/Chat.css'
 import Aos from 'aos';
 import 'aos/dist/aos.css';
+import MarkdownIt from 'markdown-it';
 
+const md = new MarkdownIt({
+    html: true,        // อนุญาตให้มี HTML tags ใน Markdown (ถ้า AI ส่งมา)
+    linkify: true,     // แปลง URL ให้เป็นลิงก์อัตโนมัติ
+    typographer: true  // ปรับปรุงการจัดวางเครื่องหมายวรรคตอนบางอย่าง
+});
 
 const ChatBot = () => {
     const [input, setInput] = useState('');
@@ -30,6 +36,23 @@ const ChatBot = () => {
         setLoading(false);
     };
 
+    const formattedAiResponse = useMemo(() => {
+        if (!response) return '';
+
+        // 1. **ค้นหาและห่อหุ้มแท็ก <think> ด้วย div ที่มีคลาส 'ai-thought'**
+        //    ใช้ Regular Expression เพื่อค้นหาแท็ก <think> และเนื้อหาภายใน
+        //    แล้วแทนที่ด้วย <div class="ai-thought">...เนื้อหา...</div>
+        const processedTextWithThoughtStyle = response.replace(
+            /<think>([\s\S]*?)<\/think>/gi,
+            '<div class="ai-thought">$1</div>' // $1 คือเนื้อหาที่อยู่ภายในแท็ก <think>
+        );
+
+        // 2. **แปลง Markdown ที่เหลือเป็น HTML:**
+        //    ตอนนี้ markdown-it จะเห็น <div class="ai-thought"> เป็น HTML ปกติ
+        //    และจะประมวลผล Markdown ที่เหลือ (เช่น **, -, ```) ให้เป็น HTML
+        return md.render(processedTextWithThoughtStyle);
+    }, [response]);
+
 
     useEffect(() => {
         Aos.init({
@@ -44,7 +67,8 @@ const ChatBot = () => {
                     <h1 className="chat-title" data-aos="zoom-in-down">Hi I'm HoneyBot AI Chat</h1>
                     {response ? (
                         <div className="chat-response" data-aos="zoom-in" data-aos-duration="3000">
-                            <strong>🤖HoneyBot:</strong> {response}
+                            <strong>🤖HoneyBot:</strong>
+                            <span dangerouslySetInnerHTML={{ __html: formattedAiResponse }} />
                         </div>
                     ) : (
                         <div className="chat-response" data-aos="zoom-in" data-aos-duration="3000">
