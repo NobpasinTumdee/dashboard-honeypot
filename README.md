@@ -11,6 +11,8 @@
 <p>npm install @mui/material @emotion/react @emotion/styled</p>
 <p>npm install @mui/x-charts</p>
 <p>npm i antd</p>
+<p>npm install markdown-it</p>
+<p>npm install --save-dev @types/markdown-it</p>
 
 <p>npm install react@latest react-dom@latest</p>
 <p>npm install aos --save</p>

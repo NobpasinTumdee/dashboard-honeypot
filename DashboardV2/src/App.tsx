@@ -3,8 +3,9 @@ import { RouterProvider } from 'react-router-dom';
 import Rootlayout from './layouts/Rootlayout'
 import CowriePage from './components/Cowrie'
 import Home from './components/Home'
-import Dionaea from './components/Dionaea'
+import OpenCanary from './components/OpenCanary'
 import WireShark from './components/WireShark'
+import ChatBot from './components/ChatBot';
 
 const router = createBrowserRouter([
   {
@@ -14,8 +15,9 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <Home /> },
       { path: "cowrie", element: <CowriePage /> },
-      { path: "dionaea", element: <Dionaea /> },
+      { path: "open-canary", element: <OpenCanary /> },
       { path: "wire-shark", element: <WireShark /> },
+      { path: "chatbot", element: <ChatBot /> },
     ]
   }
 ]);

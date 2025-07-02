@@ -34,11 +34,11 @@ const Navbar = () => {
                 <div className="sub-nav-bar">
                     <Link to="/" className={`Link-button ${isActive('/') ? 'active' : ''}`}> Home </Link>
                     <Link to={'cowrie'} className={`Link-button ${isActive('/cowrie') ? 'active' : ''}`}>Cowrie </Link>
-                    <Link to="dionaea" className={`Link-button ${isActive('/dionaea') ? 'active' : ''}`}>Dionaea </Link>
+                    <Link to="open-canary" className={`Link-button ${isActive('/open-canary') ? 'active' : ''}`}>OpenCanary </Link>
                     <Link to="wire-shark" className={`Link-button ${isActive('/wire-shark') ? 'active' : ''}`}>Wire Shark </Link>
                     <div className='group-menu'>
-                        <p className="icon-nav">🔔</p>
-                        <p className="icon-nav">💬</p>
+                        <Link to="/" className="icon-nav">🔔</Link>
+                        <Link to="chatbot" className="icon-nav">💬</Link>
                         <div className="theme-toggle-wrapper">
                             <label className="toggle-switch">
                                 {/* // checkbox for theme web */}
