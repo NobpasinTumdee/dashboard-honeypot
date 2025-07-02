@@ -7,7 +7,7 @@ from datetime import datetime
 # กำหนดเส้นทางไฟล์ log ของ Cowrie JSON
 COWRIE_JSON_LOG_PATH = '/home/cowrie/cowrie/var/log/cowrie/cowrie.json'
 # กำหนดเส้นทางฐานข้อมูล SQLite
-SQLITE_DB_PATH = '/home/os/dashbord/dashboard-honeypot/sever/API/CowrieAPI/cowrie.db'
+SQLITE_DB_PATH = '/home/os/dashboard-honeypot/sever/API/CowrieAPI/cowrie.db'
 
 def setup_database():
     """
