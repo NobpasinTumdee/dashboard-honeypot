@@ -10,13 +10,13 @@
 }
 
 [data-theme="dark"] {
-  --body_main_background: #111827;
-  --body_main_sidebar: #1F2937;
-  --body_sub_sidebar: #363A65;
+  --body_main_background: #242424;
+  --body_main_sidebar: #1C1C1C;
+  --body_sub_sidebar: #444444;
   --body_text_color: #F3F4F6;
-  --body_hover_text_color: #7A6CF8;
+  --body_hover_text_color: #DFD7AF;
   --text_side_bar:#82848F;
-  --line_header: #232C3C;
+  --line_header: #B0AA8C;
 }
 
 *::selection {
@@ -42,4 +42,10 @@ body{
 
 .main-dashbord {
   width: 100%;
+}
+
+@media screen and (max-width: 450px) {
+    .main {
+        display: inline;
+    }
 }

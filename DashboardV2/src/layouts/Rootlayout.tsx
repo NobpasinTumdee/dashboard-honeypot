@@ -1,11 +1,12 @@
 import { Outlet } from 'react-router-dom'
 import Navbar from '../components/Navbar'
+import '../Styles/Navbar.css'
 
 const Rootlayout = () => {
   return (
     <>
       <Navbar />
-      <div style={{height: '70px'}}></div>
+      <div className='layout-overlap'></div>
       <Outlet />
     </>
   )

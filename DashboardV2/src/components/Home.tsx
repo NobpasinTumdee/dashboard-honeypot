@@ -24,6 +24,7 @@ const Home = () => {
                                 <LineChart
                                     sx={{
                                         backdropFilter: 'blur(10px)',
+                                        backgroundColor: 'var(--line_header)',
                                         borderRadius: 2,
                                         border: '1px solid var(--line_header)',
                                         margin: '10px'
@@ -42,6 +43,7 @@ const Home = () => {
                                 <LineChart
                                     sx={{
                                         backdropFilter: 'blur(10px)',
+                                        backgroundColor: 'var(--line_header)',
                                         borderRadius: 2,
                                         border: '1px solid var(--line_header)',
                                         margin: '10px'
@@ -60,6 +62,7 @@ const Home = () => {
                                 <LineChart
                                     sx={{
                                         backdropFilter: 'blur(10px)',
+                                        backgroundColor: 'var(--line_header)',
                                         borderRadius: 2,
                                         border: '1px solid var(--line_header)',
                                         margin: '10px'

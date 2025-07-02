@@ -2,12 +2,14 @@
     color: var(--body_text_color);
     padding: 30px;
 }
+
 .overview-in-main {
     display: flex;
     justify-content: space-between;
     gap: 1rem;
     margin: 20px 0;
 }
+
 .chart-mini-size {
     background-color: var(--body_main_sidebar);
     width: 100%;
@@ -17,9 +19,23 @@
     transition: 0.2s ease-in-out;
     box-shadow: #32326911 0px 2px 5px 0px, #00000007 0px 1px 1px 0px;
 }
+
 .chart-mini-size p {
     text-align: center;
-    font-weight: 800;  
+    font-weight: 800;
     font-size: 1.3rem;
     margin: 10px 0 0;
+}
+
+@media screen and (max-width: 450px) {
+    .overview-in-main {
+        display: inline;
+        margin: 0px;
+    }
+    .dashborad-main {
+        padding: 0px;
+    }
+    .chart-mini-size {
+        width: 100vw;
+    }
 }
