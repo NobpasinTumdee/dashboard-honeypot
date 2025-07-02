@@ -1,8 +1,8 @@
 import axios from "axios";
 
 
-const apiUrl = 'http://10.5.51.9:3000'
-// const apiUrl = 'http://localhost:3000'
+// const apiUrl = 'http://10.5.51.9:3000'
+const apiUrl = 'http://localhost:3000'
 
 //get cowrie
 async function getCowrie() {
