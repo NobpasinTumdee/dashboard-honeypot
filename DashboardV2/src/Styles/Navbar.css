@@ -26,6 +26,7 @@
   box-shadow: rgb(204, 219, 232) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset;
   border-radius: 20px;
 }
+
 .Link-button.active {
   box-shadow: rgb(204, 219, 232) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset;
   border-radius: 20px;
@@ -44,11 +45,14 @@
 .icon-nav:hover {
   animation: icon 0.3s ease-in-out 1;
 }
+
 @keyframes icon {
-  40%{
+  40% {
     rotate: 50deg;
     scale: 1.2;
-  }65%{
+  }
+
+  65% {
     rotate: -30deg;
   }
 }
@@ -61,7 +65,25 @@
   box-shadow: rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
 }
 
+.group-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 
+.logo {
+  filter: drop-shadow(0px 10px 20px #ffffff);
+}
+
+.group-menu {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.layout-overlap {
+  height: 70px;
+}
 
 /* switch dark mode */
 .theme-toggle-wrapper {
@@ -208,5 +230,29 @@
 @media (prefers-reduced-motion: reduce) {
   .theme-toggle-wrapper .cloud {
     animation: none;
+  }
+}
+
+
+
+
+@media screen and (max-width: 450px) {
+  .Main-nav-bar {
+    display: inline;
+    text-align: center;
+    width: 100vw;
+  }
+
+  .group-logo {
+    margin: 10px 0;
+  }
+
+  .sub-nav-bar {
+    display: block;
+    margin: 10px 0 0;
+  }
+
+  .layout-overlap {
+    height: 150px;
   }
 }
