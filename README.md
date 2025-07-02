@@ -1,3 +1,6 @@
+# Table of Contents
+* [OpenCanary Installation](/docs/OpenCanary.md)
+
 # dashboard-honeypot
 
 <h1>front-end</h1>
@@ -53,3 +56,6 @@
 <p>=====python=====</p>
 <p>cd .\sever\API</p>
 <p>python3 cowrie_logV2.py</p>
+
+
+
