@@ -25,27 +25,11 @@ type AlertItem = {
     json_data: string;
 };
 
-
-
-// export async function GetApiTest() {
-//     try {
-//         const res = await axios.get('https://683ec1c61cd60dca33dcf91d.mockapi.io/api/test/mock');
-//         return res;
-//     } catch (e: any) {
-//         return e.response;
-//     }
-// }
-
-
-
-
-//===========================antd table title===================================
-
 const columns: TableColumnsType<AlertItem> = [
     {
         title: 'id',
         dataIndex: 'id',
-        width: 13,
+        width: 20,
     },
     {
         title: 'timestamp',
@@ -142,17 +126,6 @@ const columns: TableColumnsType<AlertItem> = [
         render: (value) => (value != null ? value : (<p style={{ opacity: '0.3' }}>null</p>)),
         width: 30,
     },
-    // {
-    //     title: 'json_data',
-    //     dataIndex: 'json_data',
-    //     width: 40,
-    //     render: (value) =>
-    //         value != null ? (
-    //             <span style={{ maxHeight: '40px', color: '#a78f48' }} title={value}>view more</span>
-    //         ) : (
-    //             <span style={{ maxHeight: '40px' }}>Null</span>
-    //         ),
-    // },
 ];
 
 
@@ -183,17 +156,16 @@ const CowriePage = () => {
         });
     }, []);
 
-
-
-
     return (
         <>
             <div style={{ margin: '10px 30px 20px', textAlign: 'center' }} data-aos="zoom-in-down">
                 <h1>Cowrie</h1>
                 มีจำนวนทั้งสิ้น {data.length} รายการ
             </div>
-            <div style={{ backgroundColor: '#fff', margin: '10px 30px', borderRadius: '10px' }} data-aos="fade-up">
-                <Table<AlertItem> columns={columns} dataSource={data} size="middle" />
+            <div style={{ backgroundColor: '#fff', margin: '10px 30px', borderRadius: '10px', overflowX: 'auto' }} data-aos="fade-up">
+                <div style={{minWidth: '1460px'}}>
+                    <Table<AlertItem> columns={columns} dataSource={data} size="middle" />
+                </div>
             </div>
         </>
     );

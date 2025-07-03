@@ -16,7 +16,20 @@ async function getCowrie() {
         .catch((e) => e.response);
 
 }
+//get getOpenCanary
+async function getOpenCanary() {
+
+    return await axios
+
+        .get(`${apiUrl}/open-canary`)
+
+        .then((res) => res)
+
+        .catch((e) => e.response);
+
+}
 
 export {
     getCowrie,
+    getOpenCanary,
 }
