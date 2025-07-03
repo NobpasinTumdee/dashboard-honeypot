@@ -5,9 +5,9 @@ import os
 from datetime import datetime
 
 # กำหนดเส้นทางไฟล์
-COWRIE_JSON_LOG_PATH = 'C:/Users/ACER/Documents/GitHub/dashboard-honeypot/sever/cowrie.json'
-OPENCANARY_LOG_PATH = 'C:/Users/ACER/Documents/GitHub/dashboard-honeypot/sever/opencanary.log'
-SQLITE_DB_PATH = 'C:/Users/ACER/Documents/GitHub/dashboard-honeypot/sever/API/CowrieAPI/HeneyPot.db'
+COWRIE_JSON_LOG_PATH = '/home/cowrie/cowrie/var/log/cowrie/cowrie.json'
+OPENCANARY_LOG_PATH = '/var/tmp/opencanary.log'
+SQLITE_DB_PATH = '/home/os/dashboard-honeypot/sever/API/CowrieAPI/HeneyPot.db'
 
 # Dictionary เก็บตำแหน่งสุดท้ายที่อ่านของแต่ละไฟล์
 last_file_positions = {
