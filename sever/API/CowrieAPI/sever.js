@@ -23,8 +23,6 @@ app.get("/cowrie", async (req, res) => {
   } catch (error) {
     console.error("❌ Error fetching logs:", error);
     res.status(500).json({ error: "Internal Server Error" });
-    console.log("prisma keys:", Object.keys(prisma));
-
   }
 });
 
@@ -41,6 +39,17 @@ app.post("/cowrie", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+// opencanary
+app.get("/open-canary",async (req,res) => {
+  try {
+    const logs = await prisma.opencanary_logs.findMany();
+    res.json(logs);
+  } catch (error) {
+    console.error("❌ Error fetching logs:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+})
 
 app.listen(port, () => {
   console.log(`🚀 Server running at http://localhost:${port}`);

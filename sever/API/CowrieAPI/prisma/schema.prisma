@@ -26,3 +26,19 @@ model honeypot_logs {
   ttylog    String?
   json_data String?
 }
+
+model opencanary_logs {
+  id                  Int     @id @default(autoincrement())
+  dst_host            String?
+  dst_port            Int?
+  local_time          String?
+  local_time_adjusted String?
+  logdata_raw         String?
+  logdata_msg_logdata String?
+  logtype             Int?
+  node_id             String?
+  src_host            String?
+  src_port            Int?
+  utc_time            String?
+  full_json_line      String?
+}
