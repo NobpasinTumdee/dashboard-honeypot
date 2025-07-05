@@ -63,6 +63,10 @@ npx prisma generate
 ```
 npm run dev
 ```
+เป็นคำสั่งสำหรับดูข้อมูลใน database โดยที่ไม่จำเป็นต้อง เปิดหน้า web
+```
+npx prisma studio
+```
 
 ## set up ตัวแปลงไฟล์ log json --> db
 * [Honeypot processor.py](/sever/Honeypot_Log_Processor.py)
