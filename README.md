@@ -1,4 +1,5 @@
 # Table of Contents
+* [Get Started](/docs/Get_Started.md)
 * [OpenCanary Installation](/docs/OpenCanary.md)
 
 # dashboard-honeypot
