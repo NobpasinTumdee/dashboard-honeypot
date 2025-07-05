@@ -16,11 +16,9 @@ sudo apt install tshark -y
 ```bash
 sudo dpkg-reconfigure wireshark-common
 ```
-## Wireshark basic config
 ```bash
 sudo usermod -aG wireshark $USER
 ```
-## Wireshark basic config
 ```bash
 sudo chmod +x /usr/bin/dumpcap
 ```
