@@ -101,6 +101,18 @@ npx prisma generate
 ```
 
 
+### validate
+```
+npm install yup
+```
+
+
+### Authenticate
+```
+npm install bcryptjs jsonwebtoken
+```
+
+
 ## ขั้นตอนการใช้งาน
 ```
 =====front-end=====

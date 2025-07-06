@@ -4,10 +4,15 @@ import time
 import os
 from datetime import datetime
 
-# กำหนดเส้นทางไฟล์
+# กำหนดเส้นทางไฟล์ Linux
 COWRIE_JSON_LOG_PATH = '/home/cowrie/cowrie/var/log/cowrie/cowrie.json'
 OPENCANARY_LOG_PATH = '/var/tmp/opencanary.log'
 SQLITE_DB_PATH = '/home/os/dashboard-honeypot/sever/API/backend/HeneyPot.db'
+
+# กำหนดเส้นทางไฟล์ windows
+# COWRIE_JSON_LOG_PATH = 'C:/Users/ACER/Documents/GitHub/dashboard-honeypot/server/cowrie.json'
+# OPENCANARY_LOG_PATH = 'C:/Users/ACER/Documents/GitHub/dashboard-honeypot/server/opencanary.log'
+# SQLITE_DB_PATH = 'C:/Users/ACER/Documents/GitHub/dashboard-honeypot/server/API/backend/HeneyPot.db'
 
 # Dictionary เก็บตำแหน่งสุดท้ายที่อ่านของแต่ละไฟล์
 last_file_positions = {
@@ -61,6 +66,20 @@ def setup_database():
             full_json_line TEXT
         )
     ''')
+
+    # สร้างตาราง users
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS users (
+            UserID INTEGER PRIMARY KEY AUTOINCREMENT,
+            Email TEXT NOT NULL,
+            UserName TEXT NOT NULL,
+            Password TEXT NOT NULL,
+            createdAt DATETIME DEFAULT (CURRENT_TIMESTAMP),
+            updatedAt DATETIME DEFAULT (CURRENT_TIMESTAMP),
+            deletedAt DATETIME
+        )
+    ''')
+
     conn.commit()
     return conn, cursor, not db_exists
 

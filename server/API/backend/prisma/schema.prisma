@@ -42,3 +42,13 @@ model opencanary_logs {
   utc_time            String?
   full_json_line      String?
 }
+
+model users {
+  UserID    Int       @id @default(autoincrement())
+  Email     String
+  UserName  String
+  Password  String
+  createdAt DateTime? @default(now())
+  updatedAt DateTime? @default(now())
+  deletedAt DateTime?
+}

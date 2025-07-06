@@ -11,9 +11,9 @@ app.use(morgan("dev")); // Show Logs
 app.use(express.json()); // For read JSON
 import { PrismaClient } from "@prisma/client";
 
-
-// Middleware
-app.use(express.json());
+// Routing
+import authRoute from "./routes/auth.js"
+app.use("/auth", authRoute);
 
 // GET /logs - ดึงข้อมูลทั้งหมดจาก honeypot_logs
 app.get("/cowrie", async (req, res) => {
