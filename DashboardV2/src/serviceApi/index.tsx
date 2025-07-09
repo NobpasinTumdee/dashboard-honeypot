@@ -9,7 +9,7 @@ async function getCowrie() {
 
     return await axios
 
-        .get(`${apiUrl}/cowrie`)
+        .get(`${apiUrl}/get/cowrie-none-auth`)
 
         .then((res) => res)
 
@@ -21,7 +21,7 @@ async function getOpenCanary() {
 
     return await axios
 
-        .get(`${apiUrl}/open-canary`)
+        .get(`${apiUrl}/get/open-canary-none-auth`)
 
         .then((res) => res)
 
