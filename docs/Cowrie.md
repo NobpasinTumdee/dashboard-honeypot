@@ -73,7 +73,27 @@ ssh cowrie@localhost -p 2222
 ลองพยายาม login  
 หมายเหตุ : username/password ที่ใช้ login ไม่ได้ สามารถดูใน etc/userdb.example
 
-## Step 7: Listening on port 22 (OPTIONAL)
+## เปิดใช้งาน Authbind 
+Authbind เป็นเครื่องมือที่ช่วยให้ user ที่ไม่ใช่ root สามารถเปิด Port ที่ต่ำกว่า 1024 ได้
+สร้างไฟล์ 22 สำหรับผู้ใช้ cowrie และกลุ่ม cowrie เป็นเจ้าของ
+```bash
+sudo apt-get install authbind
+sudo touch /etc/authbind/byport/22
+sudo chown cowrie:cowrie /etc/authbind/byport/22
+sudo chmod 770 /etc/authbind/byport/22
+```
+- เปิดใช้งาน Authbind ของ Cowrie ผ่านการเข้าถึง bin/cowrie  
+AUTHBIND_ENABLED = True  
+หมายเหตุ : เวอร์ชันใหม่ๆ จะมีการตรวจสอบ directory /etc/authbind/byport/ ว่ามีไฟล์ตามชื่อ port ที่ต้องการเปิดไหม
+หากมี จะเปิด AUTHBIND เอง  
+  
+- เปิด Port 22 สำหรับดักจับผ่านการแก้ไขไฟล์ cowrie.cfg  
+[ssh]  
+listen_endpoints = tcp:22:interface=0.0.0.0  
+ทำแบบเดียวกับ Service หรือ Port อื่นๆ ที่ต้องการเช่น Port 23
+
+
+## Listening on port 22 (OPTIONAL)
 ```bash
 sudo iptables -t nat -A PREROUTING -p tcp --dport 22 -j REDIRECT --to-port 2222
 ```
@@ -81,7 +101,3 @@ sudo iptables -t nat -A PREROUTING -p tcp --dport 22 -j REDIRECT --to-port 2222
 sudo iptables -t nat -A PREROUTING -p tcp --dport 23 -j REDIRECT --to-port 2223
 ```
 
-## ลองโจมตี
-```bash
-ssh -p 2222 127.0.0.1
-```
