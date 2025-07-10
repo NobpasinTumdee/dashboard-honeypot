@@ -41,7 +41,7 @@ python -m pip install --upgrade -r requirements.txt
   [ssh] enabled = true    
   (เปลี่ยน port ของทั้งคู่ 22->2222 , 23->2223)
 
-## Step 6: Starting Cowrie
+## Step 7: Starting Cowrie
 ```bash
 bin/cowrie start
 ```
