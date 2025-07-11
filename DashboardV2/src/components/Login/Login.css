@@ -8,13 +8,15 @@
 
 
 .login-form {
-    background-color: #ffffff;
+    background-color: #ffffff11;
+    backdrop-filter: blur(20px);
     padding: 50px;
     width: 100%;
-    max-width: 450px;
+    max-width: 400px;
     text-align: left;
     border-radius: 10px;
-    box-shadow: rgba(136, 165, 191, 0.48) 6px 2px 16px 0px, rgba(255, 255, 255, 0.8) -6px -2px 16px 0px;
+    color: #fff;
+    box-shadow: #0000002b 0px -23px 25px 0px inset, #00000026 0px -36px 30px 0px inset, rgba(0, 0, 0, 0.1) 0px -79px 40px 0px inset, #0000000f 0px 2px 1px, rgba(0, 0, 0, 0.09) 0px 4px 2px, rgba(0, 0, 0, 0.09) 0px 8px 4px, rgba(0, 0, 0, 0.09) 0px 16px 8px, rgba(0, 0, 0, 0.09) 0px 32px 16px;
 }
 
 .error-message {
@@ -26,9 +28,8 @@
 
 .login-form h2 {
     margin-bottom: 35px;
-    color: #2a3749;
     text-align: center;
-    font-size: 2.2em;
+    font-size: 2.5em;
     font-weight: 700;
 }
 
@@ -57,7 +58,6 @@
 .input-group label {
     display: block;
     margin-bottom: 10px;
-    color: #333;
     font-weight: 600;
     font-size: 1.1em;
 }
@@ -66,6 +66,8 @@
     width: calc(100% - 24px);
     padding: 12px;
     border: 1px solid #ddd;
+    background-color: transparent;
+    color: #fff;
     border-radius: 8px;
     font-size: 16px;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
@@ -100,7 +102,7 @@
     display: block;
     text-align: center;
     margin-top: 20px;
-    color: #2a3749;
+    color: #fff;
     text-decoration: none;
     font-weight: 600;
     transition: color 0.3s ease;
@@ -128,4 +130,21 @@
     .login-button {
         font-size: 16px;
     }
+}
+
+
+.aurora-container {
+  width: 100%;
+  height: 100%;
+}
+
+.aurora-container-login {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;  
+  z-index: -1;
+  background-color: #242424;
 }

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './Login.css';
 import { LignIn } from '../../serviceApi/index';
+import Aurora from './Aurora';
 
 
 const Login: React.FC = () => {
@@ -59,6 +60,14 @@ const Login: React.FC = () => {
                 </>
             ) : (
                 <>
+                    <div className='aurora-container-login'>
+                        <Aurora
+                            colorStops={["#9183FF", "#FF94B4", "#DFD7AF"]}
+                            blend={0.7}
+                            amplitude={1.0}
+                            speed={0.5}
+                        />
+                    </div>
                     <div className="login-container">
                         <form className="login-form" onSubmit={handleSubmit}>
                             <h2>Login</h2>

@@ -78,14 +78,14 @@ const Home = () => {
                             </div>
                         </div>
                         <div className='overview-in-main'>
-                            <div className='chart-mini-size' data-aos="fade-right" data-aos-duration="2000">
+                            <div className='chart-mini-size' data-aos="fade-up" data-aos-duration="2000">
                                 <p>Overview</p>
                                 <BarChart
                                     xAxis={[{ data: ['group A', 'group B', 'group C'] }]}
                                     series={[{ data: [4, 3, 5], color: '#8470FF' }, { data: [1, 6, 3], color: '#67BFFF' }, { data: [2, 5, 6], color: '#61C8B5' }]}
                                 />
                             </div>
-                            <div className='chart-mini-size' data-aos="fade-left" data-aos-duration="2500">
+                            <div className='chart-mini-size' data-aos="fade-up" data-aos-duration="2500">
                                 <p>I don't Know bro.</p>
                                 <BarChart
                                     xAxis={[{ data: ['group A', 'group B', 'group C'] }]}
