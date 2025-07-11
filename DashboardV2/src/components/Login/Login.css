@@ -103,4 +103,29 @@
     color: #2a3749;
     text-decoration: none;
     font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.sign-up:hover {
+    color: #DFD7AF;
+}
+
+@media screen and (max-width: 450px) {
+    .login-form {
+        padding: 30px;
+        width: 100%;
+        height: 75vh;
+    }
+
+    .login-form h2 {
+        font-size: 1.8em;
+    }
+
+    .input-group input {
+        width: calc(100% - 20px);
+    }
+
+    .login-button {
+        font-size: 16px;
+    }
 }
