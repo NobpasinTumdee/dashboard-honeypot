@@ -1,8 +1,9 @@
 import axios from "axios";
 
 
-const apiUrl = 'http://192.168.196.193:3000'
-// const apiUrl = 'http://localhost:3000'
+// const apiUrl = 'http://192.168.196.193:3000'
+// const apiUrl = 'http://192.168.1.4:3000'
+const apiUrl = 'http://localhost:3000'
 
 
 // Auth
