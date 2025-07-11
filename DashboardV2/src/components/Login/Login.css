@@ -1,0 +1,131 @@
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 5% 0;
+}
+
+
+.login-form {
+    background-color: #ffffff;
+    padding: 50px;
+    width: 100%;
+    max-width: 450px;
+    text-align: left;
+    border-radius: 10px;
+    box-shadow: rgba(136, 165, 191, 0.48) 6px 2px 16px 0px, rgba(255, 255, 255, 0.8) -6px -2px 16px 0px;
+}
+
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
+    text-align: center;
+}
+
+.login-form h2 {
+    margin-bottom: 35px;
+    color: #2a3749;
+    text-align: center;
+    font-size: 2.2em;
+    font-weight: 700;
+}
+
+.logout {
+    background-color: #ff4d4f;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease, scale 0.3s ease;
+}
+
+.logout:hover {
+    background-color: #b61d1a;
+    transform: translateY(-6px);
+    scale: 1.4;
+    box-shadow: rgba(255, 0, 0, 0.2) 0px 10px 20px -5px, rgba(255, 0, 0, 0.1) 0px 6px 6px -5px;
+}
+.input-group {
+    margin-bottom: 25px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 10px;
+    color: #333;
+    font-weight: 600;
+    font-size: 1.1em;
+}
+
+.input-group input {
+    width: calc(100% - 24px);
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #DFD7AF;
+    box-shadow: 0 0 5px #DFD7AF;
+}
+
+.login-button {
+    width: 100%;
+    padding: 14px;
+    background-color: #b6aa6c;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.login-button:hover {
+    background-color: #dacd8d;
+    transform: translateY(-2px);
+}
+
+
+.sign-up {
+    display: block;
+    text-align: center;
+    margin-top: 20px;
+    color: #2a3749;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.sign-up:hover {
+    color: #DFD7AF;
+}
+
+@media screen and (max-width: 450px) {
+    .login-form {
+        padding: 30px;
+        width: 100%;
+        height: 75vh;
+    }
+
+    .login-form h2 {
+        font-size: 1.8em;
+    }
+
+    .input-group input {
+        width: calc(100% - 20px);
+    }
+
+    .login-button {
+        font-size: 16px;
+    }
+}

@@ -239,9 +239,9 @@
 
 @media screen and (max-width: 450px) {
   .Main-nav-bar {
-    display: inline;
+    display: block;
     text-align: center;
-    width: 100vw;
+    width: 100%;
   }
 
   .group-logo {
@@ -255,5 +255,13 @@
 
   .layout-overlap {
     height: 150px;
+  }
+
+  .group-menu {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
   }
 }

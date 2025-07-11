@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Table } from 'antd';
 import type { TableColumnsType } from 'antd';
-import { getCowrie } from '../serviceApi';
+import { getCowrieAuth } from '../serviceApi';
 import Aos from 'aos';
 import 'aos/dist/aos.css';
 
@@ -137,9 +137,20 @@ const CowriePage = () => {
 
     const handleFetchData = async () => {
         try {
-            const res = await getCowrie();
-            if (res && res.data) {
-                setData(res.data);
+            const res = await getCowrieAuth();
+            const responseData = res?.data;
+            if (!responseData) {
+                console.error("No data received from API");
+                setData([]);
+                return;
+            }
+            if (Array.isArray(responseData)) {
+                setData(responseData);
+            } else if (Array.isArray(responseData?.data)) {
+                setData(responseData.data);
+            } else {
+                console.error("Unexpected response:", responseData);
+                setData([]);
             }
         } catch (error) {
             setData([])
@@ -156,17 +167,33 @@ const CowriePage = () => {
         });
     }, []);
 
+    useEffect(() => {
+        const interval = setInterval(() => {
+            (async () => {
+                await handleFetchData();
+            })();
+            console.log("reload data 10 วิ");
+        }, 10000);
+        return () => clearInterval(interval); // เคลียร์เมื่อ component หายไป
+    }, []);
+
     return (
         <>
             <div style={{ margin: '10px 30px 20px', textAlign: 'center' }} data-aos="zoom-in-down">
                 <h1>Cowrie</h1>
                 มีจำนวนทั้งสิ้น {data.length} รายการ
             </div>
-            <div style={{ backgroundColor: '#fff', margin: '10px 30px', borderRadius: '10px', overflowX: 'auto' }} data-aos="fade-up">
-                <div style={{minWidth: '1460px'}}>
-                    <Table<AlertItem> columns={columns} dataSource={data} size="middle" />
+            {data.length === 0 ? (
+                <div style={{ textAlign: 'center', margin: '20px' }} data-aos="zoom-in-up">
+                    <h1>โปรดล็อคอิน เพื่อดูตารางแบบเต็ม</h1>
                 </div>
-            </div>
+            ) : (
+                <div style={{ backgroundColor: '#fff', margin: '10px 30px', borderRadius: '10px', overflowX: 'auto' }} data-aos="fade-up">
+                    <div style={{ minWidth: '1460px' }}>
+                        <Table<AlertItem> columns={columns} dataSource={data} size="middle" />
+                    </div>
+                </div>
+            )}
         </>
     );
 };

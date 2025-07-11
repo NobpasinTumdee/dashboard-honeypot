@@ -6,6 +6,7 @@ import Home from './components/Home'
 import OpenCanary from './components/OpenCanary'
 import WireShark from './components/WireShark'
 import ChatBot from './components/ChatBot';
+import Login from './components/Login/Login';
 
 const router = createBrowserRouter([
   {
@@ -18,6 +19,7 @@ const router = createBrowserRouter([
       { path: "open-canary", element: <OpenCanary /> },
       { path: "wire-shark", element: <WireShark /> },
       { path: "chatbot", element: <ChatBot /> },
+      { path: "login", element: <Login /> },
     ]
   }
 ]);

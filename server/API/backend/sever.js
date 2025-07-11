@@ -21,4 +21,5 @@ app.use("/get", honeypotRoute);
 
 app.listen(port, () => {
   console.log(`🚀 Server running at http://localhost:${port}`);
+  console.log(`🚀 Server running at http://192.168.196.193:${port}`);
 });

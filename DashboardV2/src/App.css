@@ -46,6 +46,6 @@ body{
 
 @media screen and (max-width: 450px) {
     .main {
-        display: inline;
+        display: block;
     }
 }

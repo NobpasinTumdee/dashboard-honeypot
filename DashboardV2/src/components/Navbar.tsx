@@ -20,6 +20,11 @@ const toggleTheme = (e: any) => {
     else setLightMode();
 }
 
+const isLogin = localStorage.getItem("isLogin");
+if (isLogin === "true") {
+    console.log("Login Success");
+
+}
 
 const Navbar = () => {
     const location = useLocation();
@@ -33,12 +38,24 @@ const Navbar = () => {
                 </div>
                 <div className="sub-nav-bar">
                     <Link to="/" className={`Link-button ${isActive('/') ? 'active' : ''}`}> Home </Link>
-                    <Link to={'cowrie'} className={`Link-button ${isActive('/cowrie') ? 'active' : ''}`}>Cowrie </Link>
-                    <Link to="open-canary" className={`Link-button ${isActive('/open-canary') ? 'active' : ''}`}>OpenCanary </Link>
-                    <Link to="wire-shark" className={`Link-button ${isActive('/wire-shark') ? 'active' : ''}`}>Wire Shark </Link>
+                    {isLogin === "true" ? (
+                        <>
+                            <Link to={'cowrie'} className={`Link-button ${isActive('/cowrie') ? 'active' : ''}`}>Cowrie </Link>
+                            <Link to="open-canary" className={`Link-button ${isActive('/open-canary') ? 'active' : ''}`}>OpenCanary </Link>
+                            <Link to="wire-shark" className={`Link-button ${isActive('/wire-shark') ? 'active' : ''}`}>Wire Shark </Link>
+                        </>
+                    ) : (
+                        <>
+                            <Link to="login" className={`Link-button ${isActive('/login') ? 'active' : ''}`}>Login</Link>
+                        </>
+                    )}
                     <div className='group-menu'>
-                        <Link to="/" className="icon-nav">🔔</Link>
-                        <Link to="chatbot" className="icon-nav">💬</Link>
+                        {isLogin === "true" && (
+                            <>
+                                <Link to="/" className="icon-nav">🔔</Link>
+                                <Link to="chatbot" className="icon-nav">💬</Link>
+                            </>
+                        )}
                         <div className="theme-toggle-wrapper">
                             <label className="toggle-switch">
                                 {/* // checkbox for theme web */}
@@ -59,7 +76,9 @@ const Navbar = () => {
                                 </span>
                             </label>
                         </div>
-                        <Link to={'/'} style={{ display: 'flex' }}><img className="Profile" src="https://images2.alphacoders.com/129/1299701.jpg" alt="Profile" /></Link>
+                        {isLogin === "true" &&
+                            <Link to={'login'} style={{ display: 'flex' }}><img className="Profile" src="https://images2.alphacoders.com/129/1299701.jpg" alt="Profile" /></Link>
+                        }
                     </div>
                     {/* <img className="Profile" src="https://i.pravatar.cc/40" alt="Profile" /> */}
                 </div>

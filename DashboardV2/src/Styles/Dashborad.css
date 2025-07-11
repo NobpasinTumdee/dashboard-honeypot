@@ -29,13 +29,15 @@
 
 @media screen and (max-width: 450px) {
     .overview-in-main {
-        display: inline;
-        margin: 0px;
+        display: block;
+        margin: 5%;
+        width: 90%;
     }
     .dashborad-main {
         padding: 0px;
     }
     .chart-mini-size {
-        width: 100vw;
+        width: 100%;
+        margin: 10% 0;
     }
 }
