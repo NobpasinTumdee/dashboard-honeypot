@@ -1,0 +1,86 @@
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 5% 0;
+}
+
+/* สไตล์ของฟอร์ม Login */
+.login-form {
+    background-color: #ffffff;
+    padding: 50px;
+    width: 100%;
+    max-width: 450px;
+    text-align: left;
+}
+
+/* หัวข้อ "เข้าสู่ระบบ" */
+.login-form h2 {
+    margin-bottom: 35px;
+    color: #411495;
+    /* สีม่วงเข้ม */
+    text-align: center;
+    font-size: 2.2em;
+    font-weight: 700;
+}
+
+/* กลุ่มของ Label และ Input */
+.input-group {
+    margin-bottom: 25px;
+}
+
+.input-group label {
+    display: block;
+    margin-bottom: 10px;
+    color: #333;
+    font-weight: 600;
+    font-size: 1.1em;
+}
+
+.input-group input {
+    width: calc(100% - 24px);
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.input-group input:focus {
+    outline: none;
+    border-color: #411495;
+    box-shadow: 0 0 5px rgba(65, 20, 149, 0.5);
+}
+
+.login-button {
+    width: 100%;
+    padding: 14px;
+    background-color: #411495;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.login-button:hover {
+    background-color: #623ab0;
+    transform: translateY(-2px);
+}
+
+
+.forgot-password {
+    display: block;
+    margin-top: 25px;
+    color: #f7785c;
+    text-decoration: none;
+    text-align: center;
+    font-size: 0.95em;
+    transition: color 0.3s ease;
+}
+
+.forgot-password:hover {
+    color: #e05a3e;
+}
