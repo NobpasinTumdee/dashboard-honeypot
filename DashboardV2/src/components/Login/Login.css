@@ -6,26 +6,50 @@
     margin: 5% 0;
 }
 
-/* สไตล์ของฟอร์ม Login */
+
 .login-form {
     background-color: #ffffff;
     padding: 50px;
     width: 100%;
     max-width: 450px;
     text-align: left;
+    border-radius: 10px;
+    box-shadow: rgba(136, 165, 191, 0.48) 6px 2px 16px 0px, rgba(255, 255, 255, 0.8) -6px -2px 16px 0px;
 }
 
-/* หัวข้อ "เข้าสู่ระบบ" */
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-top: 10px;
+    text-align: center;
+}
+
 .login-form h2 {
     margin-bottom: 35px;
-    color: #411495;
-    /* สีม่วงเข้ม */
+    color: #2a3749;
     text-align: center;
     font-size: 2.2em;
     font-weight: 700;
 }
 
-/* กลุ่มของ Label และ Input */
+.logout {
+    background-color: #ff4d4f;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease, scale 0.3s ease;
+}
+
+.logout:hover {
+    background-color: #b61d1a;
+    transform: translateY(-6px);
+    scale: 1.4;
+    box-shadow: rgba(255, 0, 0, 0.2) 0px 10px 20px -5px, rgba(255, 0, 0, 0.1) 0px 6px 6px -5px;
+}
 .input-group {
     margin-bottom: 25px;
 }
@@ -49,38 +73,34 @@
 
 .input-group input:focus {
     outline: none;
-    border-color: #411495;
-    box-shadow: 0 0 5px rgba(65, 20, 149, 0.5);
+    border-color: #DFD7AF;
+    box-shadow: 0 0 5px #DFD7AF;
 }
 
 .login-button {
     width: 100%;
     padding: 14px;
-    background-color: #411495;
+    background-color: #b6aa6c;
     color: white;
     border: none;
     border-radius: 8px;
     font-size: 18px;
+    font-weight: 700;
     cursor: pointer;
     transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .login-button:hover {
-    background-color: #623ab0;
+    background-color: #dacd8d;
     transform: translateY(-2px);
 }
 
 
-.forgot-password {
+.sign-up {
     display: block;
-    margin-top: 25px;
-    color: #f7785c;
-    text-decoration: none;
     text-align: center;
-    font-size: 0.95em;
-    transition: color 0.3s ease;
-}
-
-.forgot-password:hover {
-    color: #e05a3e;
+    margin-top: 20px;
+    color: #2a3749;
+    text-decoration: none;
+    font-weight: 600;
 }

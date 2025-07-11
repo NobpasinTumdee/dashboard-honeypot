@@ -2,7 +2,7 @@
 const WireShark = () => {
   return (
     <>
-      WireShark
+      <h1 style={{textAlign:'center'}}>เดะหาอะไรมาแทนหน้านี้ อย่าเพิ่งรีบนะพี่ชาย</h1>
     </>
   )
 }
