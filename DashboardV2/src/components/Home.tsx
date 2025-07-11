@@ -3,20 +3,73 @@ import '../Styles/Dashborad.css'
 import '../App.css'
 import Aos from 'aos';
 import 'aos/dist/aos.css';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import ChartComponent from './chart/Chart';
+import type { AlertItem } from './Cowrie';
+import { getCowrieAuth } from '../serviceApi';
+import ChartByDateComponent from './chart/ChartByDateComponent';
 
 const Home = () => {
     useEffect(() => {
+        (async () => {
+            await handleFetchData();
+        })();
         Aos.init({
             duration: 1000,
             once: true,
         });
     }, []);
+
+
+
+    // ============================================ cowrie data
+    const [data, setData] = useState<AlertItem[]>([]);
+
+    const handleFetchData = async () => {
+        try {
+            const res = await getCowrieAuth();
+            const responseData = res?.data;
+            if (!responseData) {
+                console.error("No data received from API");
+                setData([]);
+                return;
+            }
+            if (Array.isArray(responseData)) {
+                setData(responseData);
+            } else if (Array.isArray(responseData?.data)) {
+                setData(responseData.data);
+            } else {
+                console.error("Unexpected response:", responseData);
+                setData([]);
+            }
+        } catch (error) {
+            setData([])
+        }
+    };
+    // ============================================
     return (
         <>
             <div className='main'>
                 <div className='dashborad-main'>
-                    <h2 style={{ textAlign: 'center' }} data-aos="zoom-in-down">Dashborad</h2>
+                    <h1 style={{ textAlign: 'center' }} data-aos="zoom-in-down">Dashborad</h1>
+                    <h2 style={{ textAlign: 'center' }} data-aos="zoom-in-down">Cowrie</h2>
+                    <div className='chart-in-main'>
+                        <div className='chart-in-sub'>
+                            <ChartComponent logs={data} />
+                        </div>
+                        <div className='chart-in-sub'>
+                            <ChartByDateComponent logs={data} />
+                        </div>
+                    </div>
+                    <h2 style={{ textAlign: 'center' }} data-aos="zoom-in-down">Dionaea</h2>
+                    <div className='chart-in-main'>
+                        <div className='chart-in-sub'>
+                            <ChartByDateComponent logs={data} />
+                        </div>
+                        <div className='chart-in-sub'>
+                            <ChartComponent logs={data} />
+                        </div>
+                    </div>
                     <>
                         <div className='overview-in-main'>
                             <div className='chart-mini-size' data-aos="zoom-out" data-aos-duration="500">
