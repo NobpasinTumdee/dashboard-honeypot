@@ -22,7 +22,8 @@ export const cowrie10 = async (req, res, next) => {
             take: 10,
             orderBy: {
                 id: 'desc'
-            },select: {
+            }, select: {
+                id: true,
                 timestamp: true,
                 eventid: true,
                 message: true,
@@ -61,7 +62,21 @@ export const opencanary10 = async (req, res, next) => {
             take: 10,
             orderBy: {
                 id: 'desc'
-            }
+            },
+            select: {
+                id: true,
+                dst_host: true,
+                dst_port: true,
+                local_time: true,
+                local_time_adjusted: true,
+                logdata_raw: true,
+                logdata_msg_logdata: true,
+                logtype: true,
+                node_id: true,
+                src_host: true,
+                src_port: true,
+                utc_time: true,
+            },
         });
         res.json(logs);
     } catch (error) {
