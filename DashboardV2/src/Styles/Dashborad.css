@@ -1,6 +1,7 @@
 .dashborad-main {
     color: var(--body_text_color);
     padding: 30px;
+    width: 80%;
 }
 
 .overview-in-main {
