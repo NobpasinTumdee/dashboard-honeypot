@@ -5,7 +5,7 @@ import { getCowrieAuth } from '../serviceApi';
 import Aos from 'aos';
 import 'aos/dist/aos.css';
 
-type AlertItem = {
+export type AlertItem = {
     id: number;
     timestamp: string;
     eventid: string;

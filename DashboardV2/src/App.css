@@ -21,6 +21,7 @@
 
 *::selection {
   background-color: var(--body_hover_text_color);
+  color: var(--body_main_background);
 }
 
 body{

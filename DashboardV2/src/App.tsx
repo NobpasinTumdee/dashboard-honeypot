@@ -7,12 +7,13 @@ import OpenCanary from './components/OpenCanary'
 import WireShark from './components/WireShark'
 import ChatBot from './components/ChatBot';
 import Login from './components/Login/Login';
+import FuzzyText from './components/Login/FuzzyText';
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Rootlayout />,
-    errorElement: <h1>Not found this page...</h1>,
+    errorElement: <div style={{position: 'fixed',width: '100vw',height:'100vh',backgroundColor:'#242424',display:'flex',justifyContent:'center',alignItems:'center'}}><FuzzyText baseIntensity={0.2} >404 Not found this page...</FuzzyText></div>,
     children: [
       { index: true, element: <Home /> },
       { path: "cowrie", element: <CowriePage /> },

@@ -1,8 +1,15 @@
 import axios from "axios";
 
-
+// ZeroTier por
 // const apiUrl = 'http://192.168.196.193:3000'
+
+// ZeroTier Main honeypot
+// const apiUrl = 'http://172.29.26.44:3000'
+
+// Home wifi
 // const apiUrl = 'http://192.168.1.4:3000'
+
+// localhost
 const apiUrl = 'http://localhost:3000'
 
 
@@ -28,6 +35,19 @@ async function LignIn(data: SignInInterface) {
     return await axios
 
         .post(`${apiUrl}/auth/login`, data, requestOptions)
+
+        .then((res) => res)
+
+        .catch((e) => e.response);
+
+}
+
+//SignUp
+async function SignUp(data: SignInInterface) {
+
+    return await axios
+
+        .post(`${apiUrl}/auth/register`, data, requestOptions)
 
         .then((res) => res)
 
@@ -86,6 +106,7 @@ async function getOpenCanaryAuth() {
 }
 export {
     LignIn,
+    SignUp,
     getCowrie,
     getCowrieAuth,
     getOpenCanary,

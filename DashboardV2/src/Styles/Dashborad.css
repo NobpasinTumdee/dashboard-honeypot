@@ -1,6 +1,7 @@
 .dashborad-main {
     color: var(--body_text_color);
     padding: 30px;
+    width: 80%;
 }
 
 .overview-in-main {
@@ -27,6 +28,22 @@
     margin: 10px 0 0;
 }
 
+.chart-in-main {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    width: 90%;
+    margin: 0 5%;
+}
+
+.chart-in-sub {
+    width: 50%;
+    padding:5% ;
+    background-color: var(--body_main_sidebar);
+    border-radius: 10px;
+    box-shadow: #32326911 0px 2px 5px 0px, #00000007 0px 1px 1px 0px;
+}
+
 @media screen and (max-width: 450px) {
     .overview-in-main {
         display: block;
@@ -39,5 +56,16 @@
     .chart-mini-size {
         width: 100%;
         margin: 10% 0;
+    }
+
+    .chart-in-main {
+        flex-direction: column;
+        width: 90%;
+        margin: 0 5%;
+    }
+
+    .chart-in-sub {
+        width: 100%;
+        padding: 0;
     }
 }
