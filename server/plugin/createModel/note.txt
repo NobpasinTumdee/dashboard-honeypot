@@ -1,0 +1,3 @@
+รันในคอมไม่ได้ต้องไปลองใน colab
+
+https://colab.research.google.com/drive/1c_B7SJrdW5F5-qS5xQpdZe37ekh_CC43?usp=sharing
