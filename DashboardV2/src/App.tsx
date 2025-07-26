@@ -8,6 +8,7 @@ import WireShark from './components/WireShark'
 import ChatBot from './components/ChatBot';
 import Login from './components/Login/Login';
 import FuzzyText from './components/Login/FuzzyText';
+import SocketPage from './components/web-socket/Socket';
 
 const router = createBrowserRouter([
   {
@@ -21,6 +22,7 @@ const router = createBrowserRouter([
       { path: "wire-shark", element: <WireShark /> },
       { path: "chatbot", element: <ChatBot /> },
       { path: "login", element: <Login /> },
+      { path: "socket", element: <SocketPage /> },
     ]
   }
 ]);
