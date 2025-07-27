@@ -6,29 +6,21 @@ sudo apt update
 sudo apt install wireshark -y
 ```
 ```bash
-sudo apt install sqlite3 -y
-```
-```bash
 sudo apt install tshark -y
+```
+
+## Install in venv
+```bash
+pip install pyshark
 ```
 
 ## Wireshark basic config
 ```bash
-sudo dpkg-reconfigure wireshark-common
+sudo dpkg-reconfigure wireshark-common -y
 ```
 ```bash
 sudo usermod -aG wireshark $USER
 ```
 ```bash
 sudo chmod +x /usr/bin/dumpcap
-```
-
-## Run Wireshark
-```bash
-wireshark
-```
-
-# Capture Pakets(Bash Mode) from interface enp0s3
-```bash
-dumpcap -i enp0s3 -b duration:300 -w ~/capture.pcap
 ```
