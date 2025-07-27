@@ -26,7 +26,7 @@ from twisted.python import failure, log
 from cowrie.core.config import CowrieConfig
 from cowrie.core.credentials import UsernamePasswordIP
 
-# ฟังก์ชันเสริม
+# ฟังก์ชันบันทึก username และ password
 def write_user(filename, username, password):
     def to_str(val):
         return val.decode() if isinstance(val, bytes) else str(val)
@@ -45,10 +45,7 @@ def write_user(filename, username, password):
 
 # ฟังก์ชัน ตรวจสอบ password เก่า
 def password_exists(filename, password):
-    """
-    ตรวจสอบว่ามี password นี้อยู่ในไฟล์ users.txt หรือไม่
-    (ไฟล์เก็บเป็น list ของ tuple เช่น [('user1','pass1'),('user2','pass2')])
-    """
+    
     def to_str(val):
         return val.decode() if isinstance(val, bytes) else str(val)
     try:
@@ -63,6 +60,22 @@ def password_exists(filename, password):
         return False
     return False
 
+# ตรวจสอบว่ามี username ใน users.txt ไหม
+def get_user_entry(filename, username):
+        def to_str(val):
+            return val.decode() if isinstance(val, bytes) else str(val)
+        try:
+            with open(filename, 'r') as f:
+                content = f.read().strip()
+                if content:
+                    users = ast.literal_eval(content)
+                    for entry in users:
+                        if len(entry) > 1 and to_str(entry[0]) == to_str(username):
+                            return entry
+        except (FileNotFoundError, SyntaxError, ValueError):
+            return None
+        return None
+
 
 class HoneyPotTelnetAuthProtocol(AuthenticatingTelnetProtocol):
     """
@@ -75,22 +88,15 @@ class HoneyPotTelnetAuthProtocol(AuthenticatingTelnetProtocol):
     windowSize: list[int]
 
     def connectionMade(self):
-        # self.transport.negotiationMap[NAWS] = self.telnet_NAWS
-        # Initial option negotation. Want something at least for Mirai
-        # for opt in (NAWS,):
-        #    self.transport.doChain(opt).addErrback(log.err)
-
-        # I need to doubly escape here since my underlying
-        # CowrieTelnetTransport hack would remove it and leave just \n
+        
         self.windowSize = [40, 80]
         self.transport.write(self.factory.banner.replace(b"\n", b"\r\r\n"))
         self.transport.write(self.loginPrompt)
-
-        # เสริม ---------------------
-        self.login_attempts_made = 0  # นับจำนวนครั้งที่พยายามล็อกอิน
-        self.required_login_attempts = random.randint(1, 5) # สุ่มจำนวนครั้งที่ต้องพยายาม 1-5
-        log.msg(f"[*] Telnet: การเชื่อมต่อใหม่ต้องการการล็อกอินที่สำเร็จ {self.required_login_attempts} ครั้ง.")
-        # -------------------------
+        
+        self.login_attempts_made = 0                        # เก็บจำนวนรอบที่ login
+        self.required_login_attempts = random.randint(1, 5) # สุ่มจำนวนครั้งที่ต้อง login
+        # log.msg(f"[*] Telnet: การเชื่อมต่อใหม่ต้องการการล็อกอินที่สำเร็จ {self.required_login_attempts} ครั้ง.")
+        
 
     def connectionLost(self, reason: failure.Failure = connectionDone) -> None:
         """
@@ -120,23 +126,38 @@ class HoneyPotTelnetAuthProtocol(AuthenticatingTelnetProtocol):
         del self.username
 
         def login(ignored):
+            
             self.src_ip = self.transport.getPeer().host
             creds = UsernamePasswordIP(username, password, self.src_ip)
-            #d = self.portal.login(creds, self.src_ip, ITelnetProtocol)
-            #d.addCallback(self._cbLogin)
-            #d.addErrback(self._ebLogin)
             
-            # อ่าน password เก่า
             userfile_path = "/home/cowrie/users.txt"
-            if password_exists(userfile_path, password):
-                log.msg("Telnet: password นี้เคยถูกใช้แล้ว ข้ามจำนวนครั้ง login")
-                self.login_attempts_made = self.required_login_attempts
-
-
-            # เสริม ---------------------
+                
+            username_data = get_user_entry(userfile_path, username)
+            password_status = password_exists(userfile_path, password)
             
-            self.login_attempts_made += 1  # นับ
-            log.msg(f"Telnet: พยายามล็อกอินครั้งที่ {self.login_attempts_made}/{self.required_login_attempts}") 
+            # ตรวจสอบ username ว่ามีอยู่ในไฟล์หรือไม่
+            if username_data:
+                # password ตรงกับที่เคยใช้แล้ว
+                if str(username_data[1]) == str(password):
+                    self.login_attempts_made = self.required_login_attempts
+                    log.msg("Telnet: username/password ตรงกับที่เคยใช้แล้ว")
+                else:
+                    self.login_attempts_made = 0
+                    log.msg("Telnet: username นี้มีอยู่แล้ว แต่ password ไม่ตรง รีเซ็ตจำนวนครั้ง login")
+                    self.transport.wontChain(ECHO)
+                    self.transport.write(b"\nLogin incorrect\n")
+                    self.transport.write(self.loginPrompt)
+                    self.state = "User"
+                    return
+            # หากมี password ใน users.txt จะผ่านได้เลย
+            elif password_status:
+                self.login_attempts_made = self.required_login_attempts
+                log.msg("Telnet: password นี้เคยถูกใช้แล้ว แต่ username ไม่เคยใช้")
+            else:
+                self.login_attempts_made += 1
+                log.msg(f"Telnet: พยายามล็อกอินครั้งที่ {self.login_attempts_made}/{self.required_login_attempts}")
+            
+                
 
             # ตรวจสอบจำนวนครั้งที่พยายามล็อกอิน
             if self.login_attempts_made < self.required_login_attempts:
@@ -146,14 +167,12 @@ class HoneyPotTelnetAuthProtocol(AuthenticatingTelnetProtocol):
                 self.transport.write(b"\nLogin incorrect\n") # แจ้งผู้ใช้ว่าล็อกอินไม่ถูกต้อง
                 self.transport.write(self.loginPrompt)       # แสดง prompt สำหรับล็อกอินใหม่
                 self.state = "User"                          # กลับไปยังสถานะ User เพื่อ login ใหม่
-            
-            # ครบจำนวน
             else:
                 log.msg(f"Telnet: ครบ {self.required_login_attempts} ครั้งแล้ว. กำลังตรวจสอบล็อกอินจริง.")
                 d = self.portal.login(creds, self.src_ip, ITelnetProtocol)
                 d.addCallback(self._cbLogin)
                 d.addErrback(self._ebLogin)
-            # -------------------------
+            
 
         # are we dealing with a real Telnet client?
         if self.transport.options:
@@ -184,15 +203,15 @@ class HoneyPotTelnetAuthProtocol(AuthenticatingTelnetProtocol):
 
         self.transport.write(b"\n")
         
-        # ========== เสริม =================
-        # เก็บ username + password ที่ login สำเร็จไว้ใน users.txt
+        
+        # เมื่อ login สำเร็จ จะบันทึก username และ password ลงไฟล์ users.txt
+        
         userfile_path = "/home/cowrie/users.txt"
         try:
             write_user(userfile_path, self._last_success_username, self._last_success_password)
         except Exception as e:
             log.msg(f"Error writing login: {e}")
-        
-        # ========== จบ =================
+
 
         # Remove the short timeout of the login prompt.
         self.transport.setTimeout(
