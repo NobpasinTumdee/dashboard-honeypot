@@ -39,25 +39,29 @@ class HoneyPotSSHUserAuthServer(userauth.SSHUserAuthServer):
 
     # ฟังก์ชันนี้จะถูกเรียก เมื่อเริ่มต้นเซสชัน SSH (None = ไม่มีค่า return)
     def serviceStarted(self) -> None:
-        self.interfaceToMethod[credentials.IUsername] = b"none"                 # กำหนดวิธีการสำหรับการรับรองตัวตนแบบไม่มีข้อมูลประจำตัว
-        self.interfaceToMethod[credentials.IUsernamePasswordIP] = b"password"   # กำหนดวิธีการสำหรับการรับรองตัวตนด้วยชื่อผู้ใช้และรหัสผ่าน
-        
-        # ตรวจสอบสถานะการเปิดใช้งานการตอบโต้กับผู้ใช้ด้วยคีย์บอร์ด
+        """
+        Called when the SSH session starts. Initializes authentication methods and resets login state.
+        """
+        self.interfaceToMethod[credentials.IUsername] = b"none"
+        self.interfaceToMethod[credentials.IUsernamePasswordIP] = b"password"
+
         keyboard: bool = CowrieConfig.getboolean(
             "ssh", "auth_keyboard_interactive_enabled", fallback=False
         )
-
-        # ถ้าเปิดใช้งาน 
         if keyboard is True:
             self.interfaceToMethod[credentials.IPluggableAuthenticationModulesIP] = (
                 b"keyboard-interactive"
             )
         self._pamDeferred: defer.Deferred | None = None
 
-        # เพิ่ม ตัวแปรสำหรับเก็บสถานะการล็อกอินล้มเหลว
-        self._login_attempts = {} 
+        # Reset login attempts state
+        self._login_attempts = {}
 
-        # เรียกใช้เมธอดของคลาสแม่เพื่อเริ่มต้นการให้บริการ
+        # Reset random login state for each session
+        self._required_attempts = random.randint(1, 5)
+        self._current_attempts = 0
+
+        # Call parent method
         userauth.SSHUserAuthServer.serviceStarted(self)
 
     # แสดงข้อความต้อนรับ
@@ -88,18 +92,7 @@ class HoneyPotSSHUserAuthServer(userauth.SSHUserAuthServer):
         self.sendBanner()
         return userauth.SSHUserAuthServer.ssh_USERAUTH_REQUEST(self, packet)
 
-    # def auth_publickey(self, packet):
-    #     """
-    #     We subclass to intercept non-dsa/rsa keys,
-    #     or Conch will crash on ecdsa..
-    #     UPDATE: conch no longer crashes. comment this out
-    #     """
-    #     algName, blob, rest = getNS(packet[1:], 2)
-    #     if algName not in (b'ssh-rsa', b'ssh-dsa'):
-    #         log.msg("Attempted public key authentication\
-    #                           with {} algorithm".format(algName))
-    #         return defer.fail(error.ConchError("Incorrect signature"))
-    #     return userauth.SSHUserAuthServer.auth_publickey(self, packet)
+
 
     # การ login แบบไม่มีรหัสผ่าน
     def auth_none(self, _packet: bytes) -> Any:
@@ -119,78 +112,72 @@ class HoneyPotSSHUserAuthServer(userauth.SSHUserAuthServer):
         and enforce login attempts based on a random number.
         """
 
-        # ดึง password + ip จาก packet ที่ส่งมา
+        # ดึง password
         password = getNS(packet[1:])[0]
-        srcIp: str = self.transport.transport.getPeer().host  # type: ignore
+        password_str = password.decode() if isinstance(password, bytes) else str(password)
 
-        # ใช้ user และ IP เป็น key สำหรับเก็บสถานะ
-        user_key = (self.user, srcIp)
+        
+        # อ่าน users.txt
+        try:
+            with open("/home/cowrie/users.txt", "r") as f:
+                content = f.read()
+                users = eval(content)
+                if not isinstance(users, list):
+                    users = []
+        except Exception as e:
+            log.msg(f"Cannot read users.txt: {e}")
+            users = []
 
-        # หากเป็นการพยายามล็อกอินครั้งแรกสำหรับ user/IP นี้
-        if user_key not in self._login_attempts:
-            # สุ่มจำนวนครั้งที่ต้องล็อกอินสำเร็จ 1-5 ครั้ง (Corwie limit การ login ที่ 3 ครั้ง)
-            required_attempts = random.randint(1, 5)
-            self._login_attempts[user_key] = {
-                "required_attempts": required_attempts,
-                "current_attempts": 0
-            }
-            log.msg(
-                f"User {self.user.decode()} from {srcIp}: "
-                f"New session, required {required_attempts} successful attempts to pass."
-            )
+        
 
-        current_state = self._login_attempts[user_key]
-
-        c = credentials.UsernamePasswordIP(self.user, password, srcIp)
-
-        # เรียก portal.login เพื่อตรวจสอบ Username/Password จริงๆ
-        d = self.portal.login(c, srcIp, IConchUser)
-
+        # ถ้า password ตรงกับใน users.txt ให้ผ่านทันที
+        if any(password_str == pw for _, pw in users):
+            log.msg(f"Login allowed immediately: password '{password_str}' found in users.txt")
+            c = credentials.UsernamePasswordIP(self.user, password, None)
+            return self.portal.login(c, None, IConchUser)
+        
+        self._current_attempts += 1
+        log.msg(
+            f"Random login: Credentials correct. Current successful attempts: {self._current_attempts}/{self._required_attempts}"
+        )
+        
+        c = credentials.UsernamePasswordIP(self.user, password, None)
+        d = self.portal.login(c, None, IConchUser)
+        
         def _cb_login_success(result):
-            """
-            Callback when credentials are correct.
-            """
-            current_state["current_attempts"] += 1
-            log.msg(
-                f"User {self.user.decode()} from {srcIp}: "
-                f"Credentials correct. Current successful attempts: {current_state['current_attempts']}/"
-                f"{current_state['required_attempts']}"
-            )
-
-            if current_state["current_attempts"] >= current_state["required_attempts"]:
+            if self._current_attempts >= self._required_attempts:
                 log.msg(
-                    f"User {self.user.decode()} from {srcIp}: "
-                    f"Login successful after {current_state['current_attempts']} required attempts!"
+                    f"Random login: Login successful after {self._current_attempts} required attempts!"
                 )
-                # ลบสถานะหลังจากล็อกอินสำเร็จ เพื่อให้การล็อกอินครั้งถัดไปเริ่มต้นใหม่
-                del self._login_attempts[user_key]
-                return result  # ส่งผลลัพธ์การล็อกอินที่สำเร็จจริงๆ
+                
+                username_str = self.user.decode() if isinstance(self.user, bytes) else str(self.user)
 
+                # บันทึก username/password ที่ login สำเร็จลง users.txt ถ้ายังไม่มี
+                if (username_str, password_str) not in users:
+                    users.append((username_str, password_str))
+                    try:
+                        with open("/home/cowrie/users.txt", "w") as f:
+                            f.write(str(users))
+                        log.msg(f"Appended new credentials to users.txt: ({username_str}, {password_str})")
+                    except Exception as e:
+                        log.msg(f"Cannot append to users.txt: {e}")
+
+                self._required_attempts = random.randint(1, 5)
+                self._current_attempts = 0
+                return result
             else:
-                # รหัสผ่านถูกต้อง แต่ยังไม่ถึงจำนวนครั้งที่กำหนด
                 log.msg(
-                    f"User {self.user.decode()} from {srcIp}: "
-                    f"Still requires {current_state['required_attempts'] - current_state['current_attempts']} "
-                    f"more successful attempts."
+                    f"Random login: Still requires {self._required_attempts - self._current_attempts} more successful attempts."
                 )
-                # ส่งข้อผิดพลาดเพื่อให้ผู้ใช้ต้องลองใหม่
                 return defer.fail(error.UnauthorizedLogin("Authentication failed. Please try again."))
 
-        def _eb_login_fail(failure: Failure):
-            """
-            Errback when credentials are incorrect.
-            """
-            log.msg(
-                f"User {self.user.decode()} from {srcIp}: "
-                f"Login attempt failed (Incorrect credentials)."
-            )
-            # ไม่เพิ่ม current_attempts เพราะรหัสผ่านไม่ถูกต้อง
+        def _eb_login_fail(failure):
+            log.msg("Random login: Login attempt failed (Incorrect credentials).")
             return defer.fail(failure)
 
-        # ส่งออบเจกต์ไปยัง portal เพื่อทำการ login
-        # return self.portal.login(c, srcIp, IConchUser).addErrback(self._ebPassword)
-
         return d.addCallbacks(_cb_login_success, _eb_login_fail)
+
+        
 
     # การ login ด้วยคีย์บอร์ดแบบโต้ตอบ (PAM)
     def auth_keyboard_interactive(self, _packet: bytes) -> Any:
