@@ -21,6 +21,3 @@ sudo dpkg-reconfigure wireshark-common -y
 ```bash
 sudo usermod -aG wireshark $USER
 ```
-```bash
-sudo chmod +x /usr/bin/dumpcap
-```
