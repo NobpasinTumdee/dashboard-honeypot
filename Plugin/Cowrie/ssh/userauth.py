@@ -115,6 +115,7 @@ class HoneyPotSSHUserAuthServer(userauth.SSHUserAuthServer):
         # ดึง password
         password = getNS(packet[1:])[0]
         password_str = password.decode() if isinstance(password, bytes) else str(password)
+        username_str = self.user.decode() if isinstance(self.user, bytes) else str(self.user)
 
         
         # อ่าน users.txt
@@ -129,17 +130,35 @@ class HoneyPotSSHUserAuthServer(userauth.SSHUserAuthServer):
             users = []
 
         
-
-        # ถ้า password ตรงกับใน users.txt ให้ผ่านทันที
-        if any(password_str == pw for _, pw in users):
-            log.msg(f"Login allowed immediately: password '{password_str}' found in users.txt")
-            c = credentials.UsernamePasswordIP(self.user, password, None)
-            return self.portal.login(c, None, IConchUser)
+        # ตรวจสอบว่ามี username/password ในระบบหรือไม่
+        username_exists_in_system = any(username_str == u for u, _ in users)
+        password_found_in_system = any(password_str == pw for _, pw in users)
         
-        self._current_attempts += 1
-        log.msg(
-            f"Random login: Credentials correct. Current successful attempts: {self._current_attempts}/{self._required_attempts}"
-        )
+        # มี username ในระบบ
+        if username_exists_in_system:
+            # username/password ตรง
+            if (username_str, password_str) in users:
+                log.msg(f"Login allowed: ({username_str}, {password_str}) found in users.txt")
+                c = credentials.UsernamePasswordIP(self.user, password, None)
+                return self.portal.login(c, None, IConchUser)
+            # password ไม่ตรง
+            else:
+                log.msg(f"Login denied: Username '{username_str}' exists, but password '{password_str}' does not match.")
+                return defer.fail(error.UnauthorizedLogin("Authentication failed. Invalid username or password."))
+        # ไม่มี username ในระบบ
+        else:
+            # มี password ในระบบ
+            if password_found_in_system:
+                log.msg(f"Login allowed immediately: username '{username_str}' not found but password '{password_str}' found in users.txt")
+                c = credentials.UsernamePasswordIP(self.user, password, None)
+                return self.portal.login(c, None, IConchUser)
+            # ไม่มี username/password ในระบบ
+            else:
+                log.msg(f"Random login: username '{username_str}' not found and password '{password_str}' not found. Applying random login logic.")
+                self._current_attempts += 1
+                log.msg(
+                    f"Random login: Credentials correct. Current successful attempts: {self._current_attempts}/{self._required_attempts}"
+                )
         
         c = credentials.UsernamePasswordIP(self.user, password, None)
         d = self.portal.login(c, None, IConchUser)
