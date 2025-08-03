@@ -63,14 +63,13 @@ io.on('connection', (socket) => {
   socket.emit('Welcome-Message', `Welcome, User ID ${socket.user.UserID}!`);
 
   // Event handler สำหรับการดึง logs honeypot
-  socket.on('request-cowrie-logs', async (limit = 10) => {
+  socket.on('request-cowrie-logs', async () => {
     try {
       const logs = await prisma.honeypot_logs.findMany({
-        take: parseInt(limit),
         orderBy: { id: 'desc' },
-        select: {
-          id: true, timestamp: true, eventid: true, message: true,protocol: true, src_ip: true, src_port: true,username: true, password: true, command: true
-        }
+        // select: {
+        //   id: true, timestamp: true, eventid: true, message: true,protocol: true, src_ip: true, src_port: true,username: true, password: true, command: true
+        // }
       });
       socket.emit('Update-cowrie-logs', logs);
     } catch (error) {
@@ -84,9 +83,9 @@ io.on('connection', (socket) => {
     try {
       const logs = await prisma.opencanary_logs.findMany({
         orderBy: { id: 'desc' },
-        select: {
-          id: true, local_time: true, src_host: true, dst_host: true,logdata_msg_logdata: true, logtype: true, full_json_line: true
-        }
+        // select: {
+        //   id: true, local_time: true, src_host: true, dst_host: true,logdata_msg_logdata: true, logtype: true, full_json_line: true
+        // }
       });
       socket.emit('Update-opencanary-logs', logs);
     } catch (error) {
@@ -100,15 +99,15 @@ io.on('connection', (socket) => {
     try {
       const logs = await prisma.honeypot_logs.findMany({
         orderBy: { id: 'desc' },
-        select: {
-          id: true, timestamp: true, eventid: true, message: true,src_ip: true, username: true, password: true
-        }
+        // select: {
+        //   id: true, timestamp: true, eventid: true, message: true,src_ip: true, username: true, password: true
+        // }
       });
       socket.emit('real-time-cowrie', logs);
     } catch (error) {
       console.error('Error fetching real-time honeypot logs:', error);
     }
-  }, 10000);
+  }, 5000);
 
   socket.on('disconnect', () => {
     console.log('🔴 A client disconnected');
