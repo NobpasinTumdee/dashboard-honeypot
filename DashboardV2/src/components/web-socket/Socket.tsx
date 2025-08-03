@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import DateTimeNow from "../DateTimeNow";
 import type { AlertItem } from "../Cowrie";
 import { io, Socket } from "socket.io-client";
 
@@ -13,42 +14,38 @@ const SocketPage = () => {
 
     useEffect(() => {
         const token = getToken();
-
         if (!token) {
             console.error("No token found. Cannot connect to WebSocket.");
             return;
         }
-
-        const socket = io("http://localhost:3000", {
-            auth: { token },
-        });
-
+        const socket = io("http://localhost:3000", { auth: { token }, });
         socketRef.current = socket;
 
         // Update connection status
         socket.on("connect", () => {
             setIsConnected(true);
-            socket.emit("requestHoneypotLogs");
+            socket.emit("request-cowrie-logs");
         });
+        socket.on("disconnect", () => { setIsConnected(false); });
 
-        socket.on("disconnect", () => {
-            setIsConnected(false);
-        });
-
-        socket.on("honeypotLogsUpdate", (items: AlertItem[]) => {
+        socket.on("Update-cowrie-logs", (items: AlertItem[]) => {
             setData(items);
             // console.log("Initial data:", items);
-            console.log(new Date().toString());
+            console.log("Update cowrie logs : ", new Date().toString());
+        });
+        socket.on("real-time-cowrie", (items: AlertItem[]) => {
+            setData(items);
+            console.log("new data : ", new Date().toString());
         });
 
-        socket.on("initialMessage", (msg) => {
+        socket.on("Welcome-Message", (msg) => {
             console.log("Message:", msg);
         });
 
-        socket.on("cowrie-push", (msg: AlertItem) => {
-            setData((prev) => [...prev, msg]);
-            console.log("New push:", msg);
-        });
+        // socket.on("cowrie-push", (msg: AlertItem) => {
+        //     setData((prev) => [...prev, msg]);
+        //     console.log("New push:", msg);
+        // });
 
         return () => {
             socket.disconnect();
@@ -65,6 +62,7 @@ const SocketPage = () => {
                 WebSocket connection status:{" "}
                 {isConnected ? "🟢 Connected" : "🔴 Disconnected"}
             </p>
+            <DateTimeNow />
 
             <table style={{ width: "100%", borderCollapse: "collapse" }}>
                 <thead>

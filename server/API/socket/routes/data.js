@@ -1,69 +1,79 @@
 import express from "express";
 import { PrismaClient } from "@prisma/client";
-// ไม่ต้อง import verifyToken ที่นี่ เพราะเราจะใช้มันใน index.js ก่อนเข้าถึง route นี้
-// import { verifyToken, verifyTokenAndAdmin } from '../middlewares/verifyToken.js';
 
 const prisma = new PrismaClient();
 const router = express.Router();
 
-// GET all honeypot logs (requires admin)
-router.get("/honeypot", async (req, res) => {
-  // middleware verifyTokenAndAdmin จะถูกเรียกใช้ก่อนมาถึงตรงนี้
-  // ดังนั้นเรามั่นใจได้ว่า req.user.isAdmin เป็น true
+// GET all honeypot logs 
+router.get("/cowrie", async (req, res) => {
   try {
-    const logs = await prisma.honeypot_logs.findMany({
-      take: 10,
-      orderBy: { id: 'desc' },
-      select: {
-        id: true, timestamp: true, eventid: true, message: true,
-        protocol: true, src_ip: true, src_port: true,
-        username: true, password: true, input: true, command: true, duration: true
-      }
-    });
-    res.status(200).json(logs);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json("Error fetching honeypot logs.");
+    const logs = await prisma.honeypot_logs.findMany();
+    res.json(logs);
+  } catch (error) {
+    console.error("❌ Error fetching logs:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
-// GET all opencanary logs (can be accessed by any logged-in user)
-router.get("/opencanary", async (req, res) => {
-  // middleware verifyToken จะถูกเรียกใช้ก่อนมาถึงตรงนี้
-  // ดังนั้นเรามั่นใจได้ว่าผู้ใช้มีการ authenticate แล้ว
+
+
+// GET all opencanary logs
+router.get("/open-canary", async (req, res) => {
   try {
-    const limit = parseInt(req.query.limit) || 20;
-    const logs = await prisma.opencanary_logs.findMany({
-      take: limit,
-      orderBy: { id: 'desc' },
-      select: {
-        id: true, local_time: true, src_host: true, dst_host: true,
-        logdata_msg_logdata: true, logtype: true, full_json_line: true
-      }
-    });
-    res.status(200).json(logs);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json("Error fetching opencanary logs.");
+    const logs = await prisma.opencanary_logs.findMany();
+    res.json(logs);
+  } catch (error) {
+    console.error("❌ Error fetching logs:", error);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
-// GET a specific honeypot log by ID (requires admin)
-router.get("/honeypot/:id", async (req, res) => {
-  // req.user.isAdmin ถูกตรวจสอบโดย verifyTokenAndAdmin ก่อนหน้านี้
-  try {
-    const log = await prisma.honeypot_logs.findUnique({
-      where: { id: parseInt(req.params.id) },
-    });
-    if (!log) {
-      return res.status(404).json("Log not found.");
-    }
-    res.status(200).json(log);
-  } catch (err) {
-    console.error(err);
-    res.status(500).json("Error fetching honeypot log.");
-  }
-});
+
+
+// // GET 10 cowrie logs 
+// router.get("/cowrie-none-auth", async (req, res) => {
+//   try {
+//     const logs = await prisma.honeypot_logs.findMany({
+//       take: 10,
+//       orderBy: {
+//         id: 'desc'
+//       }, select: {
+//         id: true, timestamp: true, eventid: true, message: true,
+//         protocol: true, src_ip: true, src_port: true, duration: true,
+//       },
+//       // where: {
+//       //     protocol: {not: null}
+//       // }
+//     });
+//     res.json(logs);
+//   } catch (error) {
+//     console.error("❌ Error fetching logs:", error);
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// });
+
+
+
+// // GET 10 opencanary logs
+// router.get("/open-canary-none-auth", async (req, res) => {
+//   try {
+//     const logs = await prisma.opencanary_logs.findMany({
+//       take: 10,
+//       orderBy: {
+//         id: 'desc'
+//       },
+//       select: {
+//         id: true,dst_host: true,dst_port: true,local_time: true,local_time_adjusted: true,
+//         logdata_raw: true,logdata_msg_logdata: true,logtype: true,node_id: true,
+//         src_host: true,src_port: true,utc_time: true,
+//       },
+//     });
+//     res.json(logs);
+//   } catch (error) {
+//     console.error("❌ Error fetching logs:", error);
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// });
 
 
 export default router;
