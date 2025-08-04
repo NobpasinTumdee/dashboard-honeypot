@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react';
-import { Table } from 'antd';
-import type { TableColumnsType } from 'antd';
-import { getCowrieAuth } from '../serviceApi';
+import { useEffect, useRef, useState } from 'react';
+import '../Styles/Dashborad.css'
+import DateTimeNow from './DateTimeNow';
+import { io, Socket } from "socket.io-client";
+
 import Aos from 'aos';
 import 'aos/dist/aos.css';
 
@@ -25,174 +26,163 @@ export type AlertItem = {
     json_data: string;
 };
 
-const columns: TableColumnsType<AlertItem> = [
-    {
-        title: 'id',
-        dataIndex: 'id',
-        width: 20,
-    },
-    {
-        title: 'timestamp',
-        dataIndex: 'timestamp',
-        render: (value: string) => {
-            const date = new Date(value);
-            return date.toISOString().slice(0, 16).replace("T", " ");
-        },
-        width: 60,
-    },
-    {
-        title: 'eventid',
-        dataIndex: 'eventid',
-        render: (value) => (value != null ? value : (<p>null</p>)),
-        width: 40,
-    },
-    {
-        title: 'session',
-        dataIndex: 'session',
-        render: (value) => (value != null ? value : (<p style={{ opacity: '0.3' }}>null</p>)),
-        width: 40,
-    },
-    {
-        title: 'message',
-        dataIndex: 'message',
-        width: 40,
-        fixed: 'right',
-        ellipsis: true,
-        render: (value) => value != null ? value : "Null",
-    },
-    {
-        title: 'protocol',
-        dataIndex: 'protocol',
-        render: (value) => (value != null ? value : (<p style={{ opacity: '0.3' }}>null</p>)),
-        width: 40,
-    },
-    {
-        title: 'src_ip',
-        dataIndex: 'src_ip',
-        render: (value) => (value != null ? value : (<p style={{ opacity: '0.3' }}>null</p>)),
-        width: 40,
-    },
-    {
-        title: 'src_port',
-        dataIndex: 'src_port',
-        render: (value) => (value != null ? value : (<p style={{ opacity: '0.3' }}>null</p>)),
-        width: 40,
-    },
-    {
-        title: 'dst_ip',
-        dataIndex: 'dst_ip',
-        render: (value) => (value != null ? value : (<p style={{ opacity: '0.3' }}>null</p>)),
-        width: 40,
-    },
-    {
-        title: 'dst_port',
-        dataIndex: 'dst_port',
-        render: (value) => (value != null ? value : (<p style={{ opacity: '0.3' }}>null</p>)),
-        width: 35,
-    },
-    {
-        title: 'user',
-        dataIndex: 'username',
-        render: (value) => (value != null ? value : (<p style={{ opacity: '0.3' }}>null</p>)),
-        width: 20,
-    },
-    {
-        title: 'password',
-        dataIndex: 'password',
-        render: (value) => (value != null ? value : (<p style={{ opacity: '0.3' }}>null</p>)),
-        width: 30,
-    },
-    {
-        title: 'input',
-        dataIndex: 'input',
-        render: (value) => (value != null ? value : (<p style={{ opacity: '0.3' }}>null</p>)),
-        width: 30,
-    },
-    {
-        title: 'command',
-        dataIndex: 'command',
-        render: (value) => (value != null ? value : (<p style={{ opacity: '0.3' }}>null</p>)),
-        width: 30,
-    },
-    {
-        title: 'duration',
-        dataIndex: 'duration',
-        render: (value) => (value != null ? value : (<p style={{ opacity: '0.3' }}>null</p>)),
-        width: 30,
-    },
-    {
-        title: 'ttylog',
-        dataIndex: 'ttylog',
-        render: (value) => (value != null ? value : (<p style={{ opacity: '0.3' }}>null</p>)),
-        width: 30,
-    },
-];
-
-
 
 
 const CowriePage = () => {
-
     const [data, setData] = useState<AlertItem[]>([]);
+    const [isConnected, setIsConnected] = useState(false);
+    const [isLogin, setIsLogin] = useState(false);
+    const socketRef = useRef<Socket | null>(null);
 
-    const handleFetchData = async () => {
-        try {
-            const res = await getCowrieAuth();
-            const responseData = res?.data;
-            if (!responseData) {
-                console.error("No data received from API");
-                setData([]);
-                return;
-            }
-            if (Array.isArray(responseData)) {
-                setData(responseData);
-            } else if (Array.isArray(responseData?.data)) {
-                setData(responseData.data);
-            } else {
-                console.error("Unexpected response:", responseData);
-                setData([]);
-            }
-        } catch (error) {
-            setData([])
-        }
+    const getToken = (): string | null => {
+        return localStorage.getItem("token");
     };
 
     useEffect(() => {
-        (async () => {
-            await handleFetchData();
-        })();
+        const token = getToken();
+        if (!token) {
+            console.error("No token found. Cannot connect to WebSocket.");
+            return;
+        } else {
+            setIsLogin(true);
+        }
+        const socket = io("http://localhost:3000", { auth: { token }, });
+        socketRef.current = socket;
+
+        // Update connection status
+        socket.on("connect", () => {
+            setIsConnected(true);
+            socket.emit("request-cowrie-logs");
+        });
+        socket.on("disconnect", () => { setIsConnected(false); });
+
+        socket.on("Update-cowrie-logs", (items: AlertItem[]) => {
+            setData(items);
+            // console.log("Initial data:", items);
+            console.log("Update cowrie logs : ", new Date().toString());
+        });
+        socket.on("real-time-cowrie", (items: AlertItem[]) => {
+            setData(items);
+            console.log("new data : ", new Date().toString());
+        });
+
+        socket.on("Welcome-Message", (msg) => {
+            console.log("Message:", msg);
+        });
+
+        return () => {
+            socket.disconnect();
+            socket.off();
+        };
+    }, []);
+
+    const [currentPage, setCurrentPage] = useState(1);
+    const ITEMS_PER_PAGE = 10;
+
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const currentItems = data.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+    const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
+
+    useEffect(() => {
         Aos.init({
             duration: 1000,
             once: true,
         });
     }, []);
 
-    useEffect(() => {
-        const interval = setInterval(() => {
-            (async () => {
-                await handleFetchData();
-            })();
-            console.log("reload data 10 วิ");
-        }, 10000);
-        return () => clearInterval(interval); // เคลียร์เมื่อ component หายไป
-    }, []);
-
     return (
         <>
             <div style={{ margin: '10px 30px 20px', textAlign: 'center' }} data-aos="zoom-in-down">
                 <h1>Cowrie</h1>
-                มีจำนวนทั้งสิ้น {data.length} รายการ
             </div>
-            {data.length === 0 ? (
-                <div style={{ textAlign: 'center', margin: '20px' }} data-aos="zoom-in-up">
-                    <h1>โปรดล็อคอิน เพื่อดูตารางแบบเต็ม</h1>
-                </div>
+            <div style={{ fontWeight: "400", textAlign: "center", display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '0 5%' }}>
+                <p style={{ margin: '0px' }}>มีจำนวนทั้งสิ้น {data.length} รายการ</p>
+                <p data-aos="fade-down" style={{ margin: '0px' }}>
+                    WebSocket connection status:{" "}
+                    {isConnected ? "🟢 Connected" : "🔴 Disconnected"}
+                </p>
+            </div>
+            {isLogin ? (
+                <>
+                    {data.length === 0 ? (
+                        <div style={{ textAlign: 'center', margin: '20px' }} data-aos="zoom-in-up">
+                            <h1>please login for full data.</h1>
+                        </div>
+                    ) : (
+                        <>
+                            <div className="table-container" data-aos="fade-up">
+                                <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                                    <thead>
+                                        <tr style={{ backdropFilter: "blur(10px)" }}>
+                                            <th className="thStyle">#</th>
+                                            <th className="thStyle">Timestamp</th>
+                                            <th className="thStyle">Event</th>
+                                            <th className="thStyle">Message</th>
+                                            <th className="thStyle">Protocol</th>
+                                            <th className="thStyle">Source IP</th>
+                                            <th className="thStyle">Source Port</th>
+                                            <th className="thStyle">Dst IP</th>
+                                            <th className="thStyle">Dst Port</th>
+                                            <th className="thStyle">username</th>
+                                            <th className="thStyle">password</th>
+                                            <th className="thStyle">input</th>
+                                            <th className="thStyle">command</th>
+                                            <th className="thStyle">Session</th>
+                                            <th className="thStyle">Duration</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {currentItems.map((item, index) => (
+                                            <tr key={item.id || index}>
+                                                <td className="tdStyle">{startIndex + index + 1}</td>
+                                                <td className="tdStyle">{item.timestamp || <p className="tdStyle-null">null</p>}</td>
+                                                <td className="tdStyle">{item.eventid || <p className="tdStyle-null">null</p>}</td>
+                                                <td className="tdStyleMessage">{item.message || <p className="tdStyle-null">null</p>}</td>
+                                                <td className="tdStyle">{item.protocol || <p className="tdStyle-null">null</p>}</td>
+                                                <td className="tdStyle">{item.src_ip || <p className="tdStyle-null">null</p>}</td>
+                                                <td className="tdStyle">{item.src_port || <p className="tdStyle-null">null</p>}</td>
+                                                <td className="tdStyle">{item.dst_ip || <p className="tdStyle-null">null</p>}</td>
+                                                <td className="tdStyle">{item.dst_port || <p className="tdStyle-null">null</p>}</td>
+                                                <td className="tdStyle">{item.username || <p className="tdStyle-null">null</p>}</td>
+                                                <td className="tdStyle">{item.password || <p className="tdStyle-null">null</p>}</td>
+                                                <td className="tdStyle">{item.input || <p className="tdStyle-null">null</p>}</td>
+                                                <td className="tdStyle">{item.command || <p className="tdStyle-null">null</p>}</td>
+                                                <td className="tdStyle">{item.session || <p className="tdStyle-null">null</p>}</td>
+                                                <td className="tdStyle">{item.duration || <p className="tdStyle-null">null</p>}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div data-aos="flip-left">
+                                <DateTimeNow />
+                            </div>
+                            <div style={{ margin: "2% 0 10%", textAlign: "center" }} data-aos="fade-down">
+                                <button
+                                    onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                                    disabled={currentPage === 1}
+                                    className="pagination-button"
+                                >
+                                    ◀ Prev
+                                </button>
+                                <span>Page {currentPage} of {totalPages}</span>
+                                <button
+                                    onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                                    disabled={currentPage === totalPages}
+                                    className="pagination-button"
+                                >
+                                    Next ▶
+                                </button>
+                            </div>
+                        </>
+                    )}
+                </>
             ) : (
-                <div style={{ backgroundColor: '#fff', margin: '10px 30px', borderRadius: '10px', overflowX: 'auto' }} data-aos="fade-up">
-                    <div style={{ minWidth: '1460px' }}>
-                        <Table<AlertItem> columns={columns} dataSource={data} size="middle" />
-                    </div>
-                </div>
+                <>
+                    <p style={{ textAlign: "center", color: "red", fontWeight: "bold", fontSize: "3rem" }} data-aos="fade-up">
+                        Please login to view the data.
+                    </p>
+                </>
             )}
         </>
     );

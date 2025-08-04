@@ -38,7 +38,7 @@
 
 .chart-in-sub {
     width: 50%;
-    padding:5% ;
+    padding: 5%;
     background-color: var(--body_main_sidebar);
     border-radius: 10px;
     box-shadow: #32326911 0px 2px 5px 0px, #00000007 0px 1px 1px 0px;
@@ -50,9 +50,11 @@
         margin: 5%;
         width: 90%;
     }
+
     .dashborad-main {
         padding: 0px;
     }
+
     .chart-mini-size {
         width: 100%;
         margin: 10% 0;
@@ -68,4 +70,65 @@
         width: 100%;
         padding: 0;
     }
+}
+
+
+/* socket page table  */
+.table-container {
+    width: 90%;
+    margin: 5%;
+    overflow-x: auto;
+    margin-top: 20px;
+    margin-bottom: 0;
+    border-radius: 10px;
+    box-shadow: rgba(17, 17, 26, 0.05) 0px 1px 0px, rgba(17, 17, 26, 0.1) 0px 0px 8px;
+}
+
+.thStyle {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.tdStyle {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+.tdStyle-null {
+    opacity: 0.3;
+    font-style: italic;
+    margin: 0;
+}
+
+.tdStyleMessage {
+    border: 1px solid #ddd;
+    padding: 8px;
+    max-width: 100px;
+    overflow-x: auto;
+    white-space: nowrap;
+    transition: 0.5s ease-in-out;
+}
+
+.tdStyleMessage:hover {
+    white-space: normal;
+    height: 100px;
+}
+
+.pagination-button{
+    margin: 0 10px;
+    padding: 10px 20px;
+    background-color: var(--body_main_sidebar);
+    outline: none;
+    border: none;
+    box-shadow: rgb(204, 219, 232) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset;
+    border-radius: 10px;
+    color: var(--body_text_color);
+    cursor: pointer;
+    font-weight: 700;
+    transition: 0.3s ease-in-out;
+}
+
+.pagination-button:hover {
+    padding: 10px 30px;
+    background-color: var(--body_main_sidebar_hover);
 }
