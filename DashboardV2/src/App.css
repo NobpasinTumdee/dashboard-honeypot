@@ -29,7 +29,6 @@ body{
   background-color: var(--body_main_background);
   color: var(--body_text_color);
   font-family: "Roboto", sans-serif;
-  transition: 0.2s ease-in-out;
 }
 
 *::-webkit-scrollbar {
