@@ -49,10 +49,7 @@ npm install --save-dev @types/aos
 npm init -y
 ```
 ```
-npm install express
-```
-```
-npm install cors morgan nodemon sqlite3
+npm install express cors morgan bcryptjs jsonwebtoken prisma socket.io dotenv nodemon sqlite3
 ```
 
 ### prisma
