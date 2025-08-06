@@ -35,7 +35,7 @@ sudo nano /etc/opencanaryd/opencanary.conf
 ```
 # รัน OpenCanary
 ```
-. env/bin/activate
+. Opencanary_env/bin/activate
 opencanaryd --start --uid=nobody --gid=nogroup
 ```
 ## เปิดไฟล์ log
@@ -49,4 +49,5 @@ nano opencanary.log
 ps aux | grep opencanaryd
 sudo kill #ตามด้วย pid มักเป็นบรรทัดแรก
 ```
+
 
