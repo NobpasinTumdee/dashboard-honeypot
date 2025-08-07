@@ -1,64 +1,19 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import DateTimeNow from "../DateTimeNow";
 import type { AlertItem } from "../Cowrie";
-import { io, Socket } from "socket.io-client";
 import '../../Styles/Dashborad.css'
 
 import Aos from 'aos';
 import 'aos/dist/aos.css';
+import { useCowrieSocket } from "./controller";
 
 const SocketPage = () => {
     const [data, setData] = useState<AlertItem[]>([]);
     const [isConnected, setIsConnected] = useState(false);
     const [isLogin, setIsLogin] = useState(false);
-    const socketRef = useRef<Socket | null>(null);
 
-    const getToken = (): string | null => {
-        return localStorage.getItem("token");
-    };
-
-    useEffect(() => {
-        const token = getToken();
-        if (!token) {
-            console.error("No token found. Cannot connect to WebSocket.");
-            return;
-        } else {
-            setIsLogin(true);
-        }
-        const socket = io("http://localhost:3000", { auth: { token }, });
-        socketRef.current = socket;
-
-        // Update connection status
-        socket.on("connect", () => {
-            setIsConnected(true);
-            socket.emit("request-cowrie-logs");
-        });
-        socket.on("disconnect", () => { setIsConnected(false); });
-
-        socket.on("Update-cowrie-logs", (items: AlertItem[]) => {
-            setData(items);
-            // console.log("Initial data:", items);
-            console.log("Update cowrie logs : ", new Date().toString());
-        });
-        socket.on("real-time-cowrie", (items: AlertItem[]) => {
-            setData(items);
-            console.log("new data : ", new Date().toString());
-        });
-
-        socket.on("Welcome-Message", (msg) => {
-            console.log("Message:", msg);
-        });
-
-        // socket.on("cowrie-push", (msg: AlertItem) => {
-        //     setData((prev) => [...prev, msg]);
-        //     console.log("New push:", msg);
-        // });
-
-        return () => {
-            socket.disconnect();
-            socket.off();
-        };
-    }, []);
+    // Custom hook to manage WebSocket connection
+    useCowrieSocket(setData, setIsConnected, setIsLogin);
 
     const [currentPage, setCurrentPage] = useState(1);
     const ITEMS_PER_PAGE = 10;
@@ -67,12 +22,7 @@ const SocketPage = () => {
     const currentItems = data.slice(startIndex, startIndex + ITEMS_PER_PAGE);
     const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
 
-    useEffect(() => {
-        Aos.init({
-            duration: 1000,
-            once: true,
-        });
-    }, []);
+    useEffect(() => { Aos.init({ duration: 1000, once: true, }); }, []);
 
     return (
         <>
