@@ -3,11 +3,13 @@ import { io, Socket } from "socket.io-client";
 import type { AlertItem } from "../Cowrie";
 import type { AlertItemCanary } from "../OpenCanary";
 
+const apiUrl = 'http://localhost:3000'
 
 const getToken = (): string | null => {
     return localStorage.getItem("token");
 };
 
+// cowrie
 export const useCowrieSocket = (
     setData: (data: AlertItem[]) => void,
     setIsConnected: (status: boolean) => void,
@@ -24,7 +26,7 @@ export const useCowrieSocket = (
             setIsLogin(true);
         }
 
-        const socket = io("http://localhost:3000", { auth: { token } });
+        const socket = io(apiUrl, { auth: { token } });
         socketRef.current = socket;
 
         socket.on("connect", () => {
@@ -57,6 +59,7 @@ export const useCowrieSocket = (
     }, []);
 };
 
+// opencanary
 export const useCanarySocket = (
     setData: (data: AlertItemCanary[]) => void,
     setIsConnected: (status: boolean) => void,
@@ -73,7 +76,7 @@ export const useCanarySocket = (
             setIsLogin(true);
         }
 
-        const socket = io("http://localhost:3000", { auth: { token } });
+        const socket = io(apiUrl, { auth: { token } });
         socketRef.current = socket;
 
         socket.on("connect", () => {

@@ -70,16 +70,16 @@ const OpenCanary = () => {
                     <tr style={{ backdropFilter: "blur(10px)" }}>
                       <th className="thStyle">#</th>
                       {/* <th className="thStyle">dst_host</th> */}
-                      <th className="thStyle">dst_port</th>
-                      <th className="thStyle">local_time</th>
-                      <th className="thStyle">local_time_adjusted</th>
-                      <th className="thStyle">logdata_raw</th>
-                      <th className="thStyle">logdata_msg_logdata</th>
-                      <th className="thStyle">logtype</th>
-                      <th className="thStyle">node_id</th>
-                      <th className="thStyle">src_host</th>
-                      <th className="thStyle">src_port</th>
-                      <th className="thStyle">utc_time</th>
+                      <th className="thStyle">Destination Port</th>
+                      <th className="thStyle">Local Time</th>
+                      <th className="thStyle">Adjusted Local Time</th>
+                      <th className="thStyle">Raw Log Data</th>
+                      <th className="thStyle">Log Message</th>
+                      <th className="thStyle">Log Type</th>
+                      <th className="thStyle">Node ID</th>
+                      <th className="thStyle">Source Host</th>
+                      <th className="thStyle">Source Port</th>
+                      <th className="thStyle">UTC Time</th>
                     </tr>
                   </thead>
                   <tbody>
