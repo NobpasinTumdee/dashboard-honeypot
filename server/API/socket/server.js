@@ -105,7 +105,19 @@ io.on('connection', (socket) => {
       });
       socket.emit('real-time-cowrie', logs);
     } catch (error) {
-      console.error('Error fetching real-time honeypot logs:', error);
+      console.error('Error fetching real-time honeypot logs cowrie:', error);
+    }
+
+    try {
+      const logs = await prisma.opencanary_logs.findMany({
+        orderBy: { id: 'desc' },
+        // select: {
+        //   id: true, local_time: true, src_host: true, dst_host: true,logdata_msg_logdata: true, logtype: true, full_json_line: true
+        // }
+      });
+      socket.emit('real-time-canary', logs);
+    } catch (error) {
+      console.error('Error fetching real-time honeypot logs opencanary:', error);
     }
   }, 5000);
 
@@ -117,5 +129,6 @@ io.on('connection', (socket) => {
 // web socket ================================================================
 
 server.listen(port, () => {
-    console.log(`🚀 Server running at http://localhost:${port}`);
+    console.log(`🌐 Server running at http://localhost:${port}`);
+    console.log(`🚀 Server zerotier running at http://172.29.26.44:${port}`);
 });
