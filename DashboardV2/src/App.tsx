@@ -4,7 +4,6 @@ import Rootlayout from './layouts/Rootlayout'
 import CowriePage from './components/Cowrie'
 import Home from './components/Home'
 import OpenCanary from './components/OpenCanary'
-import WireShark from './components/WireShark'
 import ChatBot from './components/ChatBot';
 import Login from './components/Login/Login';
 import FuzzyText from './components/Login/FuzzyText';
@@ -19,7 +18,6 @@ const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: "cowrie", element: <CowriePage /> },
       { path: "open-canary", element: <OpenCanary /> },
-      { path: "wire-shark", element: <WireShark /> },
       { path: "chatbot", element: <ChatBot /> },
       { path: "login", element: <Login /> },
       { path: "socket", element: <SocketPage /> },

@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Table } from 'antd';
-import type { TableColumnsType } from 'antd';
-import { getOpenCanaryAuth } from '../serviceApi';
 import Aos from 'aos';
 import 'aos/dist/aos.css';
+import '../Styles/Dashborad.css';
+import DateTimeNow from './DateTimeNow';
+import { useCanarySocket } from './web-socket/controller';
 
-type AlertItem = {
+export type AlertItemCanary = {
   id: number;
   dst_host: string;
   dst_port: number;
@@ -21,151 +21,116 @@ type AlertItem = {
   full_json_line: string;
 };
 
-const columns: TableColumnsType<AlertItem> = [
-  {
-    title: 'id',
-    dataIndex: 'id',
-    width: 13,
-  },
-  {
-    title: 'Dst host',
-    dataIndex: 'dst_host',
-    render: (value) => (value != "" ? value : (<p style={{ opacity: '0.3' }}>null</p>)),
-    width: 70,
-  },
-  {
-    title: 'Dst port',
-    dataIndex: 'dst_port',
-    render: (value) => (value != null ? value : (<p style={{ opacity: '0.3' }}>null</p>)),
-    width: 40,
-  },
-  {
-    title: 'Local Time',
-    dataIndex: 'local_time',
-    render: (value: string) => {
-      const date = new Date(value);
-      return date.toISOString().slice(0, 16).replace("T", " ");
-    },
-    width: 60,
-  },
-  {
-    title: 'Local Time adjusted',
-    dataIndex: 'local_time_adjusted',
-    render: (value: string) => {
-      const date = new Date(value);
-      return date.toISOString().slice(0, 16).replace("T", " ");
-    },
-    width: 60,
-  },
-  {
-    title: 'logdata_raw',
-    dataIndex: 'logdata_raw',
-    render: (value) => (value != null ? value : (<p style={{ opacity: '0.3' }}>null</p>)),
-    width: 40,
-  },
-  {
-    title: 'logdata_msg_logdata',
-    dataIndex: 'logdata_msg_logdata',
-    render: (value) => (value != null ? value : (<p style={{ opacity: '0.3' }}>null</p>)),
-    width: 40,
-  },
-  {
-    title: 'logtype',
-    dataIndex: 'logtype',
-    render: (value) => (value != null ? value : (<p style={{ opacity: '0.3' }}>null</p>)),
-    width: 40,
-  },
-  {
-    title: 'node_id',
-    dataIndex: 'node_id',
-    render: (value) => (value != null ? value : (<p style={{ opacity: '0.3' }}>null</p>)),
-    width: 40,
-  },
-  {
-    title: 'src_host',
-    dataIndex: 'src_host',
-    render: (value) => (value != null ? value : (<p style={{ opacity: '0.3' }}>null</p>)),
-    width: 40,
-  },
-  {
-    title: 'src_port',
-    dataIndex: 'src_port',
-    render: (value) => (value != null ? value : (<p style={{ opacity: '0.3' }}>null</p>)),
-    width: 40,
-  },
-  {
-    title: 'utc_time',
-    dataIndex: 'utc_time',
-    render: (value: string) => {
-      const date = new Date(value);
-      return date.toISOString().slice(0, 16).replace("T", " ");
-    },
-    width: 40,
-  },
-];
 
 
 const OpenCanary = () => {
-  const [data, setData] = useState<AlertItem[]>([]);
+  const [data, setData] = useState<AlertItemCanary[]>([]);
+  const [isConnected, setIsConnected] = useState(false);
+  const [isLogin, setIsLogin] = useState(false);
 
-  const handleFetchData = async () => {
-    try {
-      const res = await getOpenCanaryAuth();
-      const responseData = res?.data;
-      if (!responseData) {
-        console.error("No data received from API");
-        setData([]);
-        return;
-      }
-      if (Array.isArray(responseData)) {
-        setData(responseData);
-      } else if (Array.isArray(responseData?.data)) {
-        setData(responseData.data);
-      } else {
-        console.error("Unexpected response:", responseData);
-        setData([]);
-      }
-    } catch (error) {
-      setData([])
-    }
-  };
+  // Custom hook to manage WebSocket connection
+  useCanarySocket(setData, setIsConnected, setIsLogin);
 
-  useEffect(() => {
-    (async () => {
-      await handleFetchData();
-    })();
-    Aos.init({
-      duration: 1000,
-      once: true,
-    });
-  }, []);
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const ITEMS_PER_PAGE = 10;
 
-  useEffect(() => {
-        const interval = setInterval(() => {
-            (async () => {
-                await handleFetchData();
-            })();
-            console.log("reload data 10 วิ");
-        }, 10000);
-        return () => clearInterval(interval); // เคลียร์เมื่อ component หายไป
-    }, []);
+
+  // Calculate the current items to display based on pagination
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+  const currentItems = data.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
+
+  useEffect(() => { Aos.init({ duration: 1000, once: true, }); }, []);
+
 
   return (
     <>
       <div style={{ margin: '10px 30px 20px', textAlign: 'center' }} data-aos="zoom-in-down">
         <h1>Open Canary</h1>
-        มีจำนวนทั้งสิ้น {data.length} รายการ
       </div>
-      {data.length === 0 ? (
-        <div style={{ textAlign: 'center', margin: '20px' }} data-aos="zoom-in-up">
-          <h1>โปรดล็อคอิน เพื่อดูตารางแบบเต็ม</h1>
-        </div>
+      <div style={{ fontWeight: "400", textAlign: "center", display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '0 5%' }}>
+        <p style={{ margin: '0px' }}>มีจำนวนทั้งสิ้น {data.length} รายการ</p>
+        <p data-aos="fade-down" style={{ margin: '0px' }}>
+          WebSocket connection status:{" "}
+          {isConnected ? "🟢 Connected" : "🔴 Disconnected"}
+        </p>
+      </div>
+      {isLogin ? (
+        <>
+          {data.length === 0 ? (
+            <div style={{ textAlign: 'center', margin: '20px' }} data-aos="zoom-in-up">
+              <h1>please login for full data.</h1>
+            </div>
+          ) : (
+            <>
+              <div className="table-container" data-aos="fade-up">
+                <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                  <thead>
+                    <tr style={{ backdropFilter: "blur(10px)" }}>
+                      <th className="thStyle">#</th>
+                      {/* <th className="thStyle">dst_host</th> */}
+                      <th className="thStyle">Destination Port</th>
+                      <th className="thStyle">Local Time</th>
+                      <th className="thStyle">Adjusted Local Time</th>
+                      <th className="thStyle">Raw Log Data</th>
+                      <th className="thStyle">Log Message</th>
+                      <th className="thStyle">Log Type</th>
+                      <th className="thStyle">Node ID</th>
+                      <th className="thStyle">Source Host</th>
+                      <th className="thStyle">Source Port</th>
+                      <th className="thStyle">UTC Time</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {currentItems.map((item, index) => (
+                      <tr key={item.id || index}>
+                        <td className="tdStyle">{startIndex + index + 1}</td>
+                        {/* <td className="tdStyle">{item.dst_host || <p className="tdStyle-null">null</p>}</td> */}
+                        <td className="tdStyle">{item.dst_port || <p className="tdStyle-null">null</p>}</td>
+                        <td className="tdStyle">{item.local_time || <p className="tdStyle-null">null</p>}</td>
+                        <td className="tdStyleMessage">{item.local_time_adjusted || <p className="tdStyle-null">null</p>}</td>
+                        <td className="tdStyleMessage">{item.logdata_raw || <p className="tdStyle-null">null</p>}</td>
+                        <td className="tdStyleMessage">{item.logdata_msg_logdata || <p className="tdStyle-null">null</p>}</td>
+                        <td className="tdStyle">{item.logtype || <p className="tdStyle-null">null</p>}</td>
+                        <td className="tdStyle">{item.node_id || <p className="tdStyle-null">null</p>}</td>
+                        <td className="tdStyle">{item.src_host || <p className="tdStyle-null">null</p>}</td>
+                        <td className="tdStyle">{item.src_port || <p className="tdStyle-null">null</p>}</td>
+                        <td className="tdStyle">{item.utc_time || <p className="tdStyle-null">null</p>}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <div data-aos="flip-left">
+                <DateTimeNow />
+              </div>
+              <div style={{ margin: "2% 0 10%", textAlign: "center" }} data-aos="fade-down">
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="pagination-button"
+                >
+                  ◀ Prev
+                </button>
+                <span>Page {currentPage} of {totalPages}</span>
+                <button
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className="pagination-button"
+                >
+                  Next ▶
+                </button>
+              </div>
+            </>
+          )}
+        </>
       ) : (
-        <div style={{ backgroundColor: '#fff', margin: '10px 30px', borderRadius: '10px', overflowX: 'auto' }} data-aos="fade-up">
-          <div style={{ minWidth: '1460px' }}>
-            <Table<AlertItem> columns={columns} dataSource={data} size="middle" />
-          </div>
-        </div>
+        <>
+          <p style={{ textAlign: "center", color: "red", fontWeight: "bold", fontSize: "3rem" }} data-aos="fade-up">
+            Please login to view the data.
+          </p>
+        </>
       )}
     </>
   )
