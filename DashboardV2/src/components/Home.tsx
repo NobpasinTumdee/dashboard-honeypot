@@ -7,7 +7,10 @@ import ChartComponent from './chart/Chart';
 import type { AlertItem } from './Cowrie';
 import { getCowrie } from '../serviceApi';
 import ChartByDateComponent from './chart/ChartByDateComponent';
-import { useCowrieSocket } from './web-socket/controller';
+import { useCanarySocket, useCowrieSocket } from './web-socket/controller';
+import type { AlertItemCanary } from './OpenCanary';
+import ChartCanary from './chart/ChartCanary';
+import ChartByDateCanary from './chart/ChartByDateCanary';
 
 
 
@@ -50,12 +53,14 @@ const Home = () => {
     };
 
 
-    const [dataAuth, setDataAuth] = useState<AlertItem[]>([]);
+    const [dataCowrie, setDataCowrie] = useState<AlertItem[]>([]);
+    const [dataCanary, setDataCanary] = useState<AlertItemCanary[]>([]);
     const [isConnected, setIsConnected] = useState(false);
     const [isLogin, setIsLogin] = useState(false);
 
     // Custom hook to manage WebSocket connection
-    useCowrieSocket(setDataAuth, setIsConnected, setIsLogin);
+    useCowrieSocket(setDataCowrie, setIsConnected, setIsLogin);
+    useCanarySocket(setDataCanary, setIsConnected, setIsLogin);
     // ============================================
     return (
         <>
@@ -65,22 +70,22 @@ const Home = () => {
                     {isLogin ? (
                         <>
                             <h2 style={{ textAlign: 'center' }} data-aos="zoom-in-down">Cowrie</h2>
-                            <p data-aos="zoom-in-down" style={{ textAlign: 'center' }}>data length: {dataAuth.length} status: {isConnected ? '🟢 Connected' : '🔴 Disconnected'}</p>
+                            <p data-aos="zoom-in-down" style={{ textAlign: 'center' }}>data length: {dataCowrie.length} status: {isConnected ? '🟢 Connected' : '🔴 Disconnected'}</p>
                             <div className='chart-in-main'>
                                 <div className='chart-in-sub'>
-                                    <ChartComponent logs={dataAuth} />
+                                    <ChartComponent logs={dataCowrie} />
                                 </div>
                                 <div className='chart-in-sub'>
-                                    <ChartByDateComponent logs={dataAuth} />
+                                    <ChartByDateComponent logs={dataCowrie} />
                                 </div>
                             </div>
                             <h2 style={{ textAlign: 'center' }} data-aos="zoom-in-down">Open Cannary</h2>
                             <div className='chart-in-main'>
                                 <div className='chart-in-sub'>
-                                    <ChartByDateComponent logs={dataAuth} />
+                                    <ChartByDateCanary logs={dataCanary} />
                                 </div>
                                 <div className='chart-in-sub'>
-                                    <ChartComponent logs={dataAuth} />
+                                    <ChartCanary logs={dataCanary} />
                                 </div>
                             </div>
                         </>
