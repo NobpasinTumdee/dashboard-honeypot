@@ -3,7 +3,7 @@ import cors from "cors";
 import morgan from "morgan";
 import http from "http";
 import { Server } from "socket.io";
-import jwt from "jsonwebtoken"; // สำหรับตรวจสอบ token ใน WebSocket middleware
+import jwt from "jsonwebtoken";
 import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
@@ -17,7 +17,7 @@ app.use(express.json()); // For read JSON
 
 // Import Routes
 import authRoute from "./routes/auth.js";
-import dataRoute from './routes/data.js'; // จะสร้างในขั้นตอนถัดไป
+import dataRoute from './routes/data.js';
 import {verifyToken} from './middlewares/verifyToken.js';
 
 // API Routes
