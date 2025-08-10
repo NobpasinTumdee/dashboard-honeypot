@@ -47,6 +47,43 @@ const CowriePage = () => {
 
     useEffect(() => { Aos.init({ duration: 1000, once: true, }); }, []);
 
+
+    const handleDownload = () => {
+        // กำหนด Headers จาก AlertItem type
+        const headers = ["id", "timestamp", "eventid", "session", "message", "protocol", "src_ip", "src_port", "dst_ip", "dst_port", "username", "password", "input", "command", "duration", "ttylog", "json_data"];
+        const headerString = headers.join(',');
+
+        // แปลงข้อมูลแต่ละแถวโดยอิงจาก headers
+        const rows = data.map(item => {
+            return headers.map(header => {
+                let value = item[header as keyof AlertItem]; // ดึงค่าจาก item โดยใช้ header เป็น key
+                // จัดการกับค่าที่เป็น null, undefined หรือ string ที่มี comma
+                if (value === null || value === undefined) {
+                    return ''; // ถ้าไม่มีข้อมูล ให้ส่งเป็นช่องว่าง
+                }
+                if (typeof value === 'string' && (value.includes(',') || value.includes('\n'))) {
+                    return `"${value.replace(/"/g, '""')}"`; // ใส่ double quotes และ escape double quotes
+                }
+                return value;
+            }).join(',');
+        });
+
+        // 3. รวม Header กับ Rows เข้าด้วยกัน
+        const csvString = [headerString, ...rows].join('\n');
+
+        // 4. สร้าง Blob และ URL สำหรับดาวน์โหลด
+        const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+        const url = URL.createObjectURL(blob);
+
+        // 5. สร้าง Element <a> ที่มองไม่เห็นเพื่อทำการดาวน์โหลด
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', `cowrie-${new Date().toISOString()}.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     return (
         <>
             <div style={{ margin: '10px 30px 20px', textAlign: 'center' }} data-aos="zoom-in-down">
@@ -57,6 +94,7 @@ const CowriePage = () => {
                 <p data-aos="fade-down" style={{ margin: '0px' }}>
                     WebSocket connection status:{" "}
                     {isConnected ? "🟢 Connected" : "🔴 Disconnected"}
+                    <button onClick={handleDownload} className='download-button'>Download CSV</button>
                 </p>
             </div>
             {isLogin ? (
