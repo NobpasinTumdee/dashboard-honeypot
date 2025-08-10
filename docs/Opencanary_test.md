@@ -1,19 +1,21 @@
-# ทดสอบ Http/Https
-
-## แก้ไขไฟล์
-บน path sudo nano /etc/opencanaryd/opencanary.conf
+## Http/Https
+### แก้ไขไฟล์
+ตำแหน่งไฟล์
+```bash
+sudo nano /etc/opencanaryd/opencanary.conf
+```
 ```bash
 "http.enabled": true,
-"http.port": 8080,
-"http.skin": "nasLogin",
+"http.port": 80,
+"http.skin": "test_skin",
 ```
 ```bash
 "https.enabled": true,
 "https.port": 443,
-"https.skin": "nasLogin",
+"https.skin": "test_skin",
 ```
 
-## Run Honeypot
+### Run Honeypot
 เข้าไปที่ path ที่ติดตั้ง opencanry
 ```bash
 . Opencanary_env/bin/activate
@@ -21,56 +23,55 @@
 
 เริ่มทำงาน
 ```bash
-opencanaryd --start --uid=nobody --gid=nogroup
+opencanaryd --start
+```
+หากมีปัญหา : Pidfile
+```bash
+rm /home/admin/Honeypot/Opencanary_env/bin/opencanaryd.pid
 ```
 
 ตรวจสอบ
 ```bash
-netstat -tulnp | grep -E '8080|443'
+netstat -tulnp | grep -E '80|443'
 ```
 หยุดการทำ
 ```bash
 opencanaryd --stop
 ```
 
-## ตรวจสอบ ip ที่ vm ได้รับมา
+### เข้าหน้า Web ผ่าน Browser
+หา ip เครื่อง (copyไว้)
 ```bash
 ip a
 ```
-
-## เปิด Browser 
-เปิดผ่าน PC หรือ VM ที่อยู่บน LAN เดียวกันกับ Honeypot
+เข้าหน้า web ผ่าน URL
 ```bash
-http://[ip]:8080/index.html
-https://[ip]:8080/index.html
+http://[ip]:80
+https://[ip]:443
 ```
-ผลลัพธ์
+### หน้า web
 <img width="1808" height="923" alt="image" src="https://github.com/user-attachments/assets/b7133f08-7a13-4d8c-acbc-893a4d871302" />
-หมายเหตุ: หน้า web มาจาก 
+หมายเหตุ: หน้า web มาจาก
+
 ```bash
 ls ~/Honeypot/Opencanary_env/lib/python3.12/site-packages/opencanary/modules/data/http/skin/
 ```
-# ทดสอบ ftp
+## FTP
 
-## Run Honeypot
+### Run Honeypot
 เข้าไปที่ path ที่ติดตั้ง opencanry
 ```bash
 . Opencanary_env/bin/activate
 ```
 เริ่มทำงาน
 ```bash
-opencanaryd --start --uid=nobody --gid=nogroup
+opencanaryd --start
 ```
-ตรวจสอบ
+หากมีปัญหา : Pidfile
 ```bash
-netstat -tulnp | grep -E '8080|443'
+rm /home/admin/Honeypot/Opencanary_env/bin/opencanaryd.pid
 ```
-หยุดการทำ
-```bash
-opencanaryd --stop
-```
-
-เปิด terminal
+### ทดสอบผ่าน terminal
 ```bash
 ftp localhost
 ```
