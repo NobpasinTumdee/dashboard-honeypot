@@ -1,5 +1,12 @@
 ## Http/Https
-### แก้ไขไฟล์
+### แก้ไขไฟล์ (1)
+```bash
+cd ~/Honeypot/Opencanary_env/lib/python3.12/site-packages/opencanary/modules/
+code .
+```
+* [http.py](/Plugin/Opencannary/modules/http.py)
+* [https.py](/Plugin/Opencannary/modules/https.py)
+### แก้ไขไฟล์ (2)
 ตำแหน่งไฟล์
 ```bash
 sudo nano /etc/opencanaryd/opencanary.conf
