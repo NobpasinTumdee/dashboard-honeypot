@@ -6,7 +6,7 @@ from twisted.web.resource import Resource, EncodingResourceWrapper
 from twisted.web.http import HTTPChannel, HTTPFactory
 from twisted.web.util import Redirect
 from twisted.web import static
-
+from twisted.web.static import File
 import os
 import re
 
@@ -330,14 +330,15 @@ class CanaryHTTP(CanaryService):
 
     def getService(self):
         page = BasicLogin(factory=self)
-        root = StaticNoDirListing(self.staticdir)
-        root.createErrorPages(self)
-        
-        # ให้ path "/" เสิร์ฟ index.html โดยตรง
-        root.putChild(b"", page)  
+        root = Resource()  # เปลี่ยนจาก StaticNoDirListing เป็น Resource ปกติ
+
+        root.putChild(b"static", File(self.staticdir))  # เสิร์ฟไฟล์ static
+
+        root.putChild(b"", page)
         root.putChild(b"index.html", page)
-        
+
         wrapped = EncodingResourceWrapper(root, [GzipEncoderFactory()])
         site = CanaryHttpServiceSite(wrapped)
         return internet.TCPServer(self.port, site, interface=self.listen_addr)
+
 
