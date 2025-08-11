@@ -35,15 +35,26 @@ const CowriePage = () => {
     // Custom hook to manage WebSocket connection
     useCowrieSocket(setData, setIsConnected, setIsLogin);
 
+    // Filter by eventid
+    const [protocolFilter, setProtocolFilter] = useState("");
+    const handleSelectChange = (event: any) => {
+        setProtocolFilter(event.target.value);
+    };
+    const filteredData = data.filter((item) =>
+        protocolFilter
+            ? (item.eventid && item.eventid.toLowerCase() === protocolFilter.toLowerCase())
+            : true
+    );
+
     // Pagination state
     const [currentPage, setCurrentPage] = useState(1);
     const ITEMS_PER_PAGE = 10;
 
-
     // Calculate the current items to display based on pagination
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    const currentItems = data.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-    const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
+    const currentItems = filteredData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+    const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
+
 
     useEffect(() => { Aos.init({ duration: 1000, once: true, }); }, []);
 
@@ -90,7 +101,17 @@ const CowriePage = () => {
                 <h1>Cowrie</h1>
             </div>
             <div style={{ fontWeight: "400", textAlign: "center", display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '0 5%' }}>
-                <p style={{ margin: '0px' }}>มีจำนวนทั้งสิ้น {data.length} รายการ</p>
+                <p style={{ margin: '0px' }}>
+                    มีจำนวนทั้งสิ้น {data.length} รายการ{" "}
+                    {protocolFilter && `| Filtered by: ${protocolFilter} `}
+                    <select value={protocolFilter} onChange={handleSelectChange}>
+                        <option value="">All</option>
+                        <option value="cowrie.session.connect">connect</option>
+                        <option value="cowrie.session.closed">closed</option>
+                        <option value="cowrie.command.input">input</option>
+                        <option value="cowrie.command.failed">failed</option>
+                    </select>
+                </p>
                 <p data-aos="fade-down" style={{ margin: '0px' }}>
                     WebSocket connection status:{" "}
                     {isConnected ? "🟢 Connected" : "🔴 Disconnected"}

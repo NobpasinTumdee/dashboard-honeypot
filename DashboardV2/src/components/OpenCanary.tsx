@@ -31,15 +31,25 @@ const OpenCanary = () => {
   // Custom hook to manage WebSocket connection
   useCanarySocket(setData, setIsConnected, setIsLogin);
 
+  // Filter by eventid
+  const [protocolFilter, setProtocolFilter] = useState("");
+  const handleSelectChange = (event: any) => {
+    setProtocolFilter(event.target.value);
+  };
+  const filteredData = data.filter((item) =>
+    protocolFilter
+      ? (item.logdata_msg_logdata && item.logdata_msg_logdata.toLowerCase() === protocolFilter.toLowerCase())
+      : true
+  );
+
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 10;
 
-
   // Calculate the current items to display based on pagination
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const currentItems = data.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-  const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
+  const currentItems = filteredData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
 
   useEffect(() => { Aos.init({ duration: 1000, once: true, }); }, []);
 
@@ -86,7 +96,17 @@ const OpenCanary = () => {
         <h1>Open Canary</h1>
       </div>
       <div style={{ fontWeight: "400", textAlign: "center", display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '0 5%' }}>
-        <p style={{ margin: '0px' }}>มีจำนวนทั้งสิ้น {data.length} รายการ</p>
+        <p style={{ margin: '0px' }}>
+          มีจำนวนทั้งสิ้น {data.length} รายการ{" "}
+          {protocolFilter && `| Filtered by: `}
+          <select value={protocolFilter} onChange={handleSelectChange}>
+            <option value="">All</option>
+            <option value="Canary running!!!">Running</option>
+            <option value="Added service from class CanaryHTTPS in opencanary.modules.https to fake">Canary HTTPS</option>
+            <option value="Added service from class CanaryHTTP in opencanary.modules.http to fake">Canary HTTP</option>
+            <option value="Added service from class CanaryFTP in opencanary.modules.ftp to fake">Canary FTP</option>
+          </select>
+        </p>
         <p data-aos="fade-down" style={{ margin: '0px' }}>
           WebSocket connection status:{" "}
           {isConnected ? "🟢 Connected" : "🔴 Disconnected"}
