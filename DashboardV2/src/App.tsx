@@ -8,6 +8,9 @@ import ChatBot from './components/ChatBot';
 import Login from './components/Login/Login';
 import FuzzyText from './components/Login/FuzzyText';
 import SocketPage from './components/web-socket/Socket';
+import Doclayout from './components/documentation/Doclayout';
+import DocumentPage from './components/documentation/DocumentPage';
+import DocumentCowrie from './components/documentation/DocumentCowrie';
 
 const router = createBrowserRouter([
   {
@@ -21,6 +24,14 @@ const router = createBrowserRouter([
       { path: "chatbot", element: <ChatBot /> },
       { path: "login", element: <Login /> },
       { path: "socket", element: <SocketPage /> },
+    ]
+  },
+  {
+    path: "/document",
+    element: <Doclayout />,
+    children: [
+      { index: true, element: <DocumentPage /> },
+      { path: "cowrie-guide", element: <DocumentCowrie /> },
     ]
   }
 ]);
