@@ -1,11 +1,10 @@
 .card {
     padding: 1rem;
     overflow: hidden;
-    border: 1px solid #c5c5c5;
     border-radius: 12px;
-    background-color: #d9d9d92f;
-    backdrop-filter: blur(8px);
-    min-width: 344px;
+    background-color: #d9d9d90a;
+    backdrop-filter: blur(30px);
+    width: 100%;
 }
 
 .wrap {
@@ -50,6 +49,7 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     color: #8e8e8e;
+    margin: 5px;
 }
 
 .title>svg {
@@ -103,7 +103,8 @@
     text-wrap: nowrap;
     white-space: pre;
     background-color: transparent;
-    overflow: hidden;
+    overflow-x: auto;
+    padding: 0 0.5rem;
     box-sizing: border-box;
     font-size: 16px;
 }
@@ -177,8 +178,8 @@
 
     30%,
     70% {
-        width: 215px;
-        max-width: max-content;
+        width: 100%;
+        /* max-width: 100%; */
     }
 }
 

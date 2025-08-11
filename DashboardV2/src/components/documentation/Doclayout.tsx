@@ -7,7 +7,7 @@ const Doclayout = () => {
     return (
         <>
             <NavDoc />
-            <div style={{ width: '100vw', height: '100vh', position: 'fixed', zIndex: -1 }}>
+            <div style={{ width: '100vw', height: '100vh', position: 'fixed', zIndex: -1 ,top: 0}}>
                 <LightRays
                     raysOrigin="top-center"
                     raysColor="#3aa48c"
