@@ -1,0 +1,88 @@
+.doc-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(circle, #3aa48c 0%, #000000 59%);
+    z-index: -1;
+}
+
+.doc-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    color: #d7f3ec;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.doc-title {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.doc-subtitle {
+    font-size: 1.2rem;
+    max-width: 600px;
+    margin-bottom: 2rem;
+}
+
+.doc-button {
+    padding: 12px 24px;
+    backdrop-filter: blur(10px);
+    background-color: #ffffff1a;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.doc-button:hover {
+    background-color: #ffffff3b;
+}
+
+
+
+
+.doc-nav-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    z-index: 10;
+}
+
+.doc-nav {
+    width: auto;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    z-index: 1;
+    backdrop-filter: blur(10px);
+    padding: 0px 40px;
+    box-shadow: #00000048 0px 2px 7px 0px inset;
+    border-radius: 0 0 30px 30px;
+}
+
+.Link-button-doc {
+    text-decoration: none;
+    color: #d7f3ec;
+    transition: 0.3s ease-in-out;
+}
+
+.Link-button-doc:hover {
+    padding: 0 10px;
+    scale: 1.2;
+}

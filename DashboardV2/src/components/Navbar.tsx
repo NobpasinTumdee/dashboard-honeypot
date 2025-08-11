@@ -49,6 +49,7 @@ const Navbar = () => {
                             <Link to="login" className={`Link-button ${isActive('/login') ? 'active' : ''}`}>Login</Link>
                         </>
                     )}
+                    <Link to="document" className={`Link-button ${isActive('/document') ? 'active' : ''}`}> Document </Link>
                     <div className='group-menu'>
                         {isLogin === "true" && (
                             <>
