@@ -57,7 +57,12 @@ http://[ip]:80
 https://[ip]:443
 ```
 ### หน้า web
+- nasLogin
 <img width="1808" height="923" alt="image" src="https://github.com/user-attachments/assets/b7133f08-7a13-4d8c-acbc-893a4d871302" />
+
+- HikvisionCCTV
+<img width="1856" height="930" alt="image" src="https://github.com/user-attachments/assets/de4ea107-f8de-4b52-bf96-fb1fe364a033" />
+
 หมายเหตุ: หน้า web มาจาก
 
 ```bash
