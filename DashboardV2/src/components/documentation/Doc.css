@@ -11,7 +11,7 @@
 .doc-container {
     position: relative;
     width: 100vw;
-    height: 90vh;
+    height: 100vh;
     color: #d7f3ec;
     display: flex;
     flex-direction: column;
@@ -116,4 +116,50 @@
 
 .next-step p {
     font-weight: 200;
+}
+
+
+.move-step {
+    position: fixed;
+    left: 10px;
+    top: 40%;
+    display: flex;
+    flex-direction: column;
+
+}
+
+.move-step a {
+    color: #3aa48c;
+    text-decoration: none;
+    font-weight: 600;
+    background-color: transparent;
+    border: 2px solid #3aa48c;
+    text-align: center;
+    border-radius: 50px;
+    padding: 7px 10px;
+    cursor: pointer;
+    scale: 0.7;
+}
+
+.move-step a:hover {
+    scale: 1;
+    background-color: #196453;
+}
+
+.scroll-down {
+    text-decoration: none;
+    color: #d7f3ec;
+    position: absolute;
+    font-size: 2rem;
+    transform: translateY(300px);
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    animation: scrolldown 2s ease-in-out infinite ;
+}
+
+@keyframes scrolldown {
+    50% {
+        transform: translateY(320px);
+        opacity: 0.5;
+    }
 }

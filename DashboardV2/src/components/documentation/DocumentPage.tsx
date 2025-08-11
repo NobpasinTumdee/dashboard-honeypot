@@ -14,13 +14,20 @@ const DocumentPage = () => {
                 <p className="doc-subtitle" data-aos="zoom-in" data-aos-duration="2000">
                     Learn how to deploy a fully functional honeypot system from scratch. This guide covers everything from installing and configuring the honeypot backend, building a real-time monitoring dashboard, to integrating alerts and data visualization. Whether you’re a beginner or experienced in cybersecurity, you’ll find step-by-step instructions to set up, customize, and secure your honeypot environment.
                 </p>
-                <a href="/document/cowrie-guide" className="doc-button" data-aos="zoom-in-up" data-aos-duration="2000">
-                    View Cowrie Guide
+                <a href="#target" className="doc-button" data-aos="zoom-in-up" data-aos-duration="2000">
+                    View Full Guide
                 </a>
+                <a href="#step1" className='scroll-down'>⬇</a>
             </div>
-            <h1 className="terminal-title" data-aos="fade-down">Quick Start</h1>
 
+            <div className='move-step'>
+                <a href="#step1" data-aos="fade-right" data-aos-duration="1000">I</a>
+                <a href="#step2" data-aos="fade-right" data-aos-duration="1200">II</a>
+                <a href="#step3" data-aos="fade-right" data-aos-duration="1400">III</a>
+                <a href="#step4" data-aos="fade-right" data-aos-duration="1600">IV</a>
+            </div>
 
+            <h1 className="terminal-title" data-aos="fade-down" id='step1'>Quick Start</h1>
             <div className='terminal-container'>
                 <div style={{ width: '55%' }} data-aos="fade-left">
                     <TerminalCode headertext='clone repository from github' type='git' code="clone https://github.com/NobpasinTumdee/dashboard-honeypot.git" />
@@ -34,7 +41,7 @@ const DocumentPage = () => {
             </div>
 
 
-            <div className='terminal-container'>
+            <div className='terminal-container' id='step2'>
                 <div className='next-step' style={{ width: '30%' }} data-aos="fade-left" data-aos-duration="2000">
                     <h1>Step 2 - Install and Launch the Frontend</h1>
                     <p>Now that you’ve got the main dashboard project, it’s time to fire up the frontend — the part that you’ll actually see and interact with in your browser.</p>
@@ -49,7 +56,7 @@ const DocumentPage = () => {
             </div>
 
 
-            <div className='terminal-container'>
+            <div className='terminal-container' id='step3'>
                 <div style={{ width: '55%' }} data-aos="fade-left">
                     <p>set up backend</p>
                     <TerminalCode headertext='change directory' type='cd' code=".\server\API\socket" />
@@ -80,7 +87,7 @@ const DocumentPage = () => {
             </div>
 
 
-            <div className='terminal-container'>
+            <div className='terminal-container' id='step4'>
                 <div className='next-step' style={{ width: '30%' }} data-aos="fade-left" data-aos-duration="2000">
                     <h1>Step 4 - run python script</h1>
                     <p>Now that both your frontend and backend are ready, it’s time to process some honeypot log data!</p>
