@@ -47,7 +47,7 @@ const Login: React.FC = () => {
         setIsLoading(true);
 
         try {
-            const credentials = { Email: email, Password: password, UserName: UserName};
+            const credentials = { Email: email, Password: password, UserName: UserName };
             const response = await SignUp(credentials);
 
             if (response?.status === 200) {
@@ -76,12 +76,50 @@ const Login: React.FC = () => {
         }, 100);
     };
 
+    const [Url, setUrl] = useState<string>("");
+    const [Port, setPort] = useState<string>("");
+    const UrlApi = localStorage.getItem("apiUrl");
+
+    const handleUrlapi = (e: any) => {
+        e.preventDefault();
+        if (Url && Port) {
+            localStorage.setItem("apiUrl", Url+":"+Port);
+            alert(`Url saved: ${Url+":"+Port}`);
+            window.location.reload();
+        }
+    };
+
     return (
         <>
             {isLogin === "true" ? (
                 <>
                     <div style={{ textAlign: 'center', marginTop: '20px' }}>
                         <h1>login successful</h1>
+                        <h3>{"listening on " + UrlApi || "Url not found"}</h3>
+                        <div className='form-server-url-container'>
+                            <form onSubmit={handleUrlapi} className="form-server-url">
+                                <input
+                                    type="text"
+                                    value={Url}
+                                    onChange={(e) => setUrl(e.target.value)}
+                                    placeholder="Url : http://localhost"
+                                    required
+                                    aria-label="input-text"
+                                    className="input-url"
+                                />
+                                <input
+                                    type="text"
+                                    value={Port}
+                                    onChange={(e) => setPort(e.target.value)}
+                                    placeholder="port : 3000"
+                                    required
+                                    className="input-url"
+                                />
+                                <button type="submit" className='btn-submit-url' >
+                                    Submit
+                                </button>
+                            </form>
+                        </div>
                         <button onClick={Logout} className='logout'>Logout</button>
                     </div>
                 </>

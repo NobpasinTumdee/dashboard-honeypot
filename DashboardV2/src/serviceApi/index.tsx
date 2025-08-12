@@ -10,7 +10,8 @@ import axios from "axios";
 // const apiUrl = 'http://192.168.1.4:3000'
 
 // localhost
-const apiUrl = 'http://localhost:3000'
+const Url = localStorage.getItem("apiUrl");
+const apiUrl = `${Url || 'http://localhost:3000'}`
 
 
 // Auth
