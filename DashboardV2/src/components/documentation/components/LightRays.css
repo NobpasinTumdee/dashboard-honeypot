@@ -5,5 +5,5 @@
   pointer-events: none;
   z-index: 3;
   overflow: hidden;
-  background-color: black;
+  background-color: var(--background-ui);
 }

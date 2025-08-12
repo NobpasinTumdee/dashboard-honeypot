@@ -7,6 +7,8 @@
   --text_side_bar:#82848F;          /*สีจางๆของข้อความที่ side bar*/
 
   --line_header: #E7E9ED;
+  --background-ui: #FFFFFF;
+  --text-ui: #1a1400;
 }
 
 [data-theme="dark"] {
@@ -16,7 +18,10 @@
   --body_text_color: #F3F4F6;
   --body_hover_text_color: #DFD7AF;
   --text_side_bar:#82848F;
+
   --line_header: #B0AA8C;
+  --background-ui: #000;
+  --text-ui: #d7f3ec;
 }
 
 html {
