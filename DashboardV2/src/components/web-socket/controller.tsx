@@ -3,7 +3,9 @@ import { io, Socket } from "socket.io-client";
 import type { AlertItem } from "../Cowrie";
 import type { AlertItemCanary } from "../OpenCanary";
 
-const apiUrl = 'http://localhost:3000'
+const Url = localStorage.getItem("apiUrl");
+
+const apiUrl = `${Url || 'http://localhost:3000'}`
 
 const getToken = (): string | null => {
     return localStorage.getItem("token");

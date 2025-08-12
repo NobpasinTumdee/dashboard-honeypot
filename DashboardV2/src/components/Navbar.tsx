@@ -57,6 +57,7 @@ const Navbar = () => {
                             </>
                         )}
                         <Link to="document" className={`Link-button ${isActive('/document') ? 'active' : ''}`}> Document </Link>
+                        <Link to="chatbot" className={`Link-button-mobile ${isActive('/chatbot') ? 'active' : ''}`}> chatbot </Link>
                         <div className='group-menu'>
                             {isLogin === "true" && (
                                 <>

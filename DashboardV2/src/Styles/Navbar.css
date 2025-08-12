@@ -32,6 +32,23 @@
   border-radius: 20px;
 }
 
+.Link-button-mobile {
+  text-decoration: none;
+  color: var(--body_text_color);
+  padding: 5px 15px;
+  transition: 0.3s ease-in-out;
+}
+
+.Link-button-mobile:hover {
+  box-shadow: rgb(204, 219, 232) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset;
+  border-radius: 20px;
+}
+
+.Link-button-mobile.active {
+  box-shadow: rgb(204, 219, 232) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset;
+  border-radius: 20px;
+}
+
 .sub-nav-bar {
   display: flex;
   align-items: center;
@@ -237,7 +254,6 @@
 
 
 
-
 @media screen and (max-width: 450px) {
   .Main-nav-bar {
     display: block;
@@ -246,23 +262,29 @@
   }
 
   .group-logo {
-    margin: 10px 0;
+    display: none;
   }
 
   .sub-nav-bar {
-    display: block;
-    margin: 10px 0 0;
+    display: flex;
+    margin: 0;
   }
 
   .layout-overlap {
-    height: 150px;
+    height: 90px;
+  }
+
+  .Link-button {
+    font-size: 0.7rem;
+    padding: 5px ;
+  }
+
+  .Link-button-mobile {
+    font-size: 0.7rem;
+    padding: 5px ;
   }
 
   .group-menu {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    margin-top: 20px;
+    display: none;
   }
 }
