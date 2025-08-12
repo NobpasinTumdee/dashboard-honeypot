@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import './Login.css';
 import { LignIn, SignUp } from '../../serviceApi/index';
-import GlassSurface from '../reactbits/ui/GlassSurface';
+// import GlassSurface from '../reactbits/ui/GlassSurface';
 
 
 const Login: React.FC = () => {
@@ -157,12 +157,12 @@ const Login: React.FC = () => {
                         </>
                     }
                     <div className="login-container">
-                        <GlassSurface
+                        {/* <GlassSurface
                             width={"auto"}
                             height={"auto"}
                             borderRadius={40}
                             style={{ padding: ' 0 20px' }}
-                        >
+                        > */}
                             {mode ? (
                                 <>
                                     <form className="login-form" onSubmit={handleSubmit}>
@@ -250,7 +250,7 @@ const Login: React.FC = () => {
                                     </form>
                                 </>
                             )}
-                        </GlassSurface>
+                        {/* </GlassSurface> */}
                     </div>
                     <h3 style={{ textAlign: 'center', fontWeight: '200' }}>server listening on : {UrlApi ? (UrlApi + "✨") : ("not found")}</h3>
                 </>
