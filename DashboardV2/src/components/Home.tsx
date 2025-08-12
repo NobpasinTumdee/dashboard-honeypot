@@ -66,7 +66,7 @@ const Home = () => {
         <>
             <div className='main'>
                 <div className='dashborad-main'>
-                    <h1 style={{ textAlign: 'center' }} data-aos="zoom-in-down">Dashborad</h1>
+                    <h1 style={{ textAlign: 'center' }} data-aos="zoom-in-down">Welcome to Honeypot Dashboard</h1>
                     {isLogin ? (
                         <>
                             <h2 style={{ textAlign: 'center' }} data-aos="zoom-in-down">Cowrie</h2>
@@ -82,10 +82,8 @@ const Home = () => {
                             <h2 style={{ textAlign: 'center' }} data-aos="zoom-in-down">Open Cannary</h2>
                             <div className='chart-in-main'>
                                 <div className='chart-in-sub'>
-                                    <ChartByDateCanary logs={dataCanary} />
-                                </div>
-                                <div className='chart-in-sub'>
                                     <ChartCanary logs={dataCanary} />
+                                    <ChartByDateCanary logs={dataCanary} />
                                 </div>
                             </div>
                         </>

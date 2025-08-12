@@ -38,9 +38,10 @@
 }
 
 .chart-in-sub {
-    width: 50%;
+    width: 100%;
     padding: 5%;
-    background-color: var(--body_main_sidebar);
+    backdrop-filter: blur(60px);
+    /* background-color: var(--body_main_sidebar); */
     border-radius: 10px;
     box-shadow: #32326911 0px 2px 5px 0px, #00000007 0px 1px 1px 0px;
 }
@@ -84,6 +85,7 @@
     margin-top: 20px;
     margin-bottom: 0;
     border-radius: 10px;
+    backdrop-filter: blur(50px);
     box-shadow: rgba(17, 17, 26, 0.05) 0px 1px 0px, rgba(17, 17, 26, 0.1) 0px 0px 8px;
 }
 
@@ -120,7 +122,7 @@
 .pagination-button {
     margin: 0 10px;
     padding: 10px 20px;
-    background-color: var(--body_main_sidebar);
+    backdrop-filter: blur(10px);
     outline: none;
     border: none;
     box-shadow: rgb(204, 219, 232) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset;
@@ -128,6 +130,7 @@
     color: var(--body_text_color);
     cursor: pointer;
     font-weight: 700;
+    background-color: var(--body_main_sidebar_hover);
     transition: 0.3s ease-in-out;
 }
 
@@ -140,11 +143,12 @@
 .download-button {
     margin: 0 10px;
     padding: 10px 20px;
-    background-color: var(--body_main_sidebar);
+    backdrop-filter: blur(10px);
     outline: none;
     border: none;
     box-shadow: rgb(204, 219, 232) 3px 3px 6px 0px inset, rgba(255, 255, 255, 0.5) -3px -3px 6px 1px inset;
     border-radius: 10px;
+    background-color: var(--body_main_sidebar_hover);
     color: var(--body_text_color);
     cursor: pointer;
     font-weight: 700;

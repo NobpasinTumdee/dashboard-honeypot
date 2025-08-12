@@ -97,7 +97,7 @@ const CowriePage = () => {
 
     return (
         <>
-            <div style={{ margin: '10px 30px 20px', textAlign: 'center' }} data-aos="zoom-in-down">
+            <div style={{ margin: '10px 5% 20px', textAlign: 'left' }} data-aos="zoom-in-down">
                 <h1>Cowrie</h1>
             </div>
             <div style={{ fontWeight: "400", textAlign: "center", display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '0 5%' }}>
