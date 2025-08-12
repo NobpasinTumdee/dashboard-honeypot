@@ -38,9 +38,10 @@
 }
 
 .chart-in-sub {
-    width: 50%;
+    width: 100%;
     padding: 5%;
-    background-color: var(--body_main_sidebar);
+    backdrop-filter: blur(60px);
+    /* background-color: var(--body_main_sidebar); */
     border-radius: 10px;
     box-shadow: #32326911 0px 2px 5px 0px, #00000007 0px 1px 1px 0px;
 }
@@ -129,6 +130,7 @@
     color: var(--body_text_color);
     cursor: pointer;
     font-weight: 700;
+    background-color: var(--body_main_sidebar_hover);
     transition: 0.3s ease-in-out;
 }
 

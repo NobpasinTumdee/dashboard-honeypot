@@ -74,7 +74,7 @@ const TerminalCode: React.FC<TerminalCodeProps> = ({ headertext, type, code }) =
 
                     <div className="body">
                         <pre className="pre">
-                            <code>-&nbsp;</code>
+                            <code>$&nbsp;</code>
                             <code>{type}&nbsp;</code>
                             <code className="cmd" data-cmd={code} />
                         </pre>
