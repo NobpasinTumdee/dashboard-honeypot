@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './Login.css';
 import { LignIn, SignUp } from '../../serviceApi/index';
+import GlassSurface from '../reactbits/ui/GlassSurface';
 
 
 const Login: React.FC = () => {
@@ -70,7 +71,11 @@ const Login: React.FC = () => {
     const isLogin = localStorage.getItem("isLogin");
 
     const Logout = () => {
-        localStorage.clear();
+        // localStorage.clear();
+        localStorage.removeItem("isLogin");
+        localStorage.removeItem("token_type");
+        localStorage.removeItem("token");
+        localStorage.removeItem("UserName");
         setTimeout(() => {
             location.href = "/login";
         }, 100);
@@ -83,8 +88,8 @@ const Login: React.FC = () => {
     const handleUrlapi = (e: any) => {
         e.preventDefault();
         if (Url && Port) {
-            localStorage.setItem("apiUrl", Url+":"+Port);
-            alert(`Url saved: ${Url+":"+Port}`);
+            localStorage.setItem("apiUrl", Url + ":" + Port);
+            alert(`Url saved: ${Url + ":" + Port}`);
             window.location.reload();
         }
     };
@@ -125,95 +130,129 @@ const Login: React.FC = () => {
                 </>
             ) : (
                 <>
+                    {!UrlApi &&
+                        <>
+                            <form onSubmit={handleUrlapi} className="form-server-url" style={{ marginTop: '20px' }}>
+                                <input
+                                    type="text"
+                                    value={Url}
+                                    onChange={(e) => setUrl(e.target.value)}
+                                    placeholder="Url : http://localhost"
+                                    required
+                                    aria-label="input-text"
+                                    className="input-url"
+                                />
+                                <input
+                                    type="text"
+                                    value={Port}
+                                    onChange={(e) => setPort(e.target.value)}
+                                    placeholder="port : 3000"
+                                    required
+                                    className="input-url"
+                                />
+                                <button type="submit" className='btn-submit-url' >
+                                    Submit
+                                </button>
+                            </form>
+                        </>
+                    }
                     <div className="login-container">
-                        {mode ? (
-                            <>
-                                <form className="login-form" onSubmit={handleSubmit}>
-                                    <h2>Login</h2>
-                                    <div className="input-group">
-                                        <label htmlFor="email">Email:</label>
-                                        <input
-                                            type="text"
-                                            id="email"
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                            required
-                                            disabled={isLoading}
-                                        />
-                                    </div>
+                        <GlassSurface
+                            width={"auto"}
+                            height={"auto"}
+                            borderRadius={40}
+                            style={{ padding: ' 0 20px' }}
+                        >
+                            {mode ? (
+                                <>
+                                    <form className="login-form" onSubmit={handleSubmit}>
+                                        <h2>Login</h2>
+                                        <div className="input-group">
+                                            <label htmlFor="email">Email:</label>
+                                            <input
+                                                type="text"
+                                                id="email"
+                                                value={email}
+                                                onChange={(e) => setEmail(e.target.value)}
+                                                required
+                                                disabled={isLoading}
+                                            />
+                                        </div>
 
-                                    <div className="input-group">
-                                        <label htmlFor="password">Password:</label>
-                                        <input
-                                            type="password"
-                                            id="password"
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
-                                            required
-                                            disabled={isLoading}
-                                        />
-                                        {error && <p className="error-message">{error}</p>}
-                                    </div>
+                                        <div className="input-group">
+                                            <label htmlFor="password">Password:</label>
+                                            <input
+                                                type="password"
+                                                id="password"
+                                                value={password}
+                                                onChange={(e) => setPassword(e.target.value)}
+                                                required
+                                                disabled={isLoading}
+                                            />
+                                            {error && <p className="error-message">{error}</p>}
+                                        </div>
 
-                                    <button type="submit" className="login-button" disabled={isLoading}>
-                                        {isLoading ? 'Login...' : 'Log In'}
-                                    </button>
+                                        <button type="submit" className="login-button" disabled={isLoading}>
+                                            {isLoading ? 'Login...' : 'Log In'}
+                                        </button>
 
-                                    <a href="#" onClick={() => setmode(!mode)} className="sign-up">Forget Password?</a>
-                                </form>
-                            </>
-                        ) : (
-                            <>
-                                <form className="login-form" onSubmit={handleSignUp}>
-                                    <h2>SignUp</h2>
+                                        <a href="#" onClick={() => setmode(!mode)} className="sign-up">Forget Password?</a>
+                                    </form>
+                                </>
+                            ) : (
+                                <>
+                                    <form className="login-form" onSubmit={handleSignUp}>
+                                        <h2>SignUp</h2>
 
 
-                                    <div className="input-group">
-                                        <label htmlFor="email">Email:</label>
-                                        <input
-                                            type="text"
-                                            id="email"
-                                            value={email}
-                                            onChange={(e) => setEmail(e.target.value)}
-                                            required
-                                            disabled={isLoading}
-                                        />
-                                    </div>
+                                        <div className="input-group">
+                                            <label htmlFor="email">Email:</label>
+                                            <input
+                                                type="text"
+                                                id="email"
+                                                value={email}
+                                                onChange={(e) => setEmail(e.target.value)}
+                                                required
+                                                disabled={isLoading}
+                                            />
+                                        </div>
 
-                                    <div className="input-group">
-                                        <label htmlFor="User Name">User Name:</label>
-                                        <input
-                                            type="text"
-                                            id="username"
-                                            value={UserName}
-                                            onChange={(e) => setUserName(e.target.value)}
-                                            required
-                                            disabled={isLoading}
-                                        />
-                                    </div>
+                                        <div className="input-group">
+                                            <label htmlFor="User Name">User Name:</label>
+                                            <input
+                                                type="text"
+                                                id="username"
+                                                value={UserName}
+                                                onChange={(e) => setUserName(e.target.value)}
+                                                required
+                                                disabled={isLoading}
+                                            />
+                                        </div>
 
-                                    <div className="input-group">
-                                        <label htmlFor="password">Password:</label>
-                                        <input
-                                            type="password"
-                                            id="password"
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
-                                            required
-                                            disabled={isLoading}
-                                        />
-                                        {error && <p className="error-message">{error}</p>}
-                                    </div>
+                                        <div className="input-group">
+                                            <label htmlFor="password">Password:</label>
+                                            <input
+                                                type="password"
+                                                id="password"
+                                                value={password}
+                                                onChange={(e) => setPassword(e.target.value)}
+                                                required
+                                                disabled={isLoading}
+                                            />
+                                            {error && <p className="error-message">{error}</p>}
+                                        </div>
 
-                                    <button type="submit" className="login-button" disabled={isLoading}>
-                                        {isLoading ? 'Wait...' : 'Sign Up'}
-                                    </button>
+                                        <button type="submit" className="login-button" disabled={isLoading}>
+                                            {isLoading ? 'Wait...' : 'Sign Up'}
+                                        </button>
 
-                                    <a href="#" onClick={() => setmode(!mode)} className="sign-up">Let's Login!</a>
-                                </form>
-                            </>
-                        )}
+                                        <a href="#" onClick={() => setmode(!mode)} className="sign-up">Let's Login!</a>
+                                    </form>
+                                </>
+                            )}
+                        </GlassSurface>
                     </div>
+                    <h3 style={{ textAlign: 'center', fontWeight: '200' }}>server listening on : {UrlApi ? (UrlApi + "✨") : ("not found")}</h3>
                 </>
             )}
         </>

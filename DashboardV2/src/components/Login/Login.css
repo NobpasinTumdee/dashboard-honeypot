@@ -2,19 +2,19 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 5% 0;
+    margin: 3% 0 0;
 }
 
 
 .login-form {
-    background-color: #ffffff11;
-    backdrop-filter: blur(20px);
+    /* background-color: #ffffff11; */
+    /* backdrop-filter: blur(20px); */
     padding: 50px;
     width: 100%;
     max-width: 400px;
     text-align: left;
     border-radius: 10px;
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+    /* box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px; */
 }
 
 .error-message {
@@ -66,9 +66,10 @@
     padding: 12px;
     border: 1px solid #ddd;
     background-color: transparent;
-    color: #fff;
+    color: var(--body_text_color);
     border-radius: 8px;
     font-size: 16px;
+    font-weight: 700;
     transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
