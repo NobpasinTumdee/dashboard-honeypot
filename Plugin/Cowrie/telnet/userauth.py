@@ -11,6 +11,8 @@ import ast
 import struct
 import random
 import os
+from twisted.internet import reactor
+import random
 
 from twisted.conch.telnet import (
     ECHO,
@@ -118,7 +120,11 @@ class HoneyPotTelnetAuthProtocol(AuthenticatingTelnetProtocol):
         # only send ECHO option if we are chatting with a real Telnet client
         self.transport.willChain(ECHO)
         # FIXME: this should be configurable or provided via filesystem
-        self.transport.write(self.passwordPrompt)
+        # self.transport.write(self.passwordPrompt)
+        
+        # เพิ่มการหน่วงเวลาแสดงการกรอก password
+        delay = random.uniform(0.3, 1.0)
+        reactor.callLater(delay, self.transport.write, self.passwordPrompt)
         return "Password"
 
     def telnet_Password(self, line):
@@ -150,8 +156,17 @@ class HoneyPotTelnetAuthProtocol(AuthenticatingTelnetProtocol):
                     self.login_attempts_made = 0
                     log.msg("Telnet: username นี้มีอยู่แล้ว แต่ password ไม่ตรง รีเซ็ตจำนวนครั้ง login")
                     self.transport.wontChain(ECHO)
-                    self.transport.write(b"\nLogin incorrect\n")
-                    self.transport.write(self.loginPrompt)
+                    # self.transport.write(b"\nLogin incorrect\n")
+                    # self.transport.write(self.loginPrompt)
+                    
+                    # เพิ่มการหน่วงเวลา ล็อกอินไม่ผ่าน
+                    delay_incorrect = random.uniform(0.3, 1.0)
+                    reactor.callLater(delay_incorrect, self.transport.write, b"\nLogin incorrect\n")
+                    
+                    # delay แสดง login prompt ใหม่ 
+                    delay_prompt = random.uniform(0.2, 0.5)
+                    reactor.callLater(delay_prompt, self.transport.write, self.loginPrompt)
+                    
                     self.state = "User"
                     return
             # หากมี password ใน users.txt จะผ่านได้เลย
@@ -173,10 +188,22 @@ class HoneyPotTelnetAuthProtocol(AuthenticatingTelnetProtocol):
                 self.transport.write(self.loginPrompt)       # แสดง prompt สำหรับล็อกอินใหม่
                 self.state = "User"                          # กลับไปยังสถานะ User เพื่อ login ใหม่
             else:
+                # log.msg(f"Telnet: ครบ {self.required_login_attempts} ครั้งแล้ว. กำลังตรวจสอบล็อกอินจริง.")
+                # d = self.portal.login(creds, self.src_ip, ITelnetProtocol)
+                # d.addCallback(self._cbLogin)
+                # d.addErrback(self._ebLogin)
+                
+                
                 log.msg(f"Telnet: ครบ {self.required_login_attempts} ครั้งแล้ว. กำลังตรวจสอบล็อกอินจริง.")
-                d = self.portal.login(creds, self.src_ip, ITelnetProtocol)
-                d.addCallback(self._cbLogin)
-                d.addErrback(self._ebLogin)
+
+                delay_success = random.uniform(1.0, 2.0)  # delay แบบสุ่ม 1–2 วิ
+
+                def do_real_login():
+                    d = self.portal.login(creds, self.src_ip, ITelnetProtocol)
+                    d.addCallback(self._cbLogin)
+                    d.addErrback(self._ebLogin)
+                # หน่วงเวลา
+                reactor.callLater(delay_success, do_real_login)
             
 
         # are we dealing with a real Telnet client?
