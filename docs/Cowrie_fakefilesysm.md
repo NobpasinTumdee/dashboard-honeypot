@@ -29,10 +29,27 @@ echo "" > honeyfs/etc/motd
 echo "root:x:0:0:root:/root:/bin/bash" > honeyfs/etc/passwd
 echo "root:*:19000:0:99999:7:::" > honeyfs/etc/shadow
 ```
+
+### สร้าง users ให้ระบบหลอก
+เข้ามาที่ path >> /home/cowrie
+```
+nano GenUser.py
+```
+* [GenUser.py](/Plugin/Cowrie/script/GenUsers.py)
+
+ติดตั้งไลบารี่ที่จำเป็น + Run script (sudo user) 
+```
+python3 -m venv venv
+source venv/bin/activate
+pip install Faker names
+sudo ./venv/bin/python3 GenUsers.py
+deactivate
+```
 ### สร้าง fs.pickle ใหม่
 ```
 rm -f src/cowrie/data/fs.pickle
 ./bin/createfs -l honeyfs -o src/cowrie/data/fs.pickle
 ```
 ### ผลลัพธ์
-<img width="1174" height="827" alt="image" src="https://github.com/user-attachments/assets/88c8e192-2dda-4906-ae61-89f149adf59d" />
+<img width="1019" height="875" alt="image" src="https://github.com/user-attachments/assets/397b1c73-8003-4598-a96b-ee90589fb986" />
+
