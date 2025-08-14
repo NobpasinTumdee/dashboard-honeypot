@@ -4,6 +4,7 @@
 - user ใหม่หากใช้ password ใดก็ได้ทีมี่ใน users.txt จะผ่านได้เลย
 - user ที่เคยมีชื่อใน users.txt ต้องใช้ password เดิมถึง login ผ่าน
 - user ที่เคยมีชื่อใน users.txt หากใช้ password ไม่ตรงจะไม่มีทางผ่าน
+- การหน่วงเวลาในการ login (ตอนแสดง Prompt)
 ### Telnet
 แก้ไขไฟล์
 ```
