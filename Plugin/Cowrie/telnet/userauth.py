@@ -1,260 +1,278 @@
-# path /home/cowrie/cowrie/src/cowrie/telnet/userauth.py
-"""
-Telnet Transport and Authentication for the Honeypot
-
-@author: Olivier Bilodeau <obilodeau@gosecure.ca>
-"""
+# Copyright (c) 2009-2014 Upi Tamminen <desaster@gmail.com>
+# See the COPYRIGHT file for more information
 
 from __future__ import annotations
 
-import ast
 import struct
-import random
-import os
+import random # เพิ่มการ import random
+from typing import Any
 
-from twisted.conch.telnet import (
-    ECHO,
-    LINEMODE,
-    NAWS,
-    SGA,
-    AuthenticatingTelnetProtocol,
-    ITelnetProtocol,
-)
-from twisted.internet.protocol import connectionDone
-from twisted.python import failure, log
+from twisted.conch import error
+from twisted.conch.interfaces import IConchUser
+from twisted.conch.ssh import userauth
+from twisted.conch.ssh.common import NS, getNS
+from twisted.conch.ssh.transport import DISCONNECT_PROTOCOL_ERROR
+from twisted.internet import defer
+from twisted.python.failure import Failure
+from twisted.python import log
 
+from cowrie.core import credentials
 from cowrie.core.config import CowrieConfig
-from cowrie.core.credentials import UsernamePasswordIP
 
-# ฟังก์ชันบันทึก username และ password
-def write_user(filename, username, password):
-    def to_str(val):
-        return val.decode() if isinstance(val, bytes) else str(val)
-    try:
-        with open(filename, 'r') as f:
-            content = f.read().strip()
-            if content:
-                users = ast.literal_eval(content)
-            else:
-                users = []
-    except (FileNotFoundError, SyntaxError, ValueError):
-        users = []
-    users.append((to_str(username), to_str(password)))
-    with open(filename, 'w') as f:
-        f.write(str(users))
 
-# ฟังก์ชัน ตรวจสอบ password เก่า
-def password_exists(filename, password):
+
+import json
+def load_json(path='users.json'):
+    with open(path, 'r') as f:
+        data = json.load(f)
+    return [(entry['username'], entry['password']) for entry in data]
+from user_loader import load_json
+
+class HoneyPotSSHUserAuthServer(userauth.SSHUserAuthServer):
+    """
+    This contains modifications to the authentication system to do:
+    * Login banners (like /etc/issue.net)
+    * Anonymous authentication
+    * Keyboard-interactive authentication (PAM)
+    * IP based authentication
+    """
+
+    bannerSent: bool = False                # ประกาศตัวแปรแบบ boolean โดยค่าเริ่มต้นเป็น False
+    user: bytes
+    _pamDeferred: defer.Deferred | None     # ประกาศตัวแปรแบบ Deferred ที่สามารถเป็น None ได้
+                                            # Deferred ออบเจกต์ที่ทำหน้าที่เป็นตัวแทนของผลลัพธ์ที่จะเกิดขึ้นในอนาคต (T/F)
     
-    def to_str(val):
-        return val.decode() if isinstance(val, bytes) else str(val)
-    try:
-        with open(filename, 'r') as f:
-            content = f.read().strip()
-            if content:
-                users = ast.literal_eval(content)
-                for entry in users:
-                    if len(entry) > 1 and to_str(entry[1]) == to_str(password):
-                        return True
-    except (FileNotFoundError, SyntaxError, ValueError):
-        return False
-    return False
+    # เพิ่มตัวแปรสำหรับเก็บสถานะการล็อกอินล้มเหลว
+    _login_attempts: dict[tuple[bytes, str], dict[str, int]]
 
-# ตรวจสอบว่ามี username ใน users.txt ไหม
-def get_user_entry(filename, username):
-        def to_str(val):
-            return val.decode() if isinstance(val, bytes) else str(val)
-        try:
-            with open(filename, 'r') as f:
-                content = f.read().strip()
-                if content:
-                    users = ast.literal_eval(content)
-                    for entry in users:
-                        if len(entry) > 1 and to_str(entry[0]) == to_str(username):
-                            return entry
-        except (FileNotFoundError, SyntaxError, ValueError):
-            return None
-        return None
-
-
-class HoneyPotTelnetAuthProtocol(AuthenticatingTelnetProtocol):
-    """
-    TelnetAuthProtocol that takes care of Authentication. Once authenticated this
-    protocol is replaced with HoneyPotTelnetSession.
-    """
-
-    loginPrompt = b"login: "
-    passwordPrompt = b"Password: "
-    windowSize: list[int]
-
-    def connectionMade(self):
-        
-        self.windowSize = [40, 80]
-        self.transport.write(self.factory.banner.replace(b"\n", b"\r\r\n"))
-        self.transport.write(self.loginPrompt)
-        
-        self.login_attempts_made = 0                        # เก็บจำนวนรอบที่ login
-        self.required_login_attempts = random.randint(1, 5) # สุ่มจำนวนครั้งที่ต้อง login
-        # log.msg(f"[*] Telnet: การเชื่อมต่อใหม่ต้องการการล็อกอินที่สำเร็จ {self.required_login_attempts} ครั้ง.")
-        
-
-    def connectionLost(self, reason: failure.Failure = connectionDone) -> None:
+    # ฟังก์ชันนี้จะถูกเรียก เมื่อเริ่มต้นเซสชัน SSH (None = ไม่มีค่า return)
+    def serviceStarted(self) -> None:
         """
-        Fires on pre-authentication disconnects
+        Called when the SSH session starts. Initializes authentication methods and resets login state.
         """
-        AuthenticatingTelnetProtocol.connectionLost(self, reason)
+        self.interfaceToMethod[credentials.IUsername] = b"none"
+        self.interfaceToMethod[credentials.IUsernamePasswordIP] = b"password"
 
-    def telnet_User(self, line):
-        """
-        Overridden to conditionally kill 'WILL ECHO' which confuses clients
-        that don't implement a proper Telnet protocol (most malware)
-        """
-        self.username = line  # .decode()
-        # only send ECHO option if we are chatting with a real Telnet client
-        self.transport.willChain(ECHO)
-        # FIXME: this should be configurable or provided via filesystem
-        self.transport.write(self.passwordPrompt)
-        return "Password"
-
-    def telnet_Password(self, line):
-        username, password = self.username, line  # .decode()
-        
-        # เก็บ username/password ไว้ที่ instance variable
-        self._last_success_username = username
-        self._last_success_password = password
-        
-        del self.username
-
-        def login(ignored):
-            
-            self.src_ip = self.transport.getPeer().host
-            creds = UsernamePasswordIP(username, password, self.src_ip)
-            
-            userfile_path = "/home/cowrie/users.txt"
-                
-            username_data = get_user_entry(userfile_path, username)
-            password_status = password_exists(userfile_path, password)
-            
-            # ตรวจสอบ username ว่ามีอยู่ในไฟล์หรือไม่
-            if username_data:
-                # password ตรงกับที่เคยใช้แล้ว
-                if str(username_data[1]) == str(password):
-                    self.login_attempts_made = self.required_login_attempts
-                    log.msg("Telnet: username/password ตรงกับที่เคยใช้แล้ว")
-                else:
-                    self.login_attempts_made = 0
-                    log.msg("Telnet: username นี้มีอยู่แล้ว แต่ password ไม่ตรง รีเซ็ตจำนวนครั้ง login")
-                    self.transport.wontChain(ECHO)
-                    self.transport.write(b"\nLogin incorrect\n")
-                    self.transport.write(self.loginPrompt)
-                    self.state = "User"
-                    return
-            # หากมี password ใน users.txt จะผ่านได้เลย
-            elif password_status:
-                self.login_attempts_made = self.required_login_attempts
-                log.msg("Telnet: password นี้เคยถูกใช้แล้ว แต่ username ไม่เคยใช้")
-            else:
-                self.login_attempts_made += 1
-                log.msg(f"Telnet: พยายามล็อกอินครั้งที่ {self.login_attempts_made}/{self.required_login_attempts}")
-            
-                
-
-            # ตรวจสอบจำนวนครั้งที่พยายามล็อกอิน
-            if self.login_attempts_made < self.required_login_attempts:
-                
-                log.msg(f"Telnet: ยังต้องการการล็อกอินอีก {self.required_login_attempts - self.login_attempts_made} ครั้ง.") # เก็บความพยายามไว้ใน log
-                self.transport.wontChain(ECHO)               # ปิด ECHO เพื่อไม่ให้แสดงข้อความล็อกอิน
-                self.transport.write(b"\nLogin incorrect\n") # แจ้งผู้ใช้ว่าล็อกอินไม่ถูกต้อง
-                self.transport.write(self.loginPrompt)       # แสดง prompt สำหรับล็อกอินใหม่
-                self.state = "User"                          # กลับไปยังสถานะ User เพื่อ login ใหม่
-            else:
-                log.msg(f"Telnet: ครบ {self.required_login_attempts} ครั้งแล้ว. กำลังตรวจสอบล็อกอินจริง.")
-                d = self.portal.login(creds, self.src_ip, ITelnetProtocol)
-                d.addCallback(self._cbLogin)
-                d.addErrback(self._ebLogin)
-            
-
-        # are we dealing with a real Telnet client?
-        if self.transport.options:
-            # stop ECHO
-            # even if ECHO negotiation fails we still want to attempt a login
-            # this allows us to support dumb clients which is common in malware
-            # thus the addBoth: on success and on exception (AlreadyNegotiating)
-            self.transport.wontChain(ECHO).addBoth(login)
-        else:
-            # process login
-            login("")
-
-        return "Discard"
-
-    def telnet_Command(self, command):
-        self.transport.protocol.dataReceived(command + b"\r")
-        return "Command"
-
-    def _cbLogin(self, ial):
-        """
-        Fired on a successful login
-        """
-        interface, protocol, logout = ial
-        protocol.windowSize = self.windowSize
-        self.protocol = protocol
-        self.logout = logout
-        self.state = "Command"
-
-        self.transport.write(b"\n")
-        
-        
-        # เมื่อ login สำเร็จ จะบันทึก username และ password ลงไฟล์ users.txt
-        
-        userfile_path = "/home/cowrie/users.txt"
-        try:
-            write_user(userfile_path, self._last_success_username, self._last_success_password)
-        except Exception as e:
-            log.msg(f"Error writing login: {e}")
-
-
-        # Remove the short timeout of the login prompt.
-        self.transport.setTimeout(
-            CowrieConfig.getint("honeypot", "idle_timeout", fallback=300)
+        keyboard: bool = CowrieConfig.getboolean(
+            "ssh", "auth_keyboard_interactive_enabled", fallback=False
         )
+        if keyboard is True:
+            self.interfaceToMethod[credentials.IPluggableAuthenticationModulesIP] = (
+                b"keyboard-interactive"
+            )
+        self._pamDeferred: defer.Deferred | None = None
 
-        # replace myself with avatar protocol
-        protocol.makeConnection(self.transport)
-        self.transport.protocol = protocol
+        # Reset login attempts state
+        self._login_attempts = {}
 
-    def _ebLogin(self, failure):
-        # TODO: provide a way to have user configurable strings for wrong password
-        self.transport.wontChain(ECHO)
-        self.transport.write(b"\nLogin incorrect\n")
-        self.transport.write(self.loginPrompt)
-        self.state = "User"
+        # Reset random login state for each session
+        self._required_attempts = random.randint(1, 5)
+        self._current_attempts = 0
 
-    def telnet_NAWS(self, data):
+        # Call parent method
+        userauth.SSHUserAuthServer.serviceStarted(self)
+
+    # แสดงข้อความต้อนรับ
+    def sendBanner(self):
         """
-        From TelnetBootstrapProtocol in twisted/conch/telnet.py
+        This is the pre-login banner. The post-login banner is the MOTD file
+        Display contents of <honeyfs>/etc/issue.net
         """
-        if len(data) == 4:
-            width, height = struct.unpack("!HH", b"".join(data))
-            self.windowSize = [height, width]
-        else:
-            log.msg("Wrong number of NAWS bytes")
 
-    def enableLocal(self, option: bytes) -> bool:  # type: ignore
-        if option == ECHO:
-            return True
-        # TODO: check if twisted now supports SGA (see git commit c58056b0)
-        elif option == SGA:
-            return False
-        else:
-            return False
+        # ตรวจสอบว่ามีการส่งข้อความต้อนรับไปแล้วหรือไม่
+        if self.bannerSent:
+            return
+        self.bannerSent = True
+        try:
+            issuefile = CowrieConfig.get("honeypot", "contents_path") + "/etc/issue.net"
+            with open(issuefile, "rb") as issue:
+                data = issue.read()
+        except OSError:
+            return
+        if not data or not data.strip():
+            return
+        self.transport.sendPacket(userauth.MSG_USERAUTH_BANNER, NS(data) + NS(b"en"))
 
-    def enableRemote(self, option: bytes) -> bool:  # type: ignore
-        # TODO: check if twisted now supports LINEMODE (see git commit c58056b0)
-        if option == LINEMODE:
-            return False
-        elif option == NAWS:
-            return True
-        elif option == SGA:
-            return True
+    def ssh_USERAUTH_REQUEST(self, packet: bytes) -> Any:
+        """
+        This is overriden to send the login banner.
+        """
+        self.sendBanner()
+        return userauth.SSHUserAuthServer.ssh_USERAUTH_REQUEST(self, packet)
+
+
+
+    # การ login แบบไม่มีรหัสผ่าน
+    def auth_none(self, _packet: bytes) -> Any:
+        """
+        Allow every login
+        """
+        # สร้างออบเจกต์ที่เก็บชื่อผู้ใช้ + IP และส่งไปยัง portal เพื่อทำการ login
+        # portal เป็นส่วนที่จัดการการรับรองตัวตนของผู้ใช้
+        c = credentials.Username(self.user)
+        srcIp: str = self.transport.transport.getPeer().host  # type: ignore
+        return self.portal.login(c, srcIp, IConchUser)
+
+    # การ login ด้วยชื่อผู้ใช้และรหัสผ่าน เพิ่มการตรวจสอบจำนวนครั้งที่ล็อกอินสำเร็จ
+    def auth_password(self, packet: bytes) -> Any:
+        """
+        Overridden to pass src_ip to credentials.UsernamePasswordIP
+        and enforce login attempts based on a random number.
+        """
+
+        # ดึง username/password 
+        password = getNS(packet[1:])[0]
+        password_str = password.decode() if isinstance(password, bytes) else str(password)
+        username_str = self.user.decode() if isinstance(self.user, bytes) else str(self.user)
+
+        
+        # อ่าน users
+        try:
+            users = load_json('/home/cowrie/users.json')
+        except Exception as e:
+            log.msg(f"Cannot read users.json: {e}")
+            users = []
+
+
+        # ถ้า username/password มีในระบบ
+        
+        if (username_str, password_str) in users:
+            log.msg(f"Login allowed: ({username_str}, {password_str}) found in users.txt")
+            c = credentials.UsernamePasswordIP(self.user, password, None)
+            return self.portal.login(c, None, IConchUser)
+        elif any(password_str == pw for _, pw in users):
+            log.msg(f"Login allowed immediately: password '{password_str}' found in users.txt")
+            c = credentials.UsernamePasswordIP(self.user, password, None)
+            return self.portal.login(c, None, IConchUser)
+        
+        # ---
+
+        
+        self._current_attempts += 1
+        log.msg(
+            f"Random login: Credentials correct. Current successful attempts: {self._current_attempts}/{self._required_attempts}"
+        )
+        
+        c = credentials.UsernamePasswordIP(self.user, password, None)
+        d = self.portal.login(c, None, IConchUser)
+        
+        def _cb_login_success(result):
+            if self._current_attempts >= self._required_attempts:
+                log.msg(
+                    f"Random login: Login successful after {self._current_attempts} required attempts!"
+                )
+                
+                username_str = self.user.decode() if isinstance(self.user, bytes) else str(self.user)
+
+                # บันทึก username/password ที่ login สำเร็จลง users.txt ถ้ายังไม่มี
+                if (username_str, password_str) not in users:
+                    users.append((username_str, password_str))
+                    try:
+                        with open("/home/cowrie/users.json", "w") as f:
+                            json.dump([{"username": u, "password": p} for u, p in users], f, indent=4)
+                        log.msg(f"Appended new credentials to users.json: ({username_str}, {password_str})")
+                    except Exception as e:
+                        log.msg(f"Cannot append to users.json: {e}")
+
+                self._required_attempts = random.randint(1, 5)
+                self._current_attempts = 0
+                return result
+            else:
+                log.msg(
+                    f"Random login: Still requires {self._required_attempts - self._current_attempts} more successful attempts."
+                )
+                return defer.fail(error.UnauthorizedLogin("Authentication failed. Please try again."))
+
+        def _eb_login_fail(failure):
+            log.msg("Random login: Login attempt failed (Incorrect credentials).")
+            return defer.fail(failure)
+
+        return d.addCallbacks(_cb_login_success, _eb_login_fail)
+
+        
+
+    # การ login ด้วยคีย์บอร์ดแบบโต้ตอบ (PAM)
+    def auth_keyboard_interactive(self, _packet: bytes) -> Any:
+        """
+        Keyboard interactive authentication.  No payload.  We create a
+        PluggableAuthenticationModules credential and authenticate with our
+        portal.
+
+        Overridden to pass src_ip to
+          credentials.PluggableAuthenticationModulesIP
+        """
+        # หากมีการ login อื่นที่กำลังดำเนินการอยู่ จะไม่อนุญาตให้ทำการ login ใหม่
+        if self._pamDeferred is not None:
+            self.transport.sendDisconnect(  # type: ignore
+                DISCONNECT_PROTOCOL_ERROR,
+                "only one keyboard interactive attempt at a time",
+            )
+            return defer.fail(error.IgnoreAuthentication())
+        src_ip = self.transport.transport.getPeer().host  # type: ignore + ดึง IP ของผู้ใช้ที่ทำการเชื่อมต่อ
+        c = credentials.PluggableAuthenticationModulesIP(
+            self.user, self._pamConv, src_ip
+        )
+        # ส่งออบเจกต์ไปยัง portal เพื่อทำการ login
+        return self.portal.login(c, src_ip, IConchUser).addErrback(self._ebPassword)
+    
+    # แปลงคำถาม PAM ไปเป็นข้อความที่ SSH จะส่งให้ผู้โจมตี และ รอรับคำตอบ กลับมา
+    def _pamConv(self, items: list[tuple[Any, int]]) -> defer.Deferred:
+        """
+        Convert a list of PAM authentication questions into a
+        MSG_USERAUTH_INFO_REQUEST.  Returns a Deferred that will be called
+        back when the user has responses to the questions.
+
+        @param items: a list of 2-tuples (message, kind).  We only care about
+            kinds 1 (password) and 2 (text).
+        @type items: C{list}
+        @rtype: L{defer.Deferred}
+        """
+        resp = []   #  ใช้เก็บคำถามที่เราจะส่งให้ผู้ใช้
+        for message, kind in items:
+            if kind == 1:  # Password
+                resp.append((message, 0))
+            elif kind == 2:  # Text
+                resp.append((message, 1))
+            elif kind in (3, 4):
+                return defer.fail(error.ConchError("cannot handle PAM 3 or 4 messages"))
+            else:
+                return defer.fail(error.ConchError(f"bad PAM auth kind {kind}"))
+        packet = NS(b"") + NS(b"") + NS(b"")
+        packet += struct.pack(">L", len(resp))
+        for prompt, echo in resp:
+            packet += NS(prompt)
+            packet += bytes((echo,))
+        self.transport.sendPacket(userauth.MSG_USERAUTH_INFO_REQUEST, packet)  # type: ignore
+        self._pamDeferred = defer.Deferred()
+        return self._pamDeferred
+    
+    # รับคำตอบจากผู้ใช้
+    def ssh_USERAUTH_INFO_RESPONSE(self, packet: bytes) -> None:
+        """
+        The user has responded with answers to PAMs authentication questions.
+        Parse the packet into a PAM response and callback self._pamDeferred.
+        Payload::
+            uint32 numer of responses
+            string response 1
+            ...
+            string response n
+        """
+        assert self._pamDeferred is not None        # ตรวจสแบว่าเคยมีการเรียกใช้ _pamConv
+        d: defer.Deferred = self._pamDeferred       # สร้างตัวแปร d เพื่อใช้แทนที่ _pamDeferred
+        self._pamDeferred = None                    # รีเซ็ต _pamDeferred เพื่อรอรับการตอบกลับใหม่ในอนาคต
+        resp: list
+
+        # จัดการกับ ข้อผิดพลาด (Error Handling)
+        try:
+            resp = []
+            numResps = struct.unpack(">L", packet[:4])[0]
+            packet = packet[4:]
+            while len(resp) < numResps:
+                response, packet = getNS(packet)
+                resp.append((response, 0))
+            if packet:
+                log.msg(f"PAM Response: {len(packet):d} extra bytes: {packet!r}")
+        except Exception as e:
+            d.errback(Failure(e))
         else:
-            return False
+            d.callback(resp)
