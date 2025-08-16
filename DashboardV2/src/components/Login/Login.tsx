@@ -253,6 +253,7 @@ const Login: React.FC = () => {
                         {/* </GlassSurface> */}
                     </div>
                     <h3 style={{ textAlign: 'center', fontWeight: '200' }}>server listening on : {UrlApi ? (UrlApi + "✨") : ("not found")}</h3>
+                    <p style={{ textAlign: 'center', fontWeight: '200', cursor: 'pointer' }} onClick={() => localStorage.removeItem("apiUrl")}>clear ip</p>
                 </>
             )}
         </>
