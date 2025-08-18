@@ -45,11 +45,25 @@ pip install Faker names
 sudo ./venv/bin/python3 GenUsers.py
 deactivate
 ```
+<img width="1043" height="634" alt="image" src="https://github.com/user-attachments/assets/9c762698-332e-4ae3-b6fe-6685e009ef69" />
+
+### ปรับเวลา Timestamp
+เข้ามาที่ path >> /home/cowrie
+```
+nano NewTimeStamp.py
+```
+* [NewTimeStamp.py](/Plugin/Cowrie/script/NewTimeStamp.py)
+```
+sudo NewTimeStamp.py
+```
+<img width="1040" height="640" alt="image" src="https://github.com/user-attachments/assets/8fc08c8d-708e-4a34-8db7-416173cc0426" />
+
 ### สร้าง fs.pickle ใหม่
 ```
 rm -f src/cowrie/data/fs.pickle
 ./bin/createfs -l honeyfs -o src/cowrie/data/fs.pickle
 ```
 ### ผลลัพธ์
-<img width="1019" height="875" alt="image" src="https://github.com/user-attachments/assets/397b1c73-8003-4598-a96b-ee90589fb986" />
+<img width="1047" height="756" alt="image" src="https://github.com/user-attachments/assets/cdadff52-3bd2-4378-85f2-3fbcb1ce4c09" />
+
 
