@@ -28,7 +28,7 @@ export const useCowrieSocket = (
             setIsLogin(true);
         }
 
-        const socket = io(apiUrl, { auth: { token } });
+        const socket = io(apiUrl, { auth: { token } ,transports: ['websocket'] ,withCredentials: true});
         socketRef.current = socket;
 
         socket.on("connect", () => {
@@ -78,7 +78,7 @@ export const useCanarySocket = (
             setIsLogin(true);
         }
 
-        const socket = io(apiUrl, { auth: { token } });
+        const socket = io(apiUrl, { auth: { token },transports: ['websocket'] ,withCredentials: true });
         socketRef.current = socket;
 
         socket.on("connect", () => {

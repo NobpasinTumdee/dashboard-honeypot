@@ -93,6 +93,14 @@ const Login: React.FC = () => {
             window.location.reload();
         }
     };
+    const handleUrlNgrok = (e: any) => {
+        e.preventDefault();
+        if (Url) {
+            localStorage.setItem("apiUrl", Url);
+            alert(`Url Ngrok saved: ${Url}`);
+            window.location.reload();
+        }
+    };
 
     return (
         <>
@@ -102,6 +110,7 @@ const Login: React.FC = () => {
                         <h1>login successful</h1>
                         <h3>{"listening on " + UrlApi || "Url not found"}</h3>
                         <div className='form-server-url-container'>
+                            <p>Localhost</p>
                             <form onSubmit={handleUrlapi} className="form-server-url">
                                 <input
                                     type="text"
@@ -118,6 +127,21 @@ const Login: React.FC = () => {
                                     onChange={(e) => setPort(e.target.value)}
                                     placeholder="port : 3000"
                                     required
+                                    className="input-url"
+                                />
+                                <button type="submit" className='btn-submit-url' >
+                                    Submit
+                                </button>
+                            </form>
+                            <p>Ngrok</p>
+                            <form onSubmit={handleUrlNgrok} className="form-server-url">
+                                <input
+                                    type="text"
+                                    value={Url}
+                                    onChange={(e) => setUrl(e.target.value)}
+                                    placeholder="Ngrok Url"
+                                    required
+                                    aria-label="input-text"
                                     className="input-url"
                                 />
                                 <button type="submit" className='btn-submit-url' >
@@ -148,6 +172,20 @@ const Login: React.FC = () => {
                                     onChange={(e) => setPort(e.target.value)}
                                     placeholder="port : 3000"
                                     required
+                                    className="input-url"
+                                />
+                                <button type="submit" className='btn-submit-url' >
+                                    Submit
+                                </button>
+                            </form>
+                            <form onSubmit={handleUrlNgrok} className="form-server-url">
+                                <input
+                                    type="text"
+                                    value={Url}
+                                    onChange={(e) => setUrl(e.target.value)}
+                                    placeholder="Ngrok Url"
+                                    required
+                                    aria-label="input-text"
                                     className="input-url"
                                 />
                                 <button type="submit" className='btn-submit-url' >
