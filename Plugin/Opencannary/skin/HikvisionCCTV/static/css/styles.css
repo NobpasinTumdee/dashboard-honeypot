@@ -45,7 +45,7 @@ body {
     justify-content: center;
     align-items: center;
     /* กำหนดรูปภาพพื้นหลังที่นี่ */
-    background-image: url('backgroundUpscaler.png'); 
+    background-image: url('background.png'); 
     /* background-size: cover; */
     background-repeat: no-repeat;
     background-position: center;
