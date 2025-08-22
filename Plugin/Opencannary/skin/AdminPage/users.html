@@ -14,15 +14,75 @@
         <ul class="nav">
             <li><a href="index.html">Dashboard</a></li>
             <li class="active"><a href="users.html">Users</a></li>
-            <li><a href="products.html">CCTV</a></li>
-            <li><a href="settings.html">Settings</a></li>
-            <li><a href="login.html">Logout</a></li>
+            <li><a href="cctv.html">CCTV</a></li>
+            <li><a href="../HikvisionCCTV/index.html">HikvisionCCTV</a></li>
         </ul>
     </div>
     <div class="main-content">
         <header>
             <h1>User Management</h1>
         </header>
+
+        <div class="employee-management-container">
+            <div class="header-section">
+                <div class="header-title">
+                    <h1>จัดการพนักงาน</h1>
+                    <p>ระบบจัดการข้อมูลและสิทธิ์การเข้าถึงของพนักงาน</p>
+                </div>
+                <button class="add-employee-btn">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M12 5C11.4477 5 11 5.44772 11 6V11H6C5.44772 11 5 11.4477 5 12C5 12.5523 5.44772 13 6 13H11V18C11 18.5523 11.4477 19 12 19C12.5523 19 13 18.5523 13 18V13H18C18.5523 13 19 12.5523 19 12C19 11.4477 18.5523 11 18 11H13V6C13 5.44772 12.5523 5 12 5Z"
+                            fill="white" />
+                    </svg>
+                    เพิ่มพนักงานใหม่
+                </button>
+            </div>
+
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <div class="stat-content">
+                        <div class="stat-title">พนักงานทั้งหมด</div>
+                        <div class="stat-value">1,250</div>
+                    </div>
+                    <div class="stat-icon">👥</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-content">
+                        <div class="stat-title">ใช้งานได้</div>
+                        <div class="stat-value" style="color: var(--success-color);">1,100</div>
+                    </div>
+                    <div class="stat-icon">🧑‍💻</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-content">
+                        <div class="stat-title">ระงับการใช้งาน</div>
+                        <div class="stat-value" style="color: var(--error-color);">24</div>
+                    </div>
+                    <div class="stat-icon">🚫</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-content">
+                        <div class="stat-title">เข้างานวันนี้</div>
+                        <div class="stat-value">542</div>
+                    </div>
+                    <div class="stat-icon">📅</div>
+                </div>
+            </div>
+
+            <div class="search-section">
+                <div class="search-bar-container">
+                    <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <path
+                            d="M21.71 20.29l-4.59-4.59A8.91 8.91 0 0 0 18 10a9 9 0 1 0-9 9 8.91 8.91 0 0 0 5.7-2.29l4.59 4.59a1 1 0 0 0 1.42 0 1 1 0 0 0 0-1.42zM4 10a6 6 0 1 1 6 6 6 6 0 0 1-6-6z" />
+                    </svg>
+                    <input type="text" class="search-input" placeholder="ค้นหาพนักงาน (ชื่อ, รหัส, แผนก...)">
+                </div>
+                <button class="filter-btn">กรองข้อมูล</button>
+                <button class="export-btn">ส่งออกรายงาน</button>
+            </div>
+        </div>
+
         <div class="table-container">
             <table>
                 <thead>
@@ -37,17 +97,703 @@
                 <tbody>
                     <tr>
                         <td>1</td>
-                        <td>John Doe</td>
-                        <td>john.doe@email.com</td>
-                        <td>Admin</td>
-                        <td>Active</td>
+                        <td>สมชาย ใจดี</td>
+                        <td>somchai.j@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
                     </tr>
                     <tr>
                         <td>2</td>
-                        <td>Jane Smith</td>
-                        <td>jane.smith@email.com</td>
+                        <td>สมหญิง รักไทย</td>
+                        <td>somying.r@email.com</td>
+                        <td>Admin</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td>ชูชัย มีสุข</td>
+                        <td>chuchai.m@email.com</td>
                         <td>User</td>
-                        <td>Active</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>4</td>
+                        <td>มาลี ศรีสุข</td>
+                        <td>malee.s@email.com</td>
+                        <td>User</td>
+                        <td>Inactive 🔴</td>
+                    </tr>
+                    <tr>
+                        <td>5</td>
+                        <td>บัญชา มั่นคง</td>
+                        <td>bancha.m@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>6</td>
+                        <td>นารีรัตน์ งามตา</td>
+                        <td>nareerat.n@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>7</td>
+                        <td>สุเทพ พิทักษ์</td>
+                        <td>suthep.p@email.com</td>
+                        <td>Admin</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>8</td>
+                        <td>อรุณี แจ่มใส</td>
+                        <td>arunee.j@email.com</td>
+                        <td>User</td>
+                        <td>Inactive 🔴</td>
+                    </tr>
+                    <tr>
+                        <td>9</td>
+                        <td>วิชัย เก่งกาจ</td>
+                        <td>vichai.k@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>10</td>
+                        <td>เพ็ญศรี ดีพร้อม</td>
+                        <td>pensri.d@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>11</td>
+                        <td>ธนวัฒน์ พรหมมา</td>
+                        <td>thanawat.p@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>12</td>
+                        <td>กมลวรรณ โสภา</td>
+                        <td>kamonwan.s@email.com</td>
+                        <td>User</td>
+                        <td>Inactive 🔴</td>
+                    </tr>
+                    <tr>
+                        <td>13</td>
+                        <td>อภิสิทธิ์ แก้วใจ</td>
+                        <td>apisit.k@email.com</td>
+                        <td>Admin</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>14</td>
+                        <td>นภัสสรณ์ รุ่งเรือง</td>
+                        <td>napassorn.r@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>15</td>
+                        <td>จักรพันธ์ ชื่นจิต</td>
+                        <td>jakapan.ch@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>16</td>
+                        <td>เบญจมาศ ทองดี</td>
+                        <td>benjamas.t@email.com</td>
+                        <td>User</td>
+                        <td>Inactive 🔴</td>
+                    </tr>
+                    <tr>
+                        <td>17</td>
+                        <td>วีระชัย พัฒนา</td>
+                        <td>veerachai.p@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>18</td>
+                        <td>ศรีสุดา ยิ่งยง</td>
+                        <td>srisuda.y@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>19</td>
+                        <td>วีระชัย พัฒนา</td>
+                        <td>pairoj.s@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>20</td>
+                        <td>กานดา เมตตา</td>
+                        <td>kanda.m@email.com</td>
+                        <td>Admin</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>21</td>
+                        <td>พงศกร เจริญ</td>
+                        <td>pongsakorn.j@email.com</td>
+                        <td>User</td>
+                        <td>Inactive 🔴</td>
+                    </tr>
+                    <tr>
+                        <td>22</td>
+                        <td>รุ่งนภา พิศาล</td>
+                        <td>rungnapa.p@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>23</td>
+                        <td>ชลิตา วรรณดี</td>
+                        <td>chalita.w@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>24</td>
+                        <td>ประวิตร ยั่งยืน</td>
+                        <td>prawit.y@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>25</td>
+                        <td>สุภาภรณ์ ชูใจ</td>
+                        <td>supaporn.c@email.com</td>
+                        <td>User</td>
+                        <td>Inactive 🔴</td>
+                    </tr>
+                    <tr>
+                        <td>26</td>
+                        <td>ธนาธิป สุขใจ</td>
+                        <td>thanatip.s@email.com</td>
+                        <td>Admin</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>27</td>
+                        <td>วรรณิดา อ่อนหวาน</td>
+                        <td>wannida.o@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>28</td>
+                        <td>อารีรัตน์ ดีจริง</td>
+                        <td>areerat.d@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>29</td>
+                        <td>กิตติชัย สำเริง</td>
+                        <td>kittichai.s@email.com</td>
+                        <td>User</td>
+                        <td>Inactive 🔴</td>
+                    </tr>
+                    <tr>
+                        <td>30</td>
+                        <td>มณีรัตน์ สุขเกษม</td>
+                        <td>maneerat.s@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>31</td>
+                        <td>ภาณุพงศ์ สว่าง</td>
+                        <td>panupong.s@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>32</td>
+                        <td>ปัทมา พรมงาม</td>
+                        <td>patama.p@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>33</td>
+                        <td>พงษ์ศักดิ์ ชัยชนะ</td>
+                        <td>pongsak.ch@email.com</td>
+                        <td>Admin</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>34</td>
+                        <td>วิภาดา รื่นรมย์</td>
+                        <td>wipada.r@email.com</td>
+                        <td>User</td>
+                        <td>Inactive 🔴</td>
+                    </tr>
+                    <tr>
+                        <td>35</td>
+                        <td>เกียรติศักดิ์ บุญนำ</td>
+                        <td>kiattisak.b@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>36</td>
+                        <td>ณัฐริกา แสงงาม</td>
+                        <td>nattarika.s@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>37</td>
+                        <td>อานนท์ อ่อนน้อม</td>
+                        <td>arnon.o@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>38</td>
+                        <td>จารุวรรณ ใฝ่ฝัน</td>
+                        <td>jaruwan.f@email.com</td>
+                        <td>User</td>
+                        <td>Inactive 🔴</td>
+                    </tr>
+                    <tr>
+                        <td>39</td>
+                        <td>ไชยา พัฒนา</td>
+                        <td>chaiya.p@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>40</td>
+                        <td>สุดารัตน์ ใจดี</td>
+                        <td>sudarat.j@email.com</td>
+                        <td>Admin</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>41</td>
+                        <td>วรพงษ์ ยินดี</td>
+                        <td>worapong.y@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>42</td>
+                        <td>จริยา วัฒนา</td>
+                        <td>jariya.w@email.com</td>
+                        <td>User</td>
+                        <td>Inactive 🔴</td>
+                    </tr>
+                    <tr>
+                        <td>43</td>
+                        <td>ชัยยงค์ สำเร็จ</td>
+                        <td>chaiyong.s@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>44</td>
+                        <td>จารุณี อดทน</td>
+                        <td>jarunee.a@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>45</td>
+                        <td>เฉลิมชัย รุ่งเรือง</td>
+                        <td>chaloemchai.r@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>46</td>
+                        <td>พรทิพย์ สุขสงบ</td>
+                        <td>porntip.s@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>47</td>
+                        <td>ประยุทธ์ สัจจะ</td>
+                        <td>prayut.s@email.com</td>
+                        <td>Admin</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>48</td>
+                        <td>ปรียานุช รุ่งอรุณ</td>
+                        <td>priyanuch.r@email.com</td>
+                        <td>User</td>
+                        <td>Inactive 🔴</td>
+                    </tr>
+                    <tr>
+                        <td>49</td>
+                        <td>กมลชัย เที่ยงตรง</td>
+                        <td>kamonchai.t@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>50</td>
+                        <td>ทัศนีย์ มีชัย</td>
+                        <td>tasanee.m@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>51</td>
+                        <td>ณรงค์ศักดิ์ สุจริต</td>
+                        <td>narongsak.s@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>52</td>
+                        <td>นงลักษณ์ พรมดี</td>
+                        <td>nonglak.p@email.com</td>
+                        <td>User</td>
+                        <td>Inactive 🔴</td>
+                    </tr>
+                    <tr>
+                        <td>53</td>
+                        <td>พิทักษ์ ปลอดภัย</td>
+                        <td>pitak.p@email.com</td>
+                        <td>Admin</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>54</td>
+                        <td>รัชนีวรรณ สดใส</td>
+                        <td>rataneewan.s@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>55</td>
+                        <td>วีรวัฒน์ พากเพียร</td>
+                        <td>veerawat.p@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>56</td>
+                        <td>ศิริพร อ่อนโยน</td>
+                        <td>siriporn.o@email.com</td>
+                        <td>User</td>
+                        <td>Inactive 🔴</td>
+                    </tr>
+                    <tr>
+                        <td>57</td>
+                        <td>เอกชัย สมบูรณ์</td>
+                        <td>ekachai.s@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>58</td>
+                        <td>เยาวลักษณ์ เพ็ชร</td>
+                        <td>yaowalak.p@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>59</td>
+                        <td>ประเสริฐ อุดม</td>
+                        <td>prasert.u@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>60</td>
+                        <td>อภิญญา วงศ์สวัสดิ์</td>
+                        <td>apinya.w@email.com</td>
+                        <td>Admin</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>61</td>
+                        <td>ชนัญชิดา ดีงาม</td>
+                        <td>chananchida.d@email.com</td>
+                        <td>User</td>
+                        <td>Inactive 🔴</td>
+                    </tr>
+                    <tr>
+                        <td>62</td>
+                        <td>วัฒนา สุจริต</td>
+                        <td>wattana.s@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>63</td>
+                        <td>อัจฉรา อิ่มใจ</td>
+                        <td>atchara.i@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>64</td>
+                        <td>ดำรงศักดิ์ ศรีสม</td>
+                        <td>damrongsak.s@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>65</td>
+                        <td>กัญญารัตน์ รุ่งอรุณ</td>
+                        <td>kanyarat.r@email.com</td>
+                        <td>User</td>
+                        <td>Inactive 🔴</td>
+                    </tr>
+                    <tr>
+                        <td>66</td>
+                        <td>วสันต์ ธรรมดา</td>
+                        <td>wasan.t@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>67</td>
+                        <td>สุรีรัตน์ สมบัติ</td>
+                        <td>sureerat.s@email.com</td>
+                        <td>Admin</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>68</td>
+                        <td>พินิจ พากเพียร</td>
+                        <td>pinit.p@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>69</td>
+                        <td>นันทิยา ดีจริง</td>
+                        <td>nantiya.d@email.com</td>
+                        <td>User</td>
+                        <td>Inactive 🔴</td>
+                    </tr>
+                    <tr>
+                        <td>70</td>
+                        <td>สมบัติ อุดม</td>
+                        <td>sombat.u@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>71</td>
+                        <td>พรรณี งามตา</td>
+                        <td>pannee.n@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>72</td>
+                        <td>วิศิษฎ์ มั่นคง</td>
+                        <td>wisit.m@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>73</td>
+                        <td>ภัทรินทร์ มีสุข</td>
+                        <td>pattarin.m@email.com</td>
+                        <td>User</td>
+                        <td>Inactive 🔴</td>
+                    </tr>
+                    <tr>
+                        <td>74</td>
+                        <td>อธิปัตย์ สุขยิ่ง</td>
+                        <td>athipat.s@email.com</td>
+                        <td>Admin</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>75</td>
+                        <td>วริศรา ใจงาม</td>
+                        <td>warisara.j@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>76</td>
+                        <td>สุรชัย แสงทอง</td>
+                        <td>surachai.s@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>77</td>
+                        <td>กัญญ์ณัชชา ดีงาม</td>
+                        <td>kannatcha.d@email.com</td>
+                        <td>User</td>
+                        <td>Inactive 🔴</td>
+                    </tr>
+                    <tr>
+                        <td>78</td>
+                        <td>ศิริชัย พูนสุข</td>
+                        <td>sirichai.p@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>79</td>
+                        <td>สุดาพร แก้วใส</td>
+                        <td>sudaporn.k@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>80</td>
+                        <td>ชัชวาลย์ ทองสุข</td>
+                        <td>chatchawan.t@email.com</td>
+                        <td>Admin</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>81</td>
+                        <td>อัจฉริยะ พลอยแสง</td>
+                        <td>atchariya.p@email.com</td>
+                        <td>User</td>
+                        <td>Inactive 🔴</td>
+                    </tr>
+                    <tr>
+                        <td>82</td>
+                        <td>วรัญญา มั่งมี</td>
+                        <td>waranya.m@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>83</td>
+                        <td>เกศรา งามวิไล</td>
+                        <td>ketsara.ng@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>84</td>
+                        <td>สุริยา รักสงบ</td>
+                        <td>suriya.r@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>85</td>
+                        <td>กิตติพงษ์ ใจเย็น</td>
+                        <td>kittipong.j@email.com</td>
+                        <td>User</td>
+                        <td>Inactive 🔴</td>
+                    </tr>
+                    <tr>
+                        <td>86</td>
+                        <td>มธุรส สุขยิ่ง</td>
+                        <td>maturos.s@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>87</td>
+                        <td>ธิติชัย มุ่งมั่น</td>
+                        <td>thitichai.m@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>88</td>
+                        <td>อรัญญา ชื่นชม</td>
+                        <td>aranya.ch@email.com</td>
+                        <td>User</td>
+                        <td>Inactive 🔴</td>
+                    </tr>
+                    <tr>
+                        <td>89</td>
+                        <td>กิตติศักดิ์ พลอยแสง</td>
+                        <td>kittisak.p@email.com</td>
+                        <td>Admin</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>90</td>
+                        <td>วราภรณ์ วัฒนา</td>
+                        <td>waraporn.w@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>91</td>
+                        <td>ณัฐวุฒิ ใจดี</td>
+                        <td>nattawut.j@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>92</td>
+                        <td>ปิยะนุช สุขใจ</td>
+                        <td>piyanuch.s@email.com</td>
+                        <td>User</td>
+                        <td>Inactive 🔴</td>
+                    </tr>
+                    <tr>
+                        <td>93</td>
+                        <td>พรชัย ดีเลิศ</td>
+                        <td>pornchai.d@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>94</td>
+                        <td>กานต์ธีรา เมตตา</td>
+                        <td>kanthira.m@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>95</td>
+                        <td>ภาคภูมิ แสงสว่าง</td>
+                        <td>pakpoom.s@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>96</td>
+                        <td>รัตนาภรณ์ มีทรัพย์</td>
+                        <td>rattanaporn.m@email.com</td>
+                        <td>User</td>
+                        <td>Inactive 🔴</td>
+                    </tr>
+                    <tr>
+                        <td>97</td>
+                        <td>วุฒิชัย รุ่งเรือง</td>
+                        <td>wuttichai.r@email.com</td>
+                        <td>Admin</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>98</td>
+                        <td>สุภาพร ใจสะอาด</td>
+                        <td>supaporn.j@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>99</td>
+                        <td>ธนภัทร งามพร้อม</td>
+                        <td>thanapat.n@email.com</td>
+                        <td>User</td>
+                        <td>Active 🟢</td>
+                    </tr>
+                    <tr>
+                        <td>100</td>
+                        <td>ชนกานต์ พรหมมา</td>
+                        <td>chanokarn.p@email.com</td>
+                        <td>User</td>
+                        <td>Inactive 🔴</td>
                     </tr>
                 </tbody>
             </table>

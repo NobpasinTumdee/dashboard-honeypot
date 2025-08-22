@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CCTV</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600&display=swap"
+        rel="stylesheet">
+</head>
+
+<body>
+    <div class="sidebar">
+        <div class="logo">Admin Panel</div>
+        <ul class="nav">
+            <li><a href="index.html">Dashboard</a></li>
+            <li><a href="users.html">Users</a></li>
+            <li class="active"><a href="cctv.html">CCTV</a></li>
+            <li><a href="../HikvisionCCTV/index.html">HikvisionCCTV</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+
+
+        <div class="content-container">
+
+            <div class="top-nav">
+                <div class="page-title-section">
+                    <h1>ระบบกล้องวงจรปิด</h1>
+                    <p>ระบบจัดการการมอนิเตอร์</p>
+                </div>
+                <div class="search-and-user">
+                    <div class="search-box">
+                        <input type="text" placeholder="ค้นหา...">
+                        <svg class="search-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#999">
+                            <path
+                                d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 5L20.29 19l-5-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z" />
+                        </svg>
+                    </div>
+                    <svg class="notification-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#666">
+                        <path
+                            d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.93 6 11v5l-2 2v1h16v-1l-2-2z" />
+                    </svg>
+                </div>
+            </div>
+
+            <div class="dashboard-content">
+
+                <div class="cctv-control-header">
+                    <div class="control-title">
+                        <h2>กล้องวงจรปิด</h2>
+                        <h3>ควบคุมระบบกล้องวงจรปิด</h3>
+                    </div>
+                    <div class="control-actions">
+                        <button class="action-btn play">▶ เล่นทั้งหมด</button>
+                        <button class="action-btn stop">⏸ หยุดชั่วคราว</button>
+                        <button class="action-btn refresh">⟳ รีเฟรช</button>
+                    </div>
+                    <div class="status-summary">
+                        <span class="status-item online">ออนไลน์: 5 กล้อง</span>
+                        <span class="status-item offline">ออฟไลน์: 1 กล้อง</span>
+                        <span class="status-item recording">กำลังบันทึก: 4 กล้อง</span>
+                    </div>
+                </div>
+
+                <div class="video-grid">
+
+                    <div class="video-card large">
+                        <div class="video-header">
+                            <span class="cam-name">CAM-001 - ทางเข้าหลัก</span>
+                            <span class="quality">1080p</span>
+                            <span class="status-dot online"></span>
+                        </div>
+                        <div class="video-player">
+                            <div class="live-status">
+                                <span class="dot"></span> LIVE
+                            </div>
+                            <div class="timestamp">18:24:48</div>
+                            <div class="rec-status">
+                                <span class="dot"></span> REC
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="video-card">
+                        <div class="video-header">
+                            <span class="cam-name">CAM-002 - ลานจอดรถ</span>
+                            <span class="quality">720p</span>
+                            <span class="status-dot online"></span>
+                        </div>
+                        <div class="video-player">
+                            <div class="live-status">
+                                <span class="dot"></span> LIVE
+                            </div>
+                            <div class="timestamp">18:24:48</div>
+                            <div class="rec-status">
+                                <span class="dot"></span> REC
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="video-card">
+                        <div class="video-header">
+                            <span class="cam-name">CAM-003 - ทางเดินชั้น 2</span>
+                            <span class="status-dot offline"></span>
+                        </div>
+                        <div class="video-player">
+                            <div class="offline-placeholder">
+                                <span class="status-dot offline"></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="video-card placeholder">
+                        <div class="offline-placeholder">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#d9d9d9">
+                                <path
+                                    d="M18 10v4h-2a2 2 0 0 1-2-2h-2v2a2 2 0 0 1-2-2H8v-4a2 2 0 0 1 2-2h2v-2a2 2 0 0 1 2-2h2v2a2 2 0 0 1 2 2zM12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" />
+                            </svg>
+                            <p>กล้องออฟไลน์</p>
+                        </div>
+                        <div class="video-footer">
+                            <button>+ เพิ่มกล้องใหม่</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
