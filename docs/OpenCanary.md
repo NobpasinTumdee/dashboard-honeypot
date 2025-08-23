@@ -7,6 +7,7 @@ sudo apt-get install python3-dev python3-pip python3-virtualenv python3-venv pyt
 ```
 ## สร้าง Python Virtual Environment
 ```
+pwd -> /home/cpe27
 virtualenv env/
 source env/bin/activate
 ```
@@ -27,15 +28,15 @@ opencanaryd --copyconfig
 ```
 
 ## แก้ไข config
-"http.enabled": true,
-"https.enabled": true,
-"ftp.enabled": true,
+"http.enabled": true,    
+"https.enabled": true,    
+"ftp.enabled": true,    
 ```
 sudo nano /etc/opencanaryd/opencanary.conf
 ```
 # รัน OpenCanary
 ```
-. Opencanary_env/bin/activate
+. env/bin/activate
 opencanaryd --start --uid=nobody --gid=nogroup
 ```
 ## เปิดไฟล์ log
@@ -45,9 +46,15 @@ nano opencanary.log
 ```
 
 ## ปิด Honeypot
+(1)
+```
+opencanaryd --stop
+```
+(2)
 ```
 ps aux | grep opencanaryd
 sudo kill #ตามด้วย pid มักเป็นบรรทัดแรก
 ```
+
 
 
