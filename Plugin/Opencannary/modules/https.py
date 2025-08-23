@@ -1,6 +1,7 @@
 import os
 from datetime import datetime, timedelta
 from pathlib import Path
+from OpenSSL import SSL
 
 from twisted.web.resource import Resource
 from opencanary.modules.http import StaticNoDirListing
@@ -145,14 +146,21 @@ class CanaryHTTPS(CanaryService):
         wrapped = EncodingResourceWrapper(root, [GzipEncoderFactory()])
         site = Site(wrapped)
 
+        # ---- Force TLSv1.2 only ----
+        ctx_factory = DefaultOpenSSLContextFactory(
+            privateKeyFileName=str(self.key_path),
+            certificateFileName=str(self.certificate_path),
+        )
+        ctx = ctx_factory.getContext()
+
+        # ปิด TLS เวอร์ชันอื่นทั้งหมด ยกเว้น TLSv1.2
+        ctx.set_options(SSL.OP_NO_TLSv1)      # ปิด TLSv1.0
+        ctx.set_options(SSL.OP_NO_TLSv1_1)    # ปิด TLSv1.1
+        ctx.set_options(SSL.OP_NO_TLSv1_3)    # ปิด TLSv1.3
+
         return internet.SSLServer(
             self.port,
             site,
-            DefaultOpenSSLContextFactory(
-                privateKeyFileName=self.key_path,
-                certificateFileName=self.certificate_path,
-            ),
+            ctx_factory,
             interface=self.listen_addr,
         )
-
-
