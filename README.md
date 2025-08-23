@@ -1,4 +1,5 @@
 # Table of Contents
+* [Raspberry Pi Setup](/docs/raspberry_pi_setup.md)
 * [Get Started](/docs/Get_Started.md)
 ### Cowrie
 * [Cowrie Installation](/docs/Cowrie.md)
