@@ -1,7 +1,7 @@
 # OpenSSL library installation for https(TLSv1.2) config module
 ```bash
-pip install pyOpenSSL
+source venv/bin/activate
 ```
 ```bash
-source venv/bin/activate
+pip install pyOpenSSL
 ```
