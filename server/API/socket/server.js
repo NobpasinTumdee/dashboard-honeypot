@@ -18,23 +18,23 @@ app.use(express.json()); // For read JSON
 // Import Routes
 import authRoute from "./routes/auth.js";
 import dataRoute from './routes/data.js';
-import {verifyToken} from './middlewares/verifyToken.js';
+import { verifyToken } from './middlewares/verifyToken.js';
 
 // API Routes
 app.use("/auth", authRoute);
-app.use("/get", verifyToken, dataRoute); 
+app.use("/get", verifyToken, dataRoute);
 app.get('/', (req, res) => {
-    res.send('API Server is running!');
+  res.send('API Server is running!');
 });
 
 // web socket ================================================================
 
 const server = http.createServer(app); // ใช้ app ของ Express ในการสร้าง HTTP server
 const io = new Server(server, {
-    cors: {
-        origin: '*',
-        methods: ['GET', 'POST']
-    }
+  cors: {
+    origin: '*',
+    methods: ['GET', 'POST']
+  }
 });
 
 
@@ -94,6 +94,19 @@ io.on('connection', (socket) => {
     }
   });
 
+
+  socket.on('requestlogs', async () => {
+    try {
+      const logs = await prisma.HttpsPackets.findMany({
+        orderBy: { id: 'desc' },
+      });
+      socket.emit('Updatelogs', logs);
+    } catch (error) {
+      console.error('Error fetching honeypot logs via WebSocket:', error);
+    }
+  });
+
+
   // ส่งข้อมูล Real-time
   const interval = setInterval(async () => {
     try {
@@ -119,6 +132,16 @@ io.on('connection', (socket) => {
     } catch (error) {
       console.error('Error fetching real-time honeypot logs opencanary:', error);
     }
+
+    try {
+      const logs = await prisma.HttpsPackets.findMany({
+        orderBy: { id: 'desc' },
+      });
+      socket.emit('real-time', logs);
+    } catch (error) {
+      console.error('Error fetching real-time honeypot logs cowrie:', error);
+    }
+
   }, 5000);
 
   socket.on('disconnect', () => {
@@ -129,6 +152,6 @@ io.on('connection', (socket) => {
 // web socket ================================================================
 
 server.listen(port, () => {
-    console.log(`🌐 Server running at http://localhost:${port}`);
-    console.log(`🚀 Server zerotier running at http://172.29.26.44:${port}`);
+  console.log(`🌐 Server running at http://localhost:${port}`);
+  console.log(`🚀 Server zerotier running at http://172.29.26.44:${port}`);
 });
