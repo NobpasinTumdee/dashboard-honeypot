@@ -1,120 +1,115 @@
-import { useEffect, useState } from "react";
-import DateTimeNow from "../DateTimeNow";
-import type { AlertItem } from "../Cowrie";
-import '../../Styles/Dashborad.css'
+import React, { useEffect, useState } from 'react';
+import { io } from 'socket.io-client';
 
-import Aos from 'aos';
-import 'aos/dist/aos.css';
-import { useCowrieSocket } from "./controller";
+// กำหนด type ให้กับข้อมูลที่ได้รับมา
+interface HttpsPacket {
+    id: number;
+    timestamp: string;
+    src_ip: string;
+    src_port: string;
+    dst_ip: string;
+    dst_port: string;
+    method: string;
+    request_uri: string;
+    userAgent: string;
+}
 
-const SocketPage = () => {
-    const [data, setData] = useState<AlertItem[]>([]);
+const SOCKET_SERVER_URL = 'http://localhost:3100'; // เปลี่ยน URL ให้ตรงกับ server ของคุณ
+
+const LogDisplay = () => {
+    const [logs, setLogs] = useState<HttpsPacket[]>([]);
     const [isConnected, setIsConnected] = useState(false);
-    const [isLogin, setIsLogin] = useState(false);
 
-    // Custom hook to manage WebSocket connection
-    useCowrieSocket(setData, setIsConnected, setIsLogin);
+    useEffect(() => {
+        // สร้างการเชื่อมต่อ WebSocket
+        const socket = io(SOCKET_SERVER_URL);
 
-    const [currentPage, setCurrentPage] = useState(1);
-    const ITEMS_PER_PAGE = 10;
+        // จัดการเหตุการณ์เมื่อเชื่อมต่อสำเร็จ
+        socket.on('connect', () => {
+            console.log('🟢 Connected to WebSocket server');
+            setIsConnected(true);
+            // ส่ง event 'requestlogs' เพื่อขอ logs ทั้งหมดในครั้งแรก
+            socket.emit('requestlogs');
+        });
 
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    const currentItems = data.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-    const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE);
+        // จัดการเหตุการณ์เมื่อหลุดการเชื่อมต่อ
+        socket.on('disconnect', () => {
+            console.log('🔴 Disconnected from WebSocket server');
+            setIsConnected(false);
+        });
 
-    useEffect(() => { Aos.init({ duration: 1000, once: true, }); }, []);
+        // รับ logs ทั้งหมดเมื่อมีการเรียก 'Updatelogs'
+        socket.on('Updatelogs', (newLogs: HttpsPacket[]) => {
+            console.log('Received initial logs:', newLogs.length);
+            setLogs(newLogs);
+        });
+
+        // รับ logs แบบ real-time เมื่อมีการเรียก 'real-time'
+        socket.on('real-time', (newLogs: HttpsPacket[]) => {
+            console.log('Received real-time logs:', newLogs.length);
+            setLogs(newLogs); // อัปเดต state ด้วย logs ใหม่
+        });
+
+        // Cleanup function: ปิดการเชื่อมต่อเมื่อ component ถูก unmount
+        return () => {
+            socket.disconnect();
+        };
+    }, []);
 
     return (
-        <>
-            <h2 style={{ fontWeight: "900", textAlign: "center" }} data-aos="fade-down">
-                WebSocket cowrie test
-            </h2>
-            <p style={{ fontWeight: "400", textAlign: "center" }} data-aos="fade-down">
-                WebSocket connection status:{" "}
-                {isConnected ? "🟢 Connected" : "🔴 Disconnected"}
-            </p>
-            <div data-aos="flip-left">
-                <DateTimeNow />
-            </div>
+        <div style={{ padding: '20px' }}>
+            <h1>Packets Logs</h1>
+            <p>Connection Status: <span style={{ color: isConnected ? 'green' : 'red', fontWeight: 'bold' }}>{isConnected ? 'Connected' : 'Disconnected'}</span></p>
 
-            {isLogin ? (
-                <>
-                    <div className="table-container" data-aos="fade-up">
-                        <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                            <thead>
-                                <tr style={{ backdropFilter: "blur(10px)" }}>
-                                    <th className="thStyle">#</th>
-                                    <th className="thStyle">Timestamp</th>
-                                    <th className="thStyle">Event</th>
-                                    <th className="thStyle">Message</th>
-                                    <th className="thStyle">Protocol</th>
-                                    <th className="thStyle">Source IP</th>
-                                    <th className="thStyle">Source Port</th>
-                                    <th className="thStyle">Dst IP</th>
-                                    <th className="thStyle">Dst Port</th>
-                                    <th className="thStyle">username</th>
-                                    <th className="thStyle">password</th>
-                                    <th className="thStyle">input</th>
-                                    <th className="thStyle">command</th>
-                                    <th className="thStyle">Session</th>
-                                    <th className="thStyle">Duration</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {currentItems.map((item, index) => (
-                                    <tr key={item.id || index}>
-                                        <td className="tdStyle">{startIndex + index + 1}</td>
-                                        <td className="tdStyle">{item.timestamp || <p className="tdStyle-null">null</p>}</td>
-                                        <td className="tdStyle">{item.eventid || <p className="tdStyle-null">null</p>}</td>
-                                        <td className="tdStyleMessage">{item.message || <p className="tdStyle-null">null</p>}</td>
-                                        <td className="tdStyle">{item.protocol || <p className="tdStyle-null">null</p>}</td>
-                                        <td className="tdStyle">{item.src_ip || <p className="tdStyle-null">null</p>}</td>
-                                        <td className="tdStyle">{item.src_port || <p className="tdStyle-null">null</p>}</td>
-                                        <td className="tdStyle">{item.dst_ip || <p className="tdStyle-null">null</p>}</td>
-                                        <td className="tdStyle">{item.dst_port || <p className="tdStyle-null">null</p>}</td>
-                                        <td className="tdStyle">{item.username || <p className="tdStyle-null">null</p>}</td>
-                                        <td className="tdStyle">{item.password || <p className="tdStyle-null">null</p>}</td>
-                                        <td className="tdStyle">{item.input || <p className="tdStyle-null">null</p>}</td>
-                                        <td className="tdStyle">{item.command || <p className="tdStyle-null">null</p>}</td>
-                                        <td className="tdStyle">{item.session || <p className="tdStyle-null">null</p>}</td>
-                                        <td className="tdStyle">{item.duration || <p className="tdStyle-null">null</p>}</td>
-                                    </tr>
-                                ))}
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div style={{ margin: "2% 0 10%", textAlign: "center" }} data-aos="fade-down">
-                        <button
-                            onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                            disabled={currentPage === 1}
-                            className="pagination-button"
-                        >
-                            ◀ Prev
-                        </button>
-                        <span>Page {currentPage} of {totalPages}</span>
-                        <button
-                            onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                            disabled={currentPage === totalPages}
-                            className="pagination-button"
-                        >
-                            Next ▶
-                        </button>
-                    </div>
-                </>
+            {/* แสดง logs ในรูปแบบตาราง */}
+            {logs.length > 0 ? (
+                <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '20px' }}>
+                    <thead>
+                        <tr style={{ backgroundColor: '#f2f2f2' }}>
+                            <th style={tableHeaderStyle}>ID</th>
+                            <th style={tableHeaderStyle}>Timestamp</th>
+                            <th style={tableHeaderStyle}>Source IP</th>
+                            <th style={tableHeaderStyle}>Source Port</th>
+                            <th style={tableHeaderStyle}>Destination IP</th>
+                            <th style={tableHeaderStyle}>Destination Port</th>
+                            <th style={tableHeaderStyle}>Method</th>
+                            <th style={tableHeaderStyle}>Request URI</th>
+                            <th style={tableHeaderStyle}>User Agent</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {logs.map((log) => (
+                            <tr key={log.id}>
+                                <td style={tableCellStyle}>{log.id}</td>
+                                <td style={tableCellStyle}>{new Date(log.timestamp).toLocaleString()}</td>
+                                <td style={tableCellStyle}>{log.src_ip}</td>
+                                <td style={tableCellStyle}>{log.src_port}</td>
+                                <td style={tableCellStyle}>{log.dst_ip}</td>
+                                <td style={tableCellStyle}>{log.dst_port}</td>
+                                <td style={tableCellStyle}>{log.method}</td>
+                                <td style={tableCellStyle}>{log.request_uri}</td>
+                                <td style={tableCellStyle}>{log.userAgent}</td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
             ) : (
-                <>
-                    <p style={{ textAlign: "center", color: "red", fontWeight: "bold", fontSize: "3rem" }} data-aos="fade-up">
-                        Please login to view the data.
-                    </p>
-                </>
+                <p>Waiting for logs...</p>
             )}
-
-
-
-
-        </>
+        </div>
     );
 };
 
-export default SocketPage;
+// Style สำหรับตาราง
+const tableHeaderStyle: React.CSSProperties = {
+    border: '1px solid #ddd',
+    padding: '8px',
+    textAlign: 'left',
+};
+
+const tableCellStyle: React.CSSProperties = {
+    border: '1px solid #ddd',
+    padding: '8px',
+};
+
+export default LogDisplay;
