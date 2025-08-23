@@ -52,3 +52,15 @@ model users {
   updatedAt DateTime? @default(now())
   deletedAt DateTime?
 }
+
+model HttpsPackets {
+  id          Int    @id @unique(map: "sqlite_autoindex_HttpsPackets_1") @default(autoincrement())
+  timestamp   String
+  src_ip      String
+  src_port    String
+  dst_ip      String
+  dst_port    String
+  method      String
+  request_uri String
+  userAgent   String
+}
