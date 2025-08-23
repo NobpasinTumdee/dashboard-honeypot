@@ -5,6 +5,8 @@
 sudo apt update
 sudo apt upgrade
 sudo apt-get install git python3-pip python3-venv libssl-dev libffi-dev build-essential libpython3-dev python3-minimal authbind
+sudo apt install net-tools
+sudo apt-get install authbind
 ```
 
 ## Step 2: สร้างผู้ใช้สำหรับ Cowrie
@@ -30,11 +32,15 @@ source cowrie-env/bin/activate
 ```
 
 ## Step 5: ติดตั้ง package ที่ใช้ใน environment
-```bash
+```
 python -m pip install --upgrade pip
 python -m pip install --upgrade -r requirements.txt
 ```
-
+```
+pwd --> /home/cowrie/cowrie/etc
+cp cowrie.cfg.dist cowrie.cfg
+cp userdb.example userdb.txt
+```
 ## Step 6: เปิดการใช้งาน Cowrie
 ตรวจสอบให้แน่ใจว่า Services ที่ต้องการดักจับนั้นเปิดอยู่ cowrie/etc/cowrie.cfg  
   [telnet] enabled = true    
