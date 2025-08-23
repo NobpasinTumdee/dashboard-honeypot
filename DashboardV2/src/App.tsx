@@ -7,11 +7,10 @@ import OpenCanary from './components/OpenCanary'
 import ChatBot from './components/ChatBot';
 import Login from './components/Login/Login';
 import FuzzyText from './components/Login/FuzzyText';
-// import SocketPage from './components/web-socket/Socket';
 import Doclayout from './components/documentation/Doclayout';
 import DocumentPage from './components/documentation/DocumentPage';
 import DocumentCowrie from './components/documentation/DocumentCowrie';
-import LogDisplay from './components/web-socket/Socket';
+import LogDisplay from './components/web-socket/Packet';
 
 const router = createBrowserRouter([
   {

@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { io, Socket } from "socket.io-client";
 import type { AlertItem } from "../Cowrie";
 import type { AlertItemCanary } from "../OpenCanary";
-import type { HttpsPacket } from "./Socket";
+import type { HttpsPacket } from "./Packet";
 
 const Url = localStorage.getItem("apiUrl");
 

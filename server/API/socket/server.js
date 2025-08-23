@@ -67,6 +67,7 @@ io.on('connection', (socket) => {
     try {
       const logs = await prisma.honeypot_logs.findMany({
         orderBy: { id: 'desc' },
+        take: 1000,
         // select: {
         //   id: true, timestamp: true, eventid: true, message: true,protocol: true, src_ip: true, src_port: true,username: true, password: true, command: true
         // }
@@ -83,6 +84,7 @@ io.on('connection', (socket) => {
     try {
       const logs = await prisma.opencanary_logs.findMany({
         orderBy: { id: 'desc' },
+        take: 1000,
         // select: {
         //   id: true, local_time: true, src_host: true, dst_host: true,logdata_msg_logdata: true, logtype: true, full_json_line: true
         // }
@@ -99,6 +101,7 @@ io.on('connection', (socket) => {
     try {
       const logs = await prisma.HttpsPackets.findMany({
         orderBy: { id: 'desc' },
+        take: 1000,
       });
       socket.emit('Updatelogs', logs);
     } catch (error) {
@@ -112,6 +115,7 @@ io.on('connection', (socket) => {
     try {
       const logs = await prisma.honeypot_logs.findMany({
         orderBy: { id: 'desc' },
+        take: 1000,
         // select: {
         //   id: true, timestamp: true, eventid: true, message: true,src_ip: true, username: true, password: true
         // }
@@ -124,6 +128,7 @@ io.on('connection', (socket) => {
     try {
       const logs = await prisma.opencanary_logs.findMany({
         orderBy: { id: 'desc' },
+        take: 1000,
         // select: {
         //   id: true, local_time: true, src_host: true, dst_host: true,logdata_msg_logdata: true, logtype: true, full_json_line: true
         // }
@@ -136,6 +141,7 @@ io.on('connection', (socket) => {
     try {
       const logs = await prisma.HttpsPackets.findMany({
         orderBy: { id: 'desc' },
+        take: 1000,
       });
       socket.emit('real-time', logs);
     } catch (error) {
