@@ -33,22 +33,32 @@ def normalize(val):
         return val.decode(errors="ignore").strip()
     return str(val).strip()
 
-# ฟังก์ชันบันทึก username และ password
+
 def write_user(filename, username, password):
     def to_str(val):
         return val.decode() if isinstance(val, bytes) else str(val)
+
+    u, p = to_str(username), to_str(password)
+
     try:
         with open(filename, 'r') as f:
             content = f.read().strip()
             if content:
                 users = ast.literal_eval(content)
+                # เผื่อกรณีไฟล์ไม่ใช่ list
+                if not isinstance(users, list):
+                    users = []
             else:
                 users = []
     except (FileNotFoundError, SyntaxError, ValueError):
         users = []
-    users.append((to_str(username), to_str(password)))
-    with open(filename, 'w') as f:
-        f.write(str(users))
+
+    # --- ป้องกันการซ้ำ ---
+    if (u, p) not in users:
+        users.append((u, p))
+        with open(filename, 'w') as f:
+            f.write(str(users))
+
 
 # ฟังก์ชัน ตรวจสอบ password เก่า
 def password_exists(filename, password):
