@@ -4,8 +4,8 @@ import sqlite3
 from datetime import datetime
 
 interface = 'ztmosdoimw'
-csv_file = 'http_requests.csv'
-db_file = 'http_requests.db'
+csv_file = 'http_packets.csv'
+db_file = 'http_packets.db'
 
 # -----------------------------
 # สร้าง/เชื่อมต่อฐานข้อมูล SQLite
