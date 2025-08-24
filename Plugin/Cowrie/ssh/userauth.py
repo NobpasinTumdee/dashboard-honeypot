@@ -4,29 +4,52 @@
 from __future__ import annotations
 
 import struct
-import random # เพิ่มการ import random
+import random
 from typing import Any
-
 from twisted.conch import error
 from twisted.conch.interfaces import IConchUser
 from twisted.conch.ssh import userauth
 from twisted.conch.ssh.common import NS, getNS
 from twisted.conch.ssh.transport import DISCONNECT_PROTOCOL_ERROR
-from twisted.internet import defer
+from twisted.internet import reactor, defer
+from twisted.cred import error
 from twisted.python.failure import Failure
 from twisted.python import log
-
 from cowrie.core import credentials
 from cowrie.core.config import CowrieConfig
+import ast
+import os
+
+
+USERS_FILE = "/home/cowrie/users.txt"
+
+# โหลด users.txt
+def load_users_txt(path=USERS_FILE):
+    users = []
+    try:
+        with open(path, "r") as f:
+            data = f.read().strip()
+            if data:
+                users = ast.literal_eval(data)  # แปลงจาก string → list
+    except Exception as e:
+        print(f"[!] Error loading users.txt: {e}")
+    return users
+
+
+def append_user_txt(username: str, password: str, path=USERS_FILE):
+    users = load_users_txt(path)
+    if (username, password) not in users:
+        users.append((username, password))
+        try:
+            with open(path, "w") as f:
+                f.write(str(users))
+            log.msg(f"Appended new credentials to {path}: ({username}, {password})")
+        except Exception as e:
+            log.msg(f"Cannot append to {path}: {e}")
 
 
 
-import json
-def load_json(path='users.json'):
-    with open(path, 'r') as f:
-        data = json.load(f)
-    return [(entry['username'], entry['password']) for entry in data]
-from user_loader import load_json
+
 
 class HoneyPotSSHUserAuthServer(userauth.SSHUserAuthServer):
     """
@@ -115,44 +138,44 @@ class HoneyPotSSHUserAuthServer(userauth.SSHUserAuthServer):
 
     # การ login ด้วยชื่อผู้ใช้และรหัสผ่าน เพิ่มการตรวจสอบจำนวนครั้งที่ล็อกอินสำเร็จ
     def auth_password(self, packet: bytes) -> Any:
-        """
-        Overridden to pass src_ip to credentials.UsernamePasswordIP
-        and enforce login attempts based on a random number.
-        """
-
-        # ดึง username/password 
         password = getNS(packet[1:])[0]
         password_str = password.decode() if isinstance(password, bytes) else str(password)
         username_str = self.user.decode() if isinstance(self.user, bytes) else str(self.user)
 
-        
-        # อ่าน users
-        try:
-            users = load_json('/home/cowrie/users.json')
-        except Exception as e:
-            log.msg(f"Cannot read users.json: {e}")
-            users = []
+        users = load_users_txt(USERS_FILE)
 
+        # ---- ฟังก์ชันบันทึก credential ใหม่ ----
+        def save_creds():
+            if (username_str, password_str) not in users:
+                users.append((username_str, password_str))
+                try:
+                    with open(USERS_FILE, "w") as f:
+                        f.write(str(users))
+                    log.msg(f"Appended new credentials to users.txt: ({username_str}, {password_str})")
+                except Exception as e:
+                    log.msg(f"Cannot append to users.txt: {e}")
+        # ---------------------------------------
 
-        # ถ้า username/password มีในระบบ
-        
+        # ถ้ามี username/password ตรง
         if (username_str, password_str) in users:
             log.msg(f"Login allowed: ({username_str}, {password_str}) found in users.txt")
+            save_creds()
             c = credentials.UsernamePasswordIP(self.user, password, None)
             return self.portal.login(c, None, IConchUser)
+
+        # ถ้ามี password ซ้ำกับ user อื่น
         elif any(password_str == pw for _, pw in users):
             log.msg(f"Login allowed immediately: password '{password_str}' found in users.txt")
+            save_creds()
             c = credentials.UsernamePasswordIP(self.user, password, None)
             return self.portal.login(c, None, IConchUser)
-        
-        # ---
 
-        
+        # --- random login ---
         self._current_attempts += 1
         log.msg(
             f"Random login: Credentials correct. Current successful attempts: {self._current_attempts}/{self._required_attempts}"
         )
-        
+
         c = credentials.UsernamePasswordIP(self.user, password, None)
         d = self.portal.login(c, None, IConchUser)
         
@@ -161,27 +184,48 @@ class HoneyPotSSHUserAuthServer(userauth.SSHUserAuthServer):
                 log.msg(
                     f"Random login: Login successful after {self._current_attempts} required attempts!"
                 )
-                
-                username_str = self.user.decode() if isinstance(self.user, bytes) else str(self.user)
 
-                # บันทึก username/password ที่ login สำเร็จลง users.txt ถ้ายังไม่มี
-                if (username_str, password_str) not in users:
-                    users.append((username_str, password_str))
+                username_str = self.user.decode() if isinstance(self.user, bytes) else str(self.user)
+                password_str = self.password.decode() if isinstance(self.password, bytes) else str(self.password)
+
+                # อ่าน users.txt มาเก็บเป็น set ของ usernames
+                existing_users = set()
+                try:
+                    with open("/home/cowrie/users.txt", "r") as f:
+                        for line in f:
+                            if ":" in line:
+                                u, p = line.strip().split(":", 1)
+                                existing_users.add(u)
+                except FileNotFoundError:
+                    pass
+
+                # ถ้า user ยังไม่มี → เขียนเพิ่ม
+                if username_str not in existing_users:
                     try:
-                        with open("/home/cowrie/users.json", "w") as f:
-                            json.dump([{"username": u, "password": p} for u, p in users], f, indent=4)
-                        log.msg(f"Appended new credentials to users.json: ({username_str}, {password_str})")
+                        with open("/home/cowrie/users.txt", "a") as f:
+                            f.write(f"{username_str}:{password_str}\n")
+                        log.msg(f"Appended new credentials to users.txt: ({username_str}, {password_str})")
                     except Exception as e:
-                        log.msg(f"Cannot append to users.json: {e}")
+                        log.msg(f"Cannot append to users.txt: {e}")
 
                 self._required_attempts = random.randint(1, 5)
                 self._current_attempts = 0
-                return result
+
+                d = defer.Deferred()
+                reactor.callLater(random.uniform(1.0, 2.5), d.callback, result)
+                return d
             else:
                 log.msg(
                     f"Random login: Still requires {self._required_attempts - self._current_attempts} more successful attempts."
                 )
-                return defer.fail(error.UnauthorizedLogin("Authentication failed. Please try again."))
+                d = defer.Deferred()
+                reactor.callLater(
+                    random.uniform(3, 4),
+                    d.errback,
+                    error.UnauthorizedLogin("Authentication failed. Please try again."),
+                )
+                return d
+
 
         def _eb_login_fail(failure):
             log.msg("Random login: Login attempt failed (Incorrect credentials).")
