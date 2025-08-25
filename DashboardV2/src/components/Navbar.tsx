@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import '../Styles/Navbar.css'
 // import logo from '../assets/Honeypot-logo.png';
-import GlassSurface from './reactbits/ui/GlassSurface';
+// import GlassSurface from './reactbits/ui/GlassSurface';
 
 //theme web
 const setDarkMode = () => {
@@ -33,12 +33,13 @@ const Navbar = () => {
     return (
         <>
             <div className="Main-nav-bar">
-                <GlassSurface
+                {/* <GlassSurface
                     width={"auto"}
                     height={"70px"}
                     borderRadius={50}
                     style={{padding:' 0 20px'}}
-                >
+                > */}
+                <div className='nav-bar-wrapper'>
                     <div className='group-logo'>
                         <img className='logo' src="https://www.mobilistics.de/_Resources/Persistent/1/1/0/0/11008f37693898dfc7206dafe7efd10ee29b7519/logo-bear.svg" alt="logo" width={45} />
                         <h2>Smart tiny HoneyPot</h2>
@@ -57,7 +58,6 @@ const Navbar = () => {
                             </>
                         )}
                         <Link to="document" className={`Link-button ${isActive('/document') ? 'active' : ''}`}> Document </Link>
-                        <Link to="chatbot" className={`Link-button-mobile ${isActive('/chatbot') ? 'active' : ''}`}> chatbot </Link>
                         <div className='group-menu'>
                             {isLogin === "true" && (
                                 <>
@@ -91,7 +91,8 @@ const Navbar = () => {
                         </div>
                         {/* <img className="Profile" src="https://i.pravatar.cc/40" alt="Profile" /> */}
                     </div>
-                </GlassSurface>
+                </div>
+                {/* </GlassSurface> */}
             </div>
         </>
     )
