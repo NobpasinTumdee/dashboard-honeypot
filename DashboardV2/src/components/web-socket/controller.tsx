@@ -23,7 +23,7 @@ export const useCowrieSocket = (
     useEffect(() => {
         const token = getToken();
         if (!token) {
-            console.error("No token found. Cannot connect to WebSocket.");
+            console.log("No token found. Cannot connect to WebSocket.");
             return;
         } else {
             setIsLogin(true);
@@ -73,7 +73,7 @@ export const useCanarySocket = (
     useEffect(() => {
         const token = getToken();
         if (!token) {
-            console.error("No token found. Cannot connect to WebSocket.");
+            console.log("No token found. Cannot connect to WebSocket.");
             return;
         } else {
             setIsLogin(true);
@@ -124,7 +124,7 @@ export const usePacketSocket = (
     useEffect(() => {
         const token = getToken();
         if (!token) {
-            console.error("No token found. Cannot connect to WebSocket.");
+            console.log("No token found. Cannot connect to WebSocket.");
             return;
         } else {
             setIsLogin(true);

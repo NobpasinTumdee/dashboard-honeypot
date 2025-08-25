@@ -22,7 +22,8 @@ import { verifyToken } from './middlewares/verifyToken.js';
 
 // API Routes
 app.use("/auth", authRoute);
-app.use("/get", verifyToken, dataRoute);
+// app.use("/get", verifyToken, dataRoute);
+app.use("/get", dataRoute);
 app.get('/', (req, res) => {
   res.send('API Server is running!');
 });

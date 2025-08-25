@@ -7,7 +7,10 @@ const router = express.Router();
 // GET all honeypot logs 
 router.get("/cowrie", async (req, res) => {
   try {
-    const logs = await prisma.honeypot_logs.findMany();
+    const logs = await prisma.honeypot_logs.findMany({
+      orderBy: { id: 'desc' },
+      take: 5,
+    });
     res.json(logs);
   } catch (error) {
     console.error("❌ Error fetching logs:", error);
@@ -20,7 +23,10 @@ router.get("/cowrie", async (req, res) => {
 // GET all opencanary logs
 router.get("/open-canary", async (req, res) => {
   try {
-    const logs = await prisma.opencanary_logs.findMany();
+    const logs = await prisma.opencanary_logs.findMany({
+      orderBy: { id: 'desc' },
+      take: 5,
+    });
     res.json(logs);
   } catch (error) {
     console.error("❌ Error fetching logs:", error);

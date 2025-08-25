@@ -37,6 +37,17 @@
     margin: 0 5%;
 }
 
+.chart-in-main-none-login {
+    backdrop-filter: blur(200px);
+    display: flex;
+    justify-content: start;
+    gap: 1rem;
+    width: 95%;
+    padding: 2.5%;
+    border-radius: 10px;
+    overflow-x: auto;
+}
+
 .chart-in-sub {
     width: 100%;
     padding: 5%;
@@ -68,6 +79,13 @@
         flex-direction: column;
         width: 90%;
         margin: 0 5%;
+    }
+
+    .chart-in-main-none-login {
+        width: 100%;
+        margin: 10% 0;
+        padding: 0;
+        font-size: 0.5rem;
     }
 
     .chart-in-sub {
@@ -161,37 +179,38 @@
 }
 
 select {
-  padding: 3px 12px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: var(--body_main_background);
-  color: var(--body_text_color);
-  outline: none;
-  transition: all 0.2s ease-in-out;
-  appearance: none; /* ซ่อนลูกศรมาตรฐานของ browser */
-  background-image: url("data:image/svg+xml;utf8,<svg fill='gray' height='12' viewBox='0 0 24 24' width='12' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
-  background-repeat: no-repeat;
-  background-position: right 1px center;
-  background-size: 12px;
+    padding: 3px 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: var(--body_main_background);
+    color: var(--body_text_color);
+    outline: none;
+    transition: all 0.2s ease-in-out;
+    appearance: none;
+    /* ซ่อนลูกศรมาตรฐานของ browser */
+    background-image: url("data:image/svg+xml;utf8,<svg fill='gray' height='12' viewBox='0 0 24 24' width='12' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 1px center;
+    background-size: 12px;
 }
 
 select:hover {
-  border-color: #888;
-  border-radius: 20px;
+    border-color: #888;
+    border-radius: 20px;
 }
 
 select:focus {
-  border-color: var(--body_hover_text_color);
-  box-shadow: 0 0 5px var(--body_hover_text_color);
+    border-color: var(--body_hover_text_color);
+    box-shadow: 0 0 5px var(--body_hover_text_color);
 }
 
 option {
-  background-color: var(--body_main_sidebar);
-  color: var(--body_text_color); 
-  padding: 8px 12px;
+    background-color: var(--body_main_sidebar);
+    color: var(--body_text_color);
+    padding: 8px 12px;
 }
 
 option:checked {
-  background-color: var(--body_hover_text_color);
+    background-color: var(--body_hover_text_color);
 }
