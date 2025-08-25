@@ -73,3 +73,12 @@ nano cowrie.cfg
 ```
 svr04 -> ubuntu_svr
 
+### เพิ่ม /etc
+```
+pwd -> /home/cowri
+nano etcFile.py
+sudo ./venv/bin/python3 GenUsers.py
+```
+* [etcFile.py](/Plugin/Cowrie/script/etcFile.py)
+
+
