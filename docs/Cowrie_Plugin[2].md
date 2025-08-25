@@ -66,4 +66,10 @@ rm -f src/cowrie/data/fs.pickle
 ### ผลลัพธ์
 <img width="1047" height="756" alt="image" src="https://github.com/user-attachments/assets/cdadff52-3bd2-4378-85f2-3fbcb1ce4c09" />
 
+### ปรับชื่อให้สอดคล้อง
+```
+pwd -> /home/cowrie/cowrie/etc
+nano cowrie.cfg
+```
+svr04 -> ubuntu_svr
 
