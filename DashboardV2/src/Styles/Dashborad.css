@@ -37,44 +37,27 @@
     margin: 0 5%;
 }
 
+.chart-in-main-none-login {
+    backdrop-filter: blur(200px);
+    display: flex;
+    justify-content: start;
+    gap: 1rem;
+    width: 95%;
+    padding: 2.5%;
+    border-radius: 10px;
+    overflow-x: auto;
+}
+
 .chart-in-sub {
     width: 100%;
     padding: 5%;
     backdrop-filter: blur(60px);
     /* background-color: var(--body_main_sidebar); */
     border-radius: 10px;
-    box-shadow: #32326911 0px 2px 5px 0px, #00000007 0px 1px 1px 0px;
+    box-shadow: #3c40434d 0px 1px 2px 0px, #3c404326 0px 2px 6px 2px;
 }
 
-@media screen and (max-width: 450px) {
-    .overview-in-main {
-        display: flex;
-        flex-direction: column;
-        margin: 5%;
-        width: 90%;
-    }
 
-    .dashborad-main {
-        padding: 0px;
-        width: 100%;
-    }
-
-    .chart-mini-size {
-        width: 100%;
-        margin: 10% 0;
-    }
-
-    .chart-in-main {
-        flex-direction: column;
-        width: 90%;
-        margin: 0 5%;
-    }
-
-    .chart-in-sub {
-        width: 100%;
-        padding: 0;
-    }
-}
 
 
 /* socket page table  */
@@ -152,6 +135,8 @@
     color: var(--body_text_color);
     cursor: pointer;
     font-weight: 700;
+    display: flex;
+    align-items: center;
     transition: 0.3s ease-in-out;
 }
 
@@ -161,37 +146,116 @@
 }
 
 select {
-  padding: 3px 12px;
-  font-size: 14px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  background-color: var(--body_main_background);
-  color: var(--body_text_color);
-  outline: none;
-  transition: all 0.2s ease-in-out;
-  appearance: none; /* ซ่อนลูกศรมาตรฐานของ browser */
-  background-image: url("data:image/svg+xml;utf8,<svg fill='gray' height='12' viewBox='0 0 24 24' width='12' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
-  background-repeat: no-repeat;
-  background-position: right 1px center;
-  background-size: 12px;
+    padding: 3px 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    background-color: var(--body_main_background);
+    color: var(--body_text_color);
+    outline: none;
+    transition: all 0.2s ease-in-out;
+    appearance: none;
+    /* ซ่อนลูกศรมาตรฐานของ browser */
+    background-image: url("data:image/svg+xml;utf8,<svg fill='gray' height='12' viewBox='0 0 24 24' width='12' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 1px center;
+    background-size: 12px;
 }
 
 select:hover {
-  border-color: #888;
-  border-radius: 20px;
+    border-color: #888;
+    border-radius: 20px;
 }
 
 select:focus {
-  border-color: var(--body_hover_text_color);
-  box-shadow: 0 0 5px var(--body_hover_text_color);
+    border-color: var(--body_hover_text_color);
+    box-shadow: 0 0 5px var(--body_hover_text_color);
 }
 
 option {
-  background-color: var(--body_main_sidebar);
-  color: var(--body_text_color); 
-  padding: 8px 12px;
+    background-color: var(--body_main_sidebar);
+    color: var(--body_text_color);
+    padding: 8px 12px;
 }
 
 option:checked {
-  background-color: var(--body_hover_text_color);
+    background-color: var(--body_hover_text_color);
+}
+
+
+
+.dashboard-container-box {
+    width: 90%;
+    margin: 0 5% 20px;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.box-alert {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    backdrop-filter: blur(60px);
+    gap: 20px;
+    padding: 10px 20px;
+    border-radius: 10px;
+    box-shadow: rgba(0, 0, 0, 0.25) 0px 0.0625em 0.0625em, rgba(0, 0, 0, 0.25) 0px 0.125em 0.5em, rgba(255, 255, 255, 0.1) 0px 0px 0px 1px inset;
+}
+
+
+
+@media screen and (max-width: 860px) {
+    .dashboard-container-box {
+        font-size: 0.5rem;
+    }
+    .dashboard-container-box svg{
+        width: 25px;
+        height: 25px
+    }
+}
+@media screen and (max-width: 700px) {
+    .dashboard-container-box svg{
+        display: none;
+    }
+}
+
+
+
+@media screen and (max-width: 450px) {
+    .overview-in-main {
+        display: flex;
+        flex-direction: column;
+        margin: 5%;
+        width: 90%;
+    }
+
+    .dashborad-main {
+        padding: 0px;
+        width: 100%;
+    }
+
+    .chart-mini-size {
+        width: 100%;
+        margin: 10% 0;
+    }
+
+    .chart-in-main {
+        flex-direction: column;
+        width: 90%;
+        margin: 0 5%;
+    }
+
+    .chart-in-main-none-login {
+        width: 100%;
+        margin: 10% 0;
+        padding: 0;
+        font-size: 0.5rem;
+    }
+
+    .chart-in-sub {
+        width: 100%;
+        padding: 0;
+    }
 }

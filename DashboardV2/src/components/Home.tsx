@@ -5,7 +5,7 @@ import 'aos/dist/aos.css';
 import { useEffect, useState } from 'react';
 import ChartComponent from './chart/Chart';
 import type { AlertItem } from './Cowrie';
-import { getCowrie } from '../serviceApi';
+import { getCowrieAuth, getOpenCanaryAuth } from '../serviceApi';
 import ChartByDateComponent from './chart/ChartByDateComponent';
 import { useCanarySocket, useCowrieSocket } from './web-socket/controller';
 import type { AlertItemCanary } from './OpenCanary';
@@ -17,7 +17,8 @@ import ChartByDateCanary from './chart/ChartByDateCanary';
 const Home = () => {
     useEffect(() => {
         (async () => {
-            await handleFetchData();
+            await handleFetchCowrieData();
+            await handleFetchCanaryData();
         })();
         Aos.init({
             duration: 1000,
@@ -28,27 +29,50 @@ const Home = () => {
 
 
     // ============================================ cowrie data
-    const [data, setData] = useState<AlertItem[]>([]);
+    const [dataCowrieApi, setDataCowrieApi] = useState<AlertItem[]>([]);
+    const [dataCanaryApi, setDataCanaryApi] = useState<AlertItemCanary[]>([]);
 
-    const handleFetchData = async () => {
+    const handleFetchCowrieData = async () => {
         try {
-            const res = await getCowrie();
+            const res = await getCowrieAuth();
             const responseData = res?.data;
             if (!responseData) {
                 console.error("No data received from API");
-                setData([]);
+                setDataCowrieApi([]);
                 return;
             }
             if (Array.isArray(responseData)) {
-                setData(responseData);
+                setDataCowrieApi(responseData);
             } else if (Array.isArray(responseData?.data)) {
-                setData(responseData.data);
+                setDataCowrieApi(responseData.data);
             } else {
                 console.error("Unexpected response:", responseData);
-                setData([]);
+                setDataCowrieApi([]);
             }
         } catch (error) {
-            setData([])
+            setDataCowrieApi([])
+        }
+    };
+
+    const handleFetchCanaryData = async () => {
+        try {
+            const res = await getOpenCanaryAuth();
+            const responseData = res?.data;
+            if (!responseData) {
+                console.error("No data received from API");
+                setDataCanaryApi([]);
+                return;
+            }
+            if (Array.isArray(responseData)) {
+                setDataCanaryApi(responseData);
+            } else if (Array.isArray(responseData?.data)) {
+                setDataCanaryApi(responseData.data);
+            } else {
+                console.error("Unexpected response:", responseData);
+                setDataCanaryApi([]);
+            }
+        } catch (error) {
+            setDataCanaryApi([])
         }
     };
 
@@ -66,9 +90,9 @@ const Home = () => {
         <>
             <div className='main'>
                 <div className='dashborad-main'>
-                    <h1 style={{ textAlign: 'center' }} data-aos="zoom-in-down">Welcome to Honeypot Dashboard</h1>
                     {isLogin ? (
                         <>
+                            <h1 style={{ textAlign: 'center' }} data-aos="zoom-in-down">Welcome to Honeypot Dashboard</h1>
                             <h2 style={{ textAlign: 'center' }} data-aos="zoom-in-down">Cowrie</h2>
                             <p data-aos="zoom-in-down" style={{ textAlign: 'center' }}>data length: {dataCowrie.length} status: {isConnected ? '🟢 Connected' : '🔴 Disconnected'}</p>
                             <div className='chart-in-main'>
@@ -89,26 +113,52 @@ const Home = () => {
                         </>
                     ) : (
                         <>
+                            <h1 style={{ textAlign: 'center' }} data-aos="zoom-in-down">Example Log Data</h1>
                             <h2 style={{ textAlign: 'center' }} data-aos="zoom-in-down">Cowrie</h2>
-                            <p style={{ textAlign: 'center', color: 'red' }} data-aos="zoom-in-down">Please log in to get full information.</p>
-                            <p>data length: {data.length}</p>
-                            <div className='chart-in-main'>
-                                <div className='chart-in-sub'>
-                                    <ChartComponent logs={data} />
-                                </div>
-                                <div className='chart-in-sub'>
-                                    <ChartByDateComponent logs={data} />
-                                </div>
+                            <div className='chart-in-main-none-login'>
+                                <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                                    <thead>
+                                        <tr style={{ backdropFilter: "blur(10px)" }}>
+                                            <th className="thStyle">#</th>
+                                            <th className="thStyle">Timestamp</th>
+                                            <th className="thStyle">Event</th>
+                                            <th className="thStyle">Message</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {dataCowrieApi.map((item, index) => (
+                                            <tr key={item.id || index}>
+                                                <td className="tdStyle">{index + 1}</td>
+                                                <td className="tdStyle">{item.timestamp.slice(0, 10) || <p className="tdStyle-null">null</p>}</td>
+                                                <td className="tdStyle">{item.eventid || <p className="tdStyle-null">null</p>}</td>
+                                                <td className="tdStyleMessage">{item.message || <p className="tdStyle-null">null</p>}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
                             </div>
                             <h2 style={{ textAlign: 'center' }} data-aos="zoom-in-down">Open Cannary</h2>
-                            <div className='chart-in-main'>
-                                <div className='chart-in-sub'>
-                                    <ChartByDateComponent logs={data} />
-                                </div>
-                                <div className='chart-in-sub'>
-                                    <ChartComponent logs={data} />
-                                </div>
+                            <div className='chart-in-main-none-login'>
+                                <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                                    <thead>
+                                        <tr style={{ backdropFilter: "blur(10px)" }}>
+                                            <th className="thStyle">#</th>
+                                            <th className="thStyle">Adjusted Local Time</th>
+                                            <th className="thStyle">Log Message</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {dataCanaryApi.map((item, index) => (
+                                            <tr key={item.id || index}>
+                                                <td className="tdStyle">{index + 1}</td>
+                                                <td className="tdStyle">{item.local_time_adjusted.slice(0, 10)  || <p className="tdStyle-null">null</p>}</td>
+                                                <td className="tdStyleMessage">{item.logdata_msg_logdata || <p className="tdStyle-null">null</p>}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
                             </div>
+                            <p style={{ textAlign: 'center', color: 'red' }} data-aos="zoom-in-down">Please log in to get full information.</p>
                         </>
                     )}
 
