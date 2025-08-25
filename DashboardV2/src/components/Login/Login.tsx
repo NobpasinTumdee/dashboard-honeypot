@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import './Login.css';
 import { LignIn, SignUp } from '../../serviceApi/index';
-// import GlassSurface from '../reactbits/ui/GlassSurface';
 
 
 const Login: React.FC = () => {
@@ -11,6 +10,7 @@ const Login: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [mode, setmode] = useState(true);
+    const [isPopup, setPopup] = useState(false);
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -82,6 +82,7 @@ const Login: React.FC = () => {
     };
 
     const [Url, setUrl] = useState<string>("");
+    const [UrlNgrok, setUrlNgrok] = useState<string>("");
     const [Port, setPort] = useState<string>("");
     const UrlApi = localStorage.getItem("apiUrl");
 
@@ -95,9 +96,9 @@ const Login: React.FC = () => {
     };
     const handleUrlNgrok = (e: any) => {
         e.preventDefault();
-        if (Url) {
-            localStorage.setItem("apiUrl", Url);
-            alert(`Url Ngrok saved: ${Url}`);
+        if (UrlNgrok) {
+            localStorage.setItem("apiUrl", UrlNgrok);
+            alert(`Url Ngrok saved: ${UrlNgrok}`);
             window.location.reload();
         }
     };
@@ -109,191 +110,151 @@ const Login: React.FC = () => {
                     <div style={{ textAlign: 'center', marginTop: '20px' }}>
                         <h1>login successful</h1>
                         <h3>{"listening on " + UrlApi || "Url not found"}</h3>
-                        <div className='form-server-url-container'>
-                            <p>Localhost</p>
-                            <form onSubmit={handleUrlapi} className="form-server-url">
-                                <input
-                                    type="text"
-                                    value={Url}
-                                    onChange={(e) => setUrl(e.target.value)}
-                                    placeholder="Url : http://localhost"
-                                    required
-                                    aria-label="input-text"
-                                    className="input-url"
-                                />
-                                <input
-                                    type="text"
-                                    value={Port}
-                                    onChange={(e) => setPort(e.target.value)}
-                                    placeholder="port : 3000"
-                                    required
-                                    className="input-url"
-                                />
-                                <button type="submit" className='btn-submit-url' >
-                                    Submit
-                                </button>
-                            </form>
-                            <p>Ngrok</p>
-                            <form onSubmit={handleUrlNgrok} className="form-server-url">
-                                <input
-                                    type="text"
-                                    value={Url}
-                                    onChange={(e) => setUrl(e.target.value)}
-                                    placeholder="Ngrok Url"
-                                    required
-                                    aria-label="input-text"
-                                    className="input-url"
-                                />
-                                <button type="submit" className='btn-submit-url' >
-                                    Submit
-                                </button>
-                            </form>
-                        </div>
+                        <h3 className='add-url' onClick={() => setPopup(!isPopup)}>{isPopup ? "Close" : "Add Url"}</h3>
                         <button onClick={Logout} className='logout'>Logout</button>
                     </div>
                 </>
             ) : (
                 <>
-                    {!UrlApi &&
-                        <>
-                            <form onSubmit={handleUrlapi} className="form-server-url" style={{ marginTop: '20px' }}>
-                                <input
-                                    type="text"
-                                    value={Url}
-                                    onChange={(e) => setUrl(e.target.value)}
-                                    placeholder="Url : http://localhost"
-                                    required
-                                    aria-label="input-text"
-                                    className="input-url"
-                                />
-                                <input
-                                    type="text"
-                                    value={Port}
-                                    onChange={(e) => setPort(e.target.value)}
-                                    placeholder="port : 3000"
-                                    required
-                                    className="input-url"
-                                />
-                                <button type="submit" className='btn-submit-url' >
-                                    Submit
-                                </button>
-                            </form>
-                            <form onSubmit={handleUrlNgrok} className="form-server-url">
-                                <input
-                                    type="text"
-                                    value={Url}
-                                    onChange={(e) => setUrl(e.target.value)}
-                                    placeholder="Ngrok Url"
-                                    required
-                                    aria-label="input-text"
-                                    className="input-url"
-                                />
-                                <button type="submit" className='btn-submit-url' >
-                                    Submit
-                                </button>
-                            </form>
-                        </>
-                    }
                     <div className="login-container">
-                        {/* <GlassSurface
-                            width={"auto"}
-                            height={"auto"}
-                            borderRadius={40}
-                            style={{ padding: ' 0 20px' }}
-                        > */}
-                            {mode ? (
-                                <>
-                                    <form className="login-form" onSubmit={handleSubmit}>
-                                        <h2>Login</h2>
-                                        <div className="input-group">
-                                            <label htmlFor="email">Email:</label>
-                                            <input
-                                                type="text"
-                                                id="email"
-                                                value={email}
-                                                onChange={(e) => setEmail(e.target.value)}
-                                                required
-                                                disabled={isLoading}
-                                            />
-                                        </div>
+                        {mode ? (
+                            <>
+                                <form className="login-form" onSubmit={handleSubmit}>
+                                    <h2>Login</h2>
+                                    <div className="input-group">
+                                        <label htmlFor="email">Email:</label>
+                                        <input
+                                            type="text"
+                                            id="email"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            required
+                                            disabled={isLoading}
+                                        />
+                                    </div>
 
-                                        <div className="input-group">
-                                            <label htmlFor="password">Password:</label>
-                                            <input
-                                                type="password"
-                                                id="password"
-                                                value={password}
-                                                onChange={(e) => setPassword(e.target.value)}
-                                                required
-                                                disabled={isLoading}
-                                            />
-                                            {error && <p className="error-message">{error}</p>}
-                                        </div>
+                                    <div className="input-group">
+                                        <label htmlFor="password">Password:</label>
+                                        <input
+                                            type="password"
+                                            id="password"
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            required
+                                            disabled={isLoading}
+                                        />
+                                        {error && <p className="error-message">{error}</p>}
+                                    </div>
 
-                                        <button type="submit" className="login-button" disabled={isLoading}>
-                                            {isLoading ? 'Login...' : 'Log In'}
-                                        </button>
+                                    <button type="submit" className="login-button" disabled={isLoading}>
+                                        {isLoading ? 'Login...' : 'Log In'}
+                                    </button>
 
-                                        <a href="#" onClick={() => setmode(!mode)} className="sign-up">Forget Password?</a>
-                                    </form>
-                                </>
-                            ) : (
-                                <>
-                                    <form className="login-form" onSubmit={handleSignUp}>
-                                        <h2>SignUp</h2>
+                                    <a href="#" onClick={() => setmode(!mode)} className="sign-up">Forget Password?</a>
+                                </form>
+                            </>
+                        ) : (
+                            <>
+                                <form className="login-form" onSubmit={handleSignUp}>
+                                    <h2>SignUp</h2>
 
 
-                                        <div className="input-group">
-                                            <label htmlFor="email">Email:</label>
-                                            <input
-                                                type="text"
-                                                id="email"
-                                                value={email}
-                                                onChange={(e) => setEmail(e.target.value)}
-                                                required
-                                                disabled={isLoading}
-                                            />
-                                        </div>
+                                    <div className="input-group">
+                                        <label htmlFor="email">Email:</label>
+                                        <input
+                                            type="text"
+                                            id="email"
+                                            value={email}
+                                            onChange={(e) => setEmail(e.target.value)}
+                                            required
+                                            disabled={isLoading}
+                                        />
+                                    </div>
 
-                                        <div className="input-group">
-                                            <label htmlFor="User Name">User Name:</label>
-                                            <input
-                                                type="text"
-                                                id="username"
-                                                value={UserName}
-                                                onChange={(e) => setUserName(e.target.value)}
-                                                required
-                                                disabled={isLoading}
-                                            />
-                                        </div>
+                                    <div className="input-group">
+                                        <label htmlFor="User Name">User Name:</label>
+                                        <input
+                                            type="text"
+                                            id="username"
+                                            value={UserName}
+                                            onChange={(e) => setUserName(e.target.value)}
+                                            required
+                                            disabled={isLoading}
+                                        />
+                                    </div>
 
-                                        <div className="input-group">
-                                            <label htmlFor="password">Password:</label>
-                                            <input
-                                                type="password"
-                                                id="password"
-                                                value={password}
-                                                onChange={(e) => setPassword(e.target.value)}
-                                                required
-                                                disabled={isLoading}
-                                            />
-                                            {error && <p className="error-message">{error}</p>}
-                                        </div>
+                                    <div className="input-group">
+                                        <label htmlFor="password">Password:</label>
+                                        <input
+                                            type="password"
+                                            id="password"
+                                            value={password}
+                                            onChange={(e) => setPassword(e.target.value)}
+                                            required
+                                            disabled={isLoading}
+                                        />
+                                        {error && <p className="error-message">{error}</p>}
+                                    </div>
 
-                                        <button type="submit" className="login-button" disabled={isLoading}>
-                                            {isLoading ? 'Wait...' : 'Sign Up'}
-                                        </button>
+                                    <button type="submit" className="login-button" disabled={isLoading}>
+                                        {isLoading ? 'Wait...' : 'Sign Up'}
+                                    </button>
 
-                                        <a href="#" onClick={() => setmode(!mode)} className="sign-up">Let's Login!</a>
-                                    </form>
-                                </>
-                            )}
-                        {/* </GlassSurface> */}
+                                    <a href="#" onClick={() => setmode(!mode)} className="sign-up">Let's Login!</a>
+                                </form>
+                            </>
+                        )}
                     </div>
                     <h3 style={{ textAlign: 'center', fontWeight: '200' }}>server listening on : {UrlApi ? (UrlApi + "✨") : ("not found")}</h3>
-                    <p style={{ textAlign: 'center', fontWeight: '200', cursor: 'pointer' }} onClick={() => localStorage.removeItem("apiUrl")}>clear ip</p>
+                    <h3 className='add-url' onClick={() => setPopup(!isPopup)}>{isPopup ? "Close" : "Add Url"}</h3>
                 </>
             )}
+            {isPopup &&
+                <div className='popup-container-url'>
+                    <div className='popup-url'>
+                        <h2 style={{ margin: '0' }}>Server Url</h2>
+                        <form onSubmit={handleUrlapi} className="form-server-url" style={{ marginTop: '20px' }}>
+                            <input
+                                type="text"
+                                value={Url}
+                                onChange={(e) => setUrl(e.target.value)}
+                                placeholder="Url : http://localhost"
+                                required
+                                aria-label="input-text"
+                                className="input-url"
+                            />
+                            <input
+                                type="text"
+                                value={Port}
+                                onChange={(e) => setPort(e.target.value)}
+                                placeholder="port : 3000"
+                                required
+                                className="input-url"
+                            />
+                            <button type="submit" className='btn-submit-url' >
+                                Submit
+                            </button>
+                        </form>
+                        <p style={{ margin: "0" }}>or</p>
+                        <form onSubmit={handleUrlNgrok} className="form-server-url">
+                            <input
+                                type="text"
+                                value={UrlNgrok}
+                                onChange={(e) => setUrlNgrok(e.target.value)}
+                                placeholder="Ngrok Url"
+                                required
+                                aria-label="input-text"
+                                className="input-url"
+                            />
+                            <button type="submit" className='btn-submit-url' >
+                                Submit
+                            </button>
+                        </form>
+                        <div style={{ cursor: 'pointer', }} onClick={() => localStorage.removeItem("apiUrl")}>clear ip</div>
+                        <div style={{ cursor: 'pointer', }} onClick={() => setPopup(!isPopup)}>close</div>
+                    </div>
+                </div>
+            }
         </>
     );
 };

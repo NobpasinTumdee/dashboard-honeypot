@@ -61,7 +61,6 @@ const Navbar = () => {
                         <div className='group-menu'>
                             {isLogin === "true" && (
                                 <>
-                                    <Link to="/" className="icon-nav">🔔</Link>
                                     <Link to="chatbot" className="icon-nav">💬</Link>
                                 </>
                             )}
@@ -86,7 +85,11 @@ const Navbar = () => {
                                 </label>
                             </div>
                             {isLogin === "true" &&
-                                <Link to={'login'} style={{ display: 'flex' }}><img className="Profile" src="https://images2.alphacoders.com/129/1299701.jpg" alt="Profile" /></Link>
+                                <Link to={'login'} style={{ display: 'flex' }}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="var(--body_text_color)" style={{ opacity:'0.8'}}>
+                                        <path d="M202.87-111.87q-37.78 0-64.39-26.61t-26.61-64.39v-554.26q0-37.78 26.61-64.39t64.39-26.61h279.04v91H202.87v554.26h279.04v91H202.87Zm434.02-156.65L574-333.93 674.56-434.5H358.09v-91h316.47L574-626.07l62.89-65.41L848.13-480 636.89-268.52Z" />
+                                    </svg>
+                                </Link>
                             }
                         </div>
                         {/* <img className="Profile" src="https://i.pravatar.cc/40" alt="Profile" /> */}
