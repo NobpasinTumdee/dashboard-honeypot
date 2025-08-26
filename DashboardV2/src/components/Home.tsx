@@ -7,10 +7,12 @@ import ChartComponent from './chart/Chart';
 import type { AlertItem } from './Cowrie';
 import { getCowrieAuth, getOpenCanaryAuth } from '../serviceApi';
 import ChartByDateComponent from './chart/ChartByDateComponent';
-import { useCanarySocket, useCowrieSocket } from './web-socket/controller';
+import { useCanarySocket, useCowrieSocket, usePacketSocket } from './web-socket/controller';
 import type { AlertItemCanary } from './OpenCanary';
 import ChartCanary from './chart/ChartCanary';
 import ChartByDateCanary from './chart/ChartByDateCanary';
+import { ChartPacketByDateMUI, ChartPacketMUI } from './chart/ChartPacketMUI';
+import type { HttpsPacket } from './web-socket/Packet';
 
 
 
@@ -79,12 +81,14 @@ const Home = () => {
 
     const [dataCowrie, setDataCowrie] = useState<AlertItem[]>([]);
     const [dataCanary, setDataCanary] = useState<AlertItemCanary[]>([]);
+    const [dataShark, setDataShark] = useState<HttpsPacket[]>([]);
     const [isConnected, setIsConnected] = useState(false);
     const [isLogin, setIsLogin] = useState(false);
 
     // Custom hook to manage WebSocket connection
     useCowrieSocket(setDataCowrie, setIsConnected, setIsLogin);
     useCanarySocket(setDataCanary, setIsConnected, setIsLogin);
+    usePacketSocket(setDataShark, setIsConnected, setIsLogin);
     // ============================================
     return (
         <>
@@ -93,8 +97,16 @@ const Home = () => {
                     {isLogin ? (
                         <>
                             <h1 style={{ textAlign: 'center' }} data-aos="zoom-in-down">Welcome to Honeypot Dashboard</h1>
+                            <h2 style={{ textAlign: 'center' }} data-aos="zoom-in-down">Wireshark</h2>
+                            <div className='chart-in-main'>
+                                <div className='chart-in-sub'>
+                                    <ChartPacketMUI logs={dataShark} />
+                                </div>
+                                <div className='chart-in-sub'>
+                                    <ChartPacketByDateMUI logs={dataShark} />
+                                </div>
+                            </div>
                             <h2 style={{ textAlign: 'center' }} data-aos="zoom-in-down">Cowrie</h2>
-                            <p data-aos="zoom-in-down" style={{ textAlign: 'center' }}>data length: {dataCowrie.length} status: {isConnected ? '🟢 Connected' : '🔴 Disconnected'}</p>
                             <div className='chart-in-main'>
                                 <div className='chart-in-sub'>
                                     <ChartComponent logs={dataCowrie} />
@@ -151,7 +163,7 @@ const Home = () => {
                                         {dataCanaryApi.map((item, index) => (
                                             <tr key={item.id || index}>
                                                 <td className="tdStyle">{index + 1}</td>
-                                                <td className="tdStyle">{item.local_time_adjusted.slice(0, 10)  || <p className="tdStyle-null">null</p>}</td>
+                                                <td className="tdStyle">{item.local_time_adjusted.slice(0, 10) || <p className="tdStyle-null">null</p>}</td>
                                                 <td className="tdStyleMessage">{item.logdata_msg_logdata || <p className="tdStyle-null">null</p>}</td>
                                             </tr>
                                         ))}
