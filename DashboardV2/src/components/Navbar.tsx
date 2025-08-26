@@ -51,13 +51,18 @@ const Navbar = () => {
                                 <Link to={'cowrie'} className={`Link-button ${isActive('/cowrie') ? 'active' : ''}`}>Cowrie </Link>
                                 <Link to="open-canary" className={`Link-button ${isActive('/open-canary') ? 'active' : ''}`}>OpenCanary </Link>
                                 <Link to="socket" className={`Link-button ${isActive('/socket') ? 'active' : ''}`}>Packets </Link>
+                                <Link to="document" className={`Link-button ${isActive('/document') ? 'active' : ''}`}> Document </Link>
                             </>
                         ) : (
                             <>
-                                <Link to="login" className={`Link-button ${isActive('/login') ? 'active' : ''}`}>Login</Link>
+                                <Link to="document" className={`Link-button ${isActive('/document') ? 'active' : ''}`}> Document </Link>
+                                <Link to="login" className={`Link-button ${isActive('/login') ? 'active' : ''}`}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" height="25px" viewBox="0 -960 960 960" width="25px" fill="var(--body_text_color)" style={{ opacity: '0.8' }}>
+                                        <path d="M120-160v-112q0-34 17.5-62.5T184-378q62-31 126-46.5T440-440q20 0 40 1.5t40 4.5q-4 58 21 109.5t73 84.5v80H120ZM760-40l-60-60v-186q-44-13-72-49.5T600-420q0-58 41-99t99-41q58 0 99 41t41 99q0 45-25.5 80T790-290l50 50-60 60 60 60-80 80ZM440-480q-66 0-113-47t-47-113q0-66 47-113t113-47q66 0 113 47t47 113q0 66-47 113t-113 47Zm300 80q17 0 28.5-11.5T780-440q0-17-11.5-28.5T740-480q-17 0-28.5 11.5T700-440q0 17 11.5 28.5T740-400Z" />
+                                    </svg>
+                                </Link>
                             </>
                         )}
-                        <Link to="document" className={`Link-button ${isActive('/document') ? 'active' : ''}`}> Document </Link>
                         {isLogin === "true" && (
                             <Link to="chatbot" className="icon-nav">
                                 <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="var(--body_text_color)"><path d="M180-380q-41.92 0-70.96-29.04Q80-438.08 80-480q0-41.92 29.04-70.96Q138.08-580 180-580v-87.69q0-29.83 21.24-51.07Q222.48-740 252.31-740H380q0-41.92 29.04-70.96Q438.08-840 480-840q41.92 0 70.96 29.04Q580-781.92 580-740h127.69q29.83 0 51.07 21.24Q780-697.52 780-667.69V-580q41.92 0 70.96 29.04Q880-521.92 880-480q0 41.92-29.04 70.96Q821.92-380 780-380v167.69q0 29.83-21.24 51.07Q737.52-140 707.69-140H252.31q-29.83 0-51.07-21.24Q180-182.48 180-212.31V-380Zm179.95-70q20.82 0 35.43-14.57Q410-479.14 410-499.95q0-20.82-14.57-35.43Q380.86-550 360.05-550q-20.82 0-35.43 14.57Q310-520.86 310-500.05q0 20.82 14.57 35.43Q339.14-450 359.95-450Zm240 0q20.82 0 35.43-14.57Q650-479.14 650-499.95q0-20.82-14.57-35.43Q620.86-550 600.05-550q-20.82 0-35.43 14.57Q550-520.86 550-500.05q0 20.82 14.57 35.43Q579.14-450 599.95-450ZM330-290h300v-60H330v60Zm-77.69 90h455.38q5.39 0 8.85-3.46t3.46-8.85v-455.38q0-5.39-3.46-8.85t-8.85-3.46H252.31q-5.39 0-8.85 3.46t-3.46 8.85v455.38q0 5.39 3.46 8.85t8.85 3.46ZM480-440Z" /></svg>

@@ -169,7 +169,8 @@
 }
 
 .popup-url {
-    background-color: #f0f2f5;
+    background-color: var(--body_main_background);
+    color: var(--body_text_color);
     max-width: 300px;
     border-radius: 12px;
     padding: 20px 5%;
