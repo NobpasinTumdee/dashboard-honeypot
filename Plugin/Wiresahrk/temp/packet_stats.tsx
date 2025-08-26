@@ -1,274 +1,522 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   LineChart,
   Line,
+  CartesianGrid,
   XAxis,
   YAxis,
   Tooltip,
-  CartesianGrid,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
   BarChart,
   Bar,
-  ResponsiveContainer,
+  Legend,
 } from "recharts";
+import Modal from "react-modal";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import "./dash.css"
+import type { DropResult } from 'react-beautiful-dnd';
+import { Select, Button, Space } from "antd";
 
-interface StatsData {
-  time_series: { time: string; count: number }[];
-  protocol: { date: string; protocol: string; count: number }[];
-  src_ip: { date: string; src_ip: string; count: number }[];
-  dst_port: { date: string; dst_port: number; count: number }[];
+
+// ---------- Types ----------
+type DataPoint = { time: string; count: number };
+type ProtocolStat = { timestamp: string; protocol: string; count: number };
+type IPStat = { timestamp: string; src_ip: string; count: number };
+type PortStat = { timestamp: string; dst_port: number; count: number };
+
+type Range = "day" | "week" | "month";
+
+interface Snapshot {
+  time_series: DataPoint[];
+  protocol: ProtocolStat[];
+  src_ip: IPStat[];
+  dst_port: PortStat[];
 }
 
-const RealtimeChart: React.FC = () => {
-  const [data, setData] = useState<StatsData>({
+interface CompareItem {
+  type: "protocol" | "ip" | "port";
+  value: string; // store as string for uniform key handling
+}
+
+// ---------- Constants ----------
+const COLORS = ["#2563eb", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#14b8a6", "#a3e635", "#eab308", "#f97316", "#f43f5e", "#6366f1", "#22c55e"];
+
+// For react-modal a11y; adjust your root selector if different
+try { Modal.setAppElement("#root"); } catch {}
+
+// ---------- Component ----------
+const Dashboard: React.FC = () => {
+  const [data, setData] = useState<Snapshot>({
     time_series: [],
     protocol: [],
     src_ip: [],
     dst_port: [],
   });
 
-  const [paused, setPaused] = useState(false);
-  const [selectedDate, setSelectedDate] = useState<string>("");
-  const wsRef = useRef<WebSocket | null>(null);
+  // Ranges
+  const [mainTimeRange, setMainTimeRange] = useState<Range>("day");
+  const [protocolTimeRange, setProtocolTimeRange] = useState<Range>("day");
+  const [ipTimeRange, setIpTimeRange] = useState<Range>("day");
+  const [portTimeRange, setPortTimeRange] = useState<Range>("day");
 
+  const [focusFilters, setFocusFilters] = useState<CompareItem[]>([]);
+
+  // Compare modal
+  const [isCompareOpen, setIsCompareOpen] = useState(false);
+  const [compareItems, setCompareItems] = useState<CompareItem[]>([]);
+  const [compareRange, setCompareRange] = useState<Range>("day");
+
+  // ---------- Data feed (WebSocket) ----------
   useEffect(() => {
     const ws = new WebSocket("ws://localhost:2004/ws");
-    wsRef.current = ws;
-
     ws.onmessage = (event) => {
       const msg = JSON.parse(event.data);
-
-      setData((prev) => {
-        if (msg.type === "snapshot") {
-          return msg.data;
-        }
-
-        if (msg.type === "update" && !paused) {
-          const updated = { ...prev };
-
-          // --- Merge time_series ---
-          if (msg.data.time_series) {
-            updated.time_series = [...prev.time_series];
-            msg.data.time_series.forEach((newEntry: any) => {
-              const idx = updated.time_series.findIndex((e) => e.time === newEntry.time);
-              if (idx >= 0) updated.time_series[idx] = newEntry;
-              else updated.time_series.push(newEntry);
-            });
-            updated.time_series.sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime());
-          }
-
-          // --- Merge protocol ---
-          if (msg.data.protocol) {
-            updated.protocol = [...prev.protocol];
-            msg.data.protocol.forEach((newEntry: any) => {
-              const idx = updated.protocol.findIndex(
-                (e) => e.date === newEntry.date && e.protocol === newEntry.protocol
-              );
-              if (idx >= 0) updated.protocol[idx] = newEntry;
-              else updated.protocol.push(newEntry);
-            });
-          }
-
-          // --- Merge src_ip ---
-          if (msg.data.src_ip) {
-            updated.src_ip = [...prev.src_ip];
-            msg.data.src_ip.forEach((newEntry: any) => {
-              const idx = updated.src_ip.findIndex(
-                (e) => e.date === newEntry.date && e.src_ip === newEntry.src_ip
-              );
-              if (idx >= 0) updated.src_ip[idx] = newEntry;
-              else updated.src_ip.push(newEntry);
-            });
-          }
-
-          // --- Merge dst_port ---
-          if (msg.data.dst_port) {
-            updated.dst_port = [...prev.dst_port];
-            msg.data.dst_port.forEach((newEntry: any) => {
-              const idx = updated.dst_port.findIndex(
-                (e) => e.date === newEntry.date && e.dst_port === newEntry.dst_port
-              );
-              if (idx >= 0) updated.dst_port[idx] = newEntry;
-              else updated.dst_port.push(newEntry);
-            });
-          }
-
-          return updated;
-        }
-
-        return prev;
-      });
+      if (msg.type === "snapshot") setData(msg.data);
+      if (msg.type === "update") {
+        setData((prev) => {
+          const merged = { ...prev } as Snapshot;
+          (["time_series", "protocol", "src_ip", "dst_port"] as const).forEach((key) => {
+            if (msg.data[key]) {
+              const updated = [...prev[key]] as any[];
+              msg.data[key].forEach((newItem: any) => {
+                const nonCountKeys = Object.keys(newItem).filter((k) => k !== "count");
+                const idx = updated.findIndex((item) =>
+                  JSON.stringify(nonCountKeys.map((k) => (item as any)[k])) ===
+                  JSON.stringify(nonCountKeys.map((k) => newItem[k]))
+                );
+                if (idx >= 0) updated[idx] = newItem; else updated.push(newItem);
+              });
+              (merged as any)[key] = updated;
+            }
+          });
+          return merged;
+        });
+      }
     };
-
     return () => ws.close();
-  }, [paused]);
+  }, []);
 
-  const toSortedChartArray = <T extends Record<string, any>>(arr: T[], keyField: keyof T) => {
-    const filtered = selectedDate ? arr.filter((item) => item.date === selectedDate) : arr;
+  // ---------- Helpers ----------
+  const formatXAxis = (time: string, range: Range) => {
+    const d = new Date(time);
+    if (range === "day") return `${d.getDate()}/${d.getMonth() + 1} ${d.getHours()}:00`;
+    if (range === "week") return `${d.getDate()}/${d.getMonth() + 1}`;
+    if (range === "month") return `${d.getDate()}`;
+    return time;
+  };
 
-    const summary: Record<string, number> = {};
-    filtered.forEach((item) => {
-      const key = String(item[keyField]);
-      summary[key] = (summary[key] || 0) + item.count;
+  const aggregate = (points: DataPoint[], range: Range) => {
+    const map = new Map<string, number>();
+    points.forEach((p) => {
+      const d = new Date(p.time);
+      let key = "";
+      if (range === "day") key = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()} ${d.getHours()}:00`;
+      if (range === "week") key = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+      if (range === "month") key = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
+      map.set(key, (map.get(key) || 0) + p.count);
     });
-
-    return Object.entries(summary)
-      .map(([name, value]) => ({ name, value }))
-      .sort((a, b) => b.value - a.value);
+    return Array.from(map, ([time, count]) => ({ time, count }))
+      .sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime());
   };
 
-  const filteredTimeSeries = selectedDate
-    ? data.time_series.filter((item) => item.time.startsWith(selectedDate))
-    : data.time_series;
+  // Series for main chart
+  const aggregatedSeries = useMemo(() => aggregate(data.time_series, mainTimeRange), [data.time_series, mainTimeRange]);
 
-  // --- Formatter สำหรับแกน X ---
-  const formatXAxis = (tickItem: string) => {
-    const date = new Date(tickItem);
-    if (selectedDate) {
-      // เลือกวัน → แสดงเวลา HH:mm
-      return date.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
-    } else {
-      // ไม่เลือกวัน → แสดงวัน/เดือน/ปี
-      return date.toLocaleDateString("en-GB", { day: "2-digit", month: "short", year: "numeric" });
+  // Top lists
+  const toTopList = (rec: Record<string, number>) =>
+    Object.entries(rec)
+      .map(([name, value]) => ({ name, value: value as number }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 10);
+
+  const topProtocols = useMemo(() => {
+    const rec = data.protocol.reduce((acc: Record<string, number>, p) => {
+      acc[p.protocol] = (acc[p.protocol] || 0) + p.count; return acc;
+    }, {});
+    return toTopList(rec);
+  }, [data.protocol]);
+
+  const topIPs = useMemo(() => {
+    const rec = data.src_ip.reduce((acc: Record<string, number>, s) => {
+      acc[s.src_ip] = (acc[s.src_ip] || 0) + s.count; return acc;
+    }, {});
+    return toTopList(rec);
+  }, [data.src_ip]);
+
+  const topPorts = useMemo(() => {
+    const rec = data.dst_port.reduce((acc: Record<string, number>, d) => {
+      const key = d.dst_port.toString(); acc[key] = (acc[key] || 0) + d.count; return acc;
+    }, {});
+    return toTopList(rec);
+  }, [data.dst_port]);
+
+  // Build time series for a single filter
+  const seriesFor = (filter: CompareItem, range: Range): DataPoint[] => {
+    if (filter.type === "protocol") {
+      const raw = data.protocol.filter((p) => p.protocol === filter.value)
+        .map((p) => ({ time: p.timestamp, count: p.count }));
+      return aggregate(raw, range);
     }
+    if (filter.type === "ip") {
+      const raw = data.src_ip.filter((s) => s.src_ip === filter.value)
+        .map((s) => ({ time: s.timestamp, count: s.count }));
+      return aggregate(raw, range);
+    }
+    // port
+    const raw = data.dst_port.filter((d) => d.dst_port === Number(filter.value))
+      .map((d) => ({ time: d.timestamp, count: d.count }));
+    return aggregate(raw, range);
   };
 
+  // Combine multiple series into a single array of rows keyed by time
+  const buildComparisonData = (items: CompareItem[], range: Range) => {
+    const rows = new Map<string, any>();
+    items.forEach((it) => {
+      const keyName = `${it.type}:${it.value}`;
+      const s = seriesFor(it, range);
+      s.forEach(({ time, count }) => {
+        const row = rows.get(time) || { time };
+        row[keyName] = (row[keyName] || 0) + count;
+        rows.set(time, row);
+      });
+    });
+    return Array.from(rows.values()).sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime());
+  };
+
+  const comparisonData = useMemo(() => buildComparisonData(compareItems, compareRange), [compareItems, compareRange, data]);
+
+  // ---------- UI handlers ----------
+  const handlePieClick = (type: CompareItem["type"], value: string | number) => {
+    const v = String(value);
+
+    setFocusFilters((prev) => {
+      // ถ้าคลิกซ้ำตัวเดียวกัน -> ลบออก (ปิดกราฟ)
+      if (prev.length === 1 && prev[0].type === type && prev[0].value === v) {
+        return [];
+      }
+      // ถ้าเป็นตัวใหม่ -> แทนที่ด้วยตัวใหม่
+      return [{ type, value: v }];
+    });
+  };
+
+  // กรองไอเทมที่อยู่ใน compare zone ออก
+  const filteredTopProtocols = topProtocols.filter(
+    (p) => !compareItems.some((c) => c.type === "protocol" && c.value === p.name)
+  );
+
+  const filteredTopIPs = topIPs.filter(
+    (ip) => !compareItems.some((c) => c.type === "ip" && c.value === ip.name)
+  );
+
+  const filteredTopPorts = topPorts.filter(
+    (port) => !compareItems.some((c) => c.type === "port" && c.value === port.name)
+  );
+
+
+  const removeCompareItem = (idx: number) => setCompareItems((prev) => prev.filter((_, i) => i !== idx));
+
+  // Drag & Drop
+  const onDragEnd = (result: DropResult) => {
+    const { destination, draggableId } = result;
+    if (!destination) return;
+    if (destination.droppableId !== "compareZone") return;
+
+    const [type, ...rest] = draggableId.split("::");
+    const value = rest.join("::");
+    const item: CompareItem = { type: type as CompareItem["type"], value };
+
+    setCompareItems((prev) =>
+      prev.some((p) => p.type === item.type && p.value === item.value)
+        ? prev
+        : [...prev, item]
+    );
+  };
+
+  // ---------- Render helpers ----------
+const renderPieAndBar = (list: { name: string; value: number }[], type: CompareItem["type"]) => {
+  const top10 = list.slice(0, 10);
   return (
-    <div className="p-4">
-      {/* Controls */}
-      <div className="flex flex-wrap items-center gap-4 mb-4">
-        <button
-          style={{
-            padding: "12px 24px",
-            background: "linear-gradient(90deg, #3b82f6, #6366f1, #8b5cf6)",
-            color: "white",
-            fontWeight: "bold",
-            border: "none",
-            borderRadius: "16px",
-            boxShadow: "0 4px 15px rgba(0,0,0,0.2)",
-            cursor: "pointer",
-            display: "flex",
-            alignItems: "center",
-            gap: "8px",
+    <div style={{ display: "flex", alignItems: "center", gap: 20 }}>
+      {/* Pie */}
+      <PieChart width={400} height={400}>
+        <Pie
+          data={top10}
+          dataKey="value"
+          nameKey="name"
+          outerRadius={80}
+          label={({ percent }) => {
+            const p = percent ?? 0;
+            return `${(p * 100).toFixed(1)}%`;
           }}
-          onClick={() => setPaused(!paused)}
+          onClick={(d: any) => handlePieClick(type, d.name)}
         >
-          {paused ? "▶ Resume" : "⏸ Pause"}
-        </button>
-        <input
-          type="date"
-          style={{
-            padding: "6px 12px",
-            borderRadius: "12px",
-            border: "1px solid #9ca3af",
-            background: "linear-gradient(180deg, #f9fafb, #e5e7eb)",
-            color: "#111827",
-            fontWeight: "500",
-            boxShadow: "inset 0 2px 4px rgba(0,0,0,0.1)",
-            cursor: "pointer",
-          }}
-          value={selectedDate}
-          onChange={(e) => setSelectedDate(e.target.value)}
-        />
-        {selectedDate && (
-          <button
-            style={{
-              marginLeft: "10px",
-              padding: "6px 12px",
-              background: "linear-gradient(90deg, #d1d5db, #9ca3af)",
-              color: "#111827",
-              fontWeight: "bold",
-              border: "none",
-              borderRadius: "12px",
-              boxShadow: "0 3px 8px rgba(0,0,0,0.15)",
-              cursor: "pointer",
-            }}
-            onClick={() => setSelectedDate("")}
-          >
-            X Clear
-          </button>
-        )}
-      </div>
+          {top10.map((_, i) => (
+            <Cell key={i} fill={COLORS[i % COLORS.length]} />
+          ))}
+        </Pie>
+        <Tooltip />
+      </PieChart>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Time Series */}
-        <div className="w-full">
-          <h3>
-            Packets Over Time{" "}
-            <span style={{ fontSize: "0.9rem", color: "#6b7280", fontWeight: "normal" }}>
-              ({selectedDate || "All Time"})
-            </span>
-          </h3>
-          {filteredTimeSeries.length === 0 ? (
-            <p className="text-center text-gray-500">Data is empty</p>
-          ) : (
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={filteredTimeSeries}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="time" tickFormatter={formatXAxis} minTickGap={20} />
-                <YAxis allowDecimals={false} />
-                <Tooltip />
-                <Line type="monotone" dataKey="count" stroke="#8884d8" />
-              </LineChart>
-            </ResponsiveContainer>
-          )}
-        </div>
-
-        {/* Protocol */}
-        <div className="w-full">
-          <h3>Packets by Protocol</h3>
-          {toSortedChartArray(data.protocol, "protocol").length === 0 ? (
-            <p className="text-center text-gray-500">Data is empty</p>
-          ) : (
-            <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={toSortedChartArray(data.protocol, "protocol").slice(0, 10)}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis allowDecimals={false} />
-                <Tooltip />
-                <Bar dataKey="value" fill="#82ca9d" />
-              </BarChart>
-            </ResponsiveContainer>
-          )}
-        </div>
-
-        {/* Source IP */}
-        <div className="w-full">
-          <h3>Packets by Source IP</h3>
-          {toSortedChartArray(data.src_ip, "src_ip").length === 0 ? (
-            <p className="text-center text-gray-500">Data is empty</p>
-          ) : (
-            <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={toSortedChartArray(data.src_ip, "src_ip").slice(0, 10)}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis allowDecimals={false} />
-                <Tooltip />
-                <Bar dataKey="value" fill="#ffc658" />
-              </BarChart>
-            </ResponsiveContainer>
-          )}
-        </div>
-
-        {/* Destination Port */}
-        <div className="w-full">
-          <h3>Packets by Destination Port</h3>
-          {toSortedChartArray(data.dst_port, "dst_port").length === 0 ? (
-            <p className="text-center text-gray-500">Data is empty</p>
-          ) : (
-            <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={toSortedChartArray(data.dst_port, "dst_port").slice(0, 20)}>
-                <CartesianGrid strokeDasharray="3 3" />
-                <XAxis dataKey="name" />
-                <YAxis allowDecimals={false} />
-                <Tooltip />
-                <Bar dataKey="value" fill="#d88484" />
-              </BarChart>
-            </ResponsiveContainer>
-          )}
-        </div>
-      </div>
+      {/* Bar (X=name, Y=value) */}
+      <ResponsiveContainer width={520} height={280}>
+        <BarChart data={top10} layout="horizontal" margin={{ top: 8, right: 16, left: 16, bottom: 40 }}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="name" type="category" angle={-30} textAnchor="end" interval={0} />
+          <YAxis type="number" allowDecimals={false} />
+          <Tooltip />
+          <Bar dataKey="value" onClick={(barData) => handlePieClick(type, (barData as any).name)}>
+            {top10.map((_, i) => (
+              <Cell key={i} fill={COLORS[i % COLORS.length]} />
+            ))}
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
     </div>
   );
 };
 
-export default RealtimeChart;
+// ---------- JSX ----------
+return (
+  <div>
+    <div>
+      <h1>Network Traffic Dashboard(เดี๋ยวมาแก้UI)</h1>
+      <Button
+        onClick={() => setIsCompareOpen(true)}
+      >
+        Custom Chart!!
+      </Button>
+    </div>
+
+    {/* Time series (overall) */}
+    <div>
+      <div>
+        <h2>Traffic Over Time</h2>
+        <Select
+          value={mainTimeRange}
+          onChange={(value: Range) => setMainTimeRange(value)}
+          style={{ width: 180 }}
+        >
+          <Select.Option value="day">Daily (per hour)</Select.Option>
+          <Select.Option value="week">Weekly (per day)</Select.Option>
+          <Select.Option value="month">Monthly (per day)</Select.Option>
+        </Select>
+      </div>
+      <ResponsiveContainer width="100%" height={320}>
+        <LineChart data={aggregatedSeries}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="time" tickFormatter={(t) => formatXAxis(t, mainTimeRange)} />
+          <YAxis allowDecimals={false} />
+          <Tooltip />
+          <Line type="monotone" dataKey="count" stroke="#2563eb" name="Total" />
+        </LineChart>
+      </ResponsiveContainer>
+    </div>
+
+    {/* Top lists with Pie + Bar */}
+    <div>
+      <div>
+        <h2>Top Protocols</h2>
+        {renderPieAndBar(topProtocols, "protocol")}
+      </div>
+      <div>
+        <h2>Top Source IPs</h2>
+        {renderPieAndBar(topIPs, "ip")}
+      </div>
+      <div>
+        <h2>Top Destination Ports</h2>
+        {renderPieAndBar(topPorts, "port")}
+      </div>
+    </div>
+
+    {/* Focus timelines (quick add by clicking bars/pies) */}
+    <div>
+      {focusFilters.map((filter, index) => {
+        const timeRange = filter.type === "protocol" ? protocolTimeRange : filter.type === "ip" ? ipTimeRange : portTimeRange;
+        const setTimeRange = filter.type === "protocol" ? setProtocolTimeRange : filter.type === "ip" ? setIpTimeRange : setPortTimeRange;
+        return (
+          <div key={`${filter.type}-${filter.value}-${index}`}>
+            <div>
+              <h3>Timeline for {filter.type.toUpperCase()}: {filter.value}</h3>
+              <Select
+                value={timeRange}
+                onChange={(value: Range) => setTimeRange(value)}
+                style={{ width: 120 }}
+              >
+                <Select.Option value="day">Daily</Select.Option>
+                <Select.Option value="week">Weekly</Select.Option>
+                <Select.Option value="month">Monthly</Select.Option>
+              </Select>
+              <Button danger style={{marginLeft: "10px"}} onClick={() => setFocusFilters((prev) => prev.filter((_, i) => i !== index))}>Close</Button>
+            </div>
+            <ResponsiveContainer width="100%" height={280}>
+              <LineChart data={seriesFor(filter, timeRange)}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="time" tickFormatter={(t) => formatXAxis(t, timeRange)} />
+                <YAxis allowDecimals={false} />
+                <Tooltip />
+                <Line type="monotone" dataKey="count" stroke="#10b981" name={`${filter.type}:${filter.value}`} />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+        );
+      })}
+    </div>
+
+    {/* Compare Modal */}
+    <Modal
+    isOpen={isCompareOpen}
+    onRequestClose={() => setIsCompareOpen(false)}
+    style={{ content: { inset: "10%", padding: 16, borderRadius: 16 } }}
+    contentLabel="Compare Items"
+  >
+    <DragDropContext onDragEnd={onDragEnd}>
+      <div className="stats-custom">
+        {/* Top 3 columns */}
+        <div className="stats-custom-top">
+          {(["protocol", "ip", "port"] as const).map((type) => (
+            <Droppable droppableId={type} isDropDisabled key={type}>
+              {(provided) => (
+                <div
+                  ref={provided.innerRef}
+                  {...provided.droppableProps}
+                  className="stats-custom-column"
+                >
+                  <h3>{type.toUpperCase()}</h3>
+                  {(type === "protocol" ? filteredTopProtocols : type === "ip" ? filteredTopIPs : filteredTopPorts).map(
+                    (item, index) => (
+                      <Draggable
+                        key={`${type}::${item.name}`}
+                        draggableId={`${type}::${item.name}`}
+                        index={index}
+                      >
+                        {(drag) => (
+                          <div
+                            ref={drag.innerRef}
+                            {...drag.draggableProps}
+                            {...drag.dragHandleProps}
+                            className="stats-custom-item"
+                          >
+                            {item.name} <span>({item.value})</span>
+                          </div>
+                        )}
+                      </Draggable>
+                    )
+                  )}
+                  {provided.placeholder}
+                </div>
+              )}
+            </Droppable>
+          ))}
+        </div>
+
+        {/* Bottom: drop zone + chart */}
+        <div className="stats-custom-bottom">
+          <Droppable droppableId="compareZone">
+            {(provided, snapshot) => (
+              <div
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+                className="stats-custom-dropzone"
+              >
+                {snapshot.isDraggingOver && <h3>Drop here!!</h3>}
+                {compareItems.map((item, index) => (
+                  <Draggable
+                    key={`${item.type}::${item.value}`}
+                    draggableId={`${item.type}::${item.value}`}
+                    index={index}
+                  >
+                    {(drag) => (
+                      <div
+                        ref={drag.innerRef}
+                        {...drag.draggableProps}
+                        {...drag.dragHandleProps}
+                        className="stats-custom-item"
+                      >
+                        {item.type.toUpperCase()}: {item.value}
+                        <button
+                          onClick={() => removeCompareItem(index)}
+                          style={{
+                            backgroundColor: "transparent",
+                            color: "red",
+                            border: "none", 
+                            fontSize: "18px",
+                            cursor: "pointer" 
+                          }}
+                        >
+                          x
+                        </button>
+                      </div>
+                    )}
+                  </Draggable>
+                ))}
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+
+          <div>
+          <Space style={{ marginBottom: 16 }}>
+            <Select
+              value={compareRange}
+              onChange={(value: Range) => setCompareRange(value)}
+              style={{ width: 120 }}
+            >
+              <Select.Option value="day">Daily</Select.Option>
+              <Select.Option value="week">Weekly</Select.Option>
+              <Select.Option value="month">Monthly</Select.Option>
+            </Select>
+
+            <Button danger onClick={() => setCompareItems([])}>
+              Clear
+            </Button>
+          </Space>
+          </div>    
+
+          <div className="stats-custom-chart">
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart
+                data={comparisonData}
+                margin={{ top: 8, right: 16, left: 8, bottom: 8 }}
+              >
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis
+                  dataKey="time"
+                  tickFormatter={(t) => formatXAxis(t, compareRange)}
+                />
+                <YAxis allowDecimals={false} />
+                <Tooltip />
+                <Legend />
+                {compareItems.map((it, idx) => {
+                  const keyName = `${it.type}:${it.value}`;
+                  return (
+                    <Line
+                      key={keyName}
+                      type="monotone"
+                      dataKey={keyName}
+                      stroke={COLORS[idx % COLORS.length]}
+                      dot={false}
+                      name={keyName}
+                    />
+                  );
+                })}
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+          <Button
+            danger
+            style={{ alignSelf: "flex-end" }}
+            onClick={() => setIsCompareOpen(false)}
+          >
+            Close
+          </Button>
+        </div>
+      </div>
+    </DragDropContext>
+  </Modal>
+  </div>
+);
+};
+export default Dashboard;
