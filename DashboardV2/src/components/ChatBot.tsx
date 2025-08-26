@@ -25,7 +25,7 @@ const ChatBot = () => {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                model: 'deepseek-r1:1.5b',
+                model: 'llama3.2:3b',
                 prompt: input,
                 stream: false,
             }),
@@ -56,7 +56,7 @@ const ChatBot = () => {
 
     useEffect(() => {
         Aos.init({
-            duration: 1000,
+            duration: 200,
             once: true,
         });
     }, []);
@@ -66,26 +66,31 @@ const ChatBot = () => {
                 <div className="chat-box">
                     <h1 className="chat-title" data-aos="zoom-in-down">Hi I'm HoneyBot AI Chat</h1>
                     {response ? (
-                        <div className="chat-response" data-aos="zoom-in" data-aos-duration="3000">
+                        <div className="chat-response" data-aos="zoom-in" data-aos-duration="2000">
                             <strong>🤖HoneyBot:</strong>
                             <span dangerouslySetInnerHTML={{ __html: formattedAiResponse }} />
                         </div>
                     ) : (
-                        <div className="chat-response" data-aos="zoom-in" data-aos-duration="3000">
-                            <strong>🤖HoneyBot:</strong> สวัสดีค้าบบบ ตัวผมนั้นใช้ model deepseek-r1:1.5b เพราะงั้นผมอาจจะตอบได้เร็วก็จริง แต่อย่าลืมนะครับผมเป็น AI เพราะงั้นผมผิดพลาดได้เสมอ
+                        <div className="chat-response" data-aos="zoom-in" data-aos-duration="2000" style={{ textAlign: 'center' }}>
+                            <strong>🤖HoneyBot:</strong> สวัสดีค้าบบบ <br /> ตัวผมนั้นใช้ <b>model llama3.2:3b</b> เพราะงั้นผมอาจจะตอบได้เร็วก็จริง<br /> แต่อย่าลืมนะครับผมเป็น AI เพราะงั้นผมผิดพลาดได้เสมอ
                         </div>
                     )}
-                    <textarea
-                        className="chat-input"
-                        placeholder="พิมพ์สิ่งที่อยากถาม AI..."
-                        value={input}
-                        onChange={(e) => setInput(e.target.value)}
-                        data-aos="zoom-in-up" data-aos-duration="2500"
-                    />
-                    <button data-aos="zoom-in-up" data-aos-duration="3000" className="chat-button" onClick={handleSend} disabled={loading}>
-                        {loading ? 'กำลังประมวลผล...' : 'ส่งคำถาม'}
-                    </button>
                 </div>
+            </div>
+            <div className="chat-input-container">
+                <textarea
+                    className="chat-input"
+                    placeholder="พิมพ์สิ่งที่อยากถาม AI..."
+                    value={input}
+                    onChange={(e) => setInput(e.target.value)}
+                />
+                <button className="chat-button" onClick={handleSend} disabled={loading}>
+                    {loading ?
+                        <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="var(--body_text_color)"><path d="M120-160v-640l572 240h-12q-35 0-66 8t-60 22L200-680v140l240 60-240 60v140l216-92q-8 23-12 45.5t-4 46.5v2L120-160Zm560 80q-83 0-141.5-58.5T480-280q0-83 58.5-141.5T680-480q83 0 141.5 58.5T880-280q0 83-58.5 141.5T680-80Zm66-106 28-28-74-74v-112h-40v128l86 86ZM200-372v-308 400-92Z"/></svg>
+                        :
+                        <svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="var(--body_text_color)"><path d="M120-160v-640l760 320-760 320Zm80-120 474-200-474-200v140l240 60-240 60v140Zm0 0v-400 400Z"/></svg>
+                    }
+                </button>
             </div>
         </>
     )
