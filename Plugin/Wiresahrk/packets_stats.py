@@ -22,35 +22,35 @@ c = conn.cursor()
 
 c.execute("""
 CREATE TABLE IF NOT EXISTS time_series (
-    bucket_time TEXT PRIMARY KEY,
+    timestamp TEXT PRIMARY KEY,
     count INTEGER
 )
 """)
 
 c.execute("""
 CREATE TABLE IF NOT EXISTS protocol_stats (
-    date TEXT,
+    timestamp TEXT,
     protocol TEXT,
     count INTEGER,
-    PRIMARY KEY(date, protocol)
+    PRIMARY KEY(timestamp, protocol)
 )
 """)
 
 c.execute("""
 CREATE TABLE IF NOT EXISTS src_ip_stats (
-    date TEXT,
+    timestamp TEXT,
     src_ip TEXT,
     count INTEGER,
-    PRIMARY KEY(date, src_ip)
+    PRIMARY KEY(timestamp, src_ip)
 )
 """)
 
 c.execute("""
 CREATE TABLE IF NOT EXISTS dst_port_stats (
-    date TEXT,
+    timestamp TEXT,
     dst_port INTEGER,
     count INTEGER,
-    PRIMARY KEY(date, dst_port)
+    PRIMARY KEY(timestamp, dst_port)
 )
 """)
 conn.commit()
@@ -61,17 +61,17 @@ conn.commit()
 def get_snapshot():
     snapshot = {"time_series": [], "protocol": [], "src_ip": [], "dst_port": []}
     with lock:
-        c.execute("SELECT bucket_time, count FROM time_series ORDER BY bucket_time")
+        c.execute("SELECT timestamp, count FROM time_series ORDER BY timestamp")
         snapshot["time_series"] = [{"time": r[0], "count": r[1]} for r in c.fetchall()]
 
-        c.execute("SELECT date, protocol, count FROM protocol_stats ORDER BY date")
-        snapshot["protocol"] = [{"date": r[0], "protocol": r[1], "count": r[2]} for r in c.fetchall()]
+        c.execute("SELECT timestamp, protocol, count FROM protocol_stats ORDER BY timestamp")
+        snapshot["protocol"] = [{"timestamp": r[0], "protocol": r[1], "count": r[2]} for r in c.fetchall()]
 
-        c.execute("SELECT date, src_ip, count FROM src_ip_stats ORDER BY date")
-        snapshot["src_ip"] = [{"date": r[0], "src_ip": r[1], "count": r[2]} for r in c.fetchall()]
+        c.execute("SELECT timestamp, src_ip, count FROM src_ip_stats ORDER BY timestamp")
+        snapshot["src_ip"] = [{"timestamp": r[0], "src_ip": r[1], "count": r[2]} for r in c.fetchall()]
 
-        c.execute("SELECT date, dst_port, count FROM dst_port_stats ORDER BY date")
-        snapshot["dst_port"] = [{"date": r[0], "dst_port": r[1], "count": r[2]} for r in c.fetchall()]
+        c.execute("SELECT timestamp, dst_port, count FROM dst_port_stats ORDER BY timestamp")
+        snapshot["dst_port"] = [{"timestamp": r[0], "dst_port": r[1], "count": r[2]} for r in c.fetchall()]
 
     return snapshot
 
@@ -81,42 +81,42 @@ def get_snapshot():
 def update_db(pkt):
     try:
         dt = datetime.fromtimestamp(float(pkt.sniff_timestamp))
-        bucket_time = dt.replace(minute=0, second=0, microsecond=0).strftime("%Y-%m-%d %H:%M")
-        date_only = dt.strftime("%Y-%m-%d")
+        # ใช้ timestamp แบบเต็ม (YYYY-MM-DD HH:MM)
+        timestamp = dt.replace(minute=0, second=0, microsecond=0).strftime("%Y-%m-%d %H:%M")
 
         msg = {}
 
         with lock:
             # time_series
             c.execute("""
-                INSERT INTO time_series(bucket_time, count)
+                INSERT INTO time_series(timestamp, count)
                 VALUES (?,1)
-                ON CONFLICT(bucket_time) DO UPDATE SET count=count+1
-            """, (bucket_time,))
-            c.execute("SELECT count FROM time_series WHERE bucket_time=?", (bucket_time,))
+                ON CONFLICT(timestamp) DO UPDATE SET count=count+1
+            """, (timestamp,))
+            c.execute("SELECT count FROM time_series WHERE timestamp=?", (timestamp,))
             ts_count = c.fetchone()[0]
-            msg["time_series"] = [{"time": bucket_time, "count": ts_count}]
+            msg["time_series"] = [{"time": timestamp, "count": ts_count}]
 
             # protocol
             proto = pkt.highest_layer
             c.execute("""
-                INSERT INTO protocol_stats(date, protocol, count)
+                INSERT INTO protocol_stats(timestamp, protocol, count)
                 VALUES (?, ?, 1)
-                ON CONFLICT(date, protocol) DO UPDATE SET count=count+1
-            """, (date_only, proto))
-            c.execute("SELECT count FROM protocol_stats WHERE date=? AND protocol=?", (date_only, proto))
-            msg["protocol"] = [{"date": date_only, "protocol": proto, "count": c.fetchone()[0]}]
+                ON CONFLICT(timestamp, protocol) DO UPDATE SET count=count+1
+            """, (timestamp, proto))
+            c.execute("SELECT count FROM protocol_stats WHERE timestamp=? AND protocol=?", (timestamp, proto))
+            msg["protocol"] = [{"timestamp": timestamp, "protocol": proto, "count": c.fetchone()[0]}]
 
             # src_ip
             if hasattr(pkt, "ip"):
                 src_ip = pkt.ip.src
                 c.execute("""
-                    INSERT INTO src_ip_stats(date, src_ip, count)
+                    INSERT INTO src_ip_stats(timestamp, src_ip, count)
                     VALUES (?, ?, 1)
-                    ON CONFLICT(date, src_ip) DO UPDATE SET count=count+1
-                """, (date_only, src_ip))
-                c.execute("SELECT count FROM src_ip_stats WHERE date=? AND src_ip=?", (date_only, src_ip))
-                msg["src_ip"] = [{"date": date_only, "src_ip": src_ip, "count": c.fetchone()[0]}]
+                    ON CONFLICT(timestamp, src_ip) DO UPDATE SET count=count+1
+                """, (timestamp, src_ip))
+                c.execute("SELECT count FROM src_ip_stats WHERE timestamp=? AND src_ip=?", (timestamp, src_ip))
+                msg["src_ip"] = [{"timestamp": timestamp, "src_ip": src_ip, "count": c.fetchone()[0]}]
 
             # dst_port
             dst = None
@@ -126,12 +126,12 @@ def update_db(pkt):
                 dst = int(pkt.udp.dstport)
             if dst is not None:
                 c.execute("""
-                    INSERT INTO dst_port_stats(date, dst_port, count)
+                    INSERT INTO dst_port_stats(timestamp, dst_port, count)
                     VALUES (?, ?, 1)
-                    ON CONFLICT(date, dst_port) DO UPDATE SET count=count+1
-                """, (date_only, dst))
-                c.execute("SELECT count FROM dst_port_stats WHERE date=? AND dst_port=?", (date_only, dst))
-                msg["dst_port"] = [{"date": date_only, "dst_port": dst, "count": c.fetchone()[0]}]
+                    ON CONFLICT(timestamp, dst_port) DO UPDATE SET count=count+1
+                """, (timestamp, dst))
+                c.execute("SELECT count FROM dst_port_stats WHERE timestamp=? AND dst_port=?", (timestamp, dst))
+                msg["dst_port"] = [{"timestamp": timestamp, "dst_port": dst, "count": c.fetchone()[0]}]
 
             conn.commit()
 
