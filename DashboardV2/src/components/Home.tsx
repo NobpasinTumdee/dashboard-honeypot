@@ -126,6 +126,7 @@ const Home = () => {
                     ) : (
                         <>
                             <h1 style={{ textAlign: 'center' }} data-aos="zoom-in-down">Example Log Data</h1>
+                            <p style={{ textAlign: 'center' }}>{isConnected ? 'Connected' : 'Disconnected'}</p>
                             <h2 style={{ textAlign: 'center' }} data-aos="zoom-in-down">Cowrie</h2>
                             <div className='chart-in-main-none-login'>
                                 <table style={{ width: "100%", borderCollapse: "collapse" }}>
