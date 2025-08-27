@@ -3,10 +3,10 @@ import '../App.css'
 import Aos from 'aos';
 import 'aos/dist/aos.css';
 import { useEffect, useState } from 'react';
-import ChartComponent from './chart/Chart';
+import ChartComponent from './chart/cowrie/Chart';
 import type { AlertItem } from './Cowrie';
 import { getCowrieAuth, getOpenCanaryAuth } from '../serviceApi';
-import ChartByDateComponent from './chart/ChartByDateComponent';
+import ChartByDateComponent from './chart/cowrie/ChartByDateComponent';
 import { useCanarySocket, useCowrieSocket, usePacketSocket } from './web-socket/controller';
 import type { AlertItemCanary } from './OpenCanary';
 import ChartCanary from './chart/ChartCanary';

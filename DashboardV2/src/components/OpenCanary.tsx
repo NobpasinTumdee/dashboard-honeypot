@@ -4,6 +4,7 @@ import 'aos/dist/aos.css';
 import '../Styles/Dashborad.css';
 import DateTimeNow from './DateTimeNow';
 import { useCanarySocket } from './web-socket/controller';
+import CanaryAlertsChart from './chart/canary/CanaryChartPage';
 
 export type AlertItemCanary = {
   id: number;
@@ -105,6 +106,9 @@ const OpenCanary = () => {
       <div style={{ margin: '10px 5% 20px', textAlign: 'left' }} data-aos="fade-down">
         <h1>Open Canary</h1>
       </div>
+      <div>
+        <CanaryAlertsChart data={data} />
+      </div>
       <div className='dashboard-container-box'>
         <div className='box-alert' data-aos="fade-down" data-aos-duration="200">
           <div>
@@ -176,16 +180,16 @@ const OpenCanary = () => {
                     <tr style={{ backdropFilter: "blur(10px)" }}>
                       <th className="thStyle">#</th>
                       {/* <th className="thStyle">dst_host</th> */}
-                      <th className="thStyle">Destination Port</th>
-                      <th className="thStyle">Local Time</th>
-                      <th className="thStyle">Adjusted Local Time</th>
-                      <th className="thStyle">Raw Log Data</th>
+                      {/* <th className="thStyle">Local Time</th> */}
+                      <th className="thStyle">Time</th>
                       <th className="thStyle">Log Message</th>
                       <th className="thStyle">Log Type</th>
                       <th className="thStyle">Node ID</th>
+                      {/* <th className="thStyle">Raw Log Data</th> */}
                       <th className="thStyle">Source Host</th>
                       <th className="thStyle">Source Port</th>
-                      <th className="thStyle">UTC Time</th>
+                      <th className="thStyle">Destination Port</th>
+                      {/* <th className="thStyle">UTC Time</th> */}
                     </tr>
                   </thead>
                   <tbody>
@@ -193,16 +197,16 @@ const OpenCanary = () => {
                       <tr key={item.id || index}>
                         <td className="tdStyle">{startIndex + index + 1}</td>
                         {/* <td className="tdStyle">{item.dst_host || <p className="tdStyle-null">null</p>}</td> */}
-                        <td className="tdStyle">{item.dst_port || <p className="tdStyle-null">null</p>}</td>
-                        <td className="tdStyle">{item.local_time || <p className="tdStyle-null">null</p>}</td>
-                        <td className="tdStyleMessage">{item.local_time_adjusted || <p className="tdStyle-null">null</p>}</td>
-                        <td className="tdStyleMessage">{item.logdata_raw || <p className="tdStyle-null">null</p>}</td>
+                        {/* <td className="tdStyle">{item.local_time || <p className="tdStyle-null">null</p>}</td> */}
+                        <td className="tdStyle">{(item.local_time_adjusted).slice(0, 10) || <p className="tdStyle-null">null</p>}</td>
                         <td className="tdStyleMessage">{item.logdata_msg_logdata || <p className="tdStyle-null">null</p>}</td>
                         <td className="tdStyle">{item.logtype || <p className="tdStyle-null">null</p>}</td>
                         <td className="tdStyle">{item.node_id || <p className="tdStyle-null">null</p>}</td>
+                        {/* <td className="tdStyleMessage">{item.logdata_raw || <p className="tdStyle-null">null</p>}</td> */}
                         <td className="tdStyle">{item.src_host || <p className="tdStyle-null">null</p>}</td>
                         <td className="tdStyle">{item.src_port || <p className="tdStyle-null">null</p>}</td>
-                        <td className="tdStyle">{item.utc_time || <p className="tdStyle-null">null</p>}</td>
+                        <td className="tdStyle">{item.dst_port || <p className="tdStyle-null">null</p>}</td>
+                        {/* <td className="tdStyle">{item.utc_time || <p className="tdStyle-null">null</p>}</td> */}
                       </tr>
                     ))}
                   </tbody>

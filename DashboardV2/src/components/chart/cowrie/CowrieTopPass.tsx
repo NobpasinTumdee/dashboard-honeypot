@@ -9,8 +9,8 @@ import {
     Tooltip,
     Legend,
 } from 'chart.js';
-import type { AlertItem } from '../Cowrie';
-import './chart.css'
+import type { AlertItem } from '../../Cowrie';
+import '../chart.css'
 
 ChartJS.register(
     CategoryScale,
@@ -48,7 +48,7 @@ const TopCredentialsChart: React.FC<TopCredentialsChartProps> = ({ data }) => {
             labels,
             datasets: [
                 {
-                    label: 'Total amount',
+                    label: 'Total top 10 passwords',
                     data: counts,
                     backgroundColor: (ctx: any) => {
                         const chart = ctx.chart;
@@ -83,7 +83,7 @@ const TopCredentialsChart: React.FC<TopCredentialsChartProps> = ({ data }) => {
             labels,
             datasets: [
                 {
-                    label: 'Total amount',
+                    label: 'Total top 10 usernames',
                     data: counts,
                     backgroundColor: (ctx: any) => {
                         const chart = ctx.chart;

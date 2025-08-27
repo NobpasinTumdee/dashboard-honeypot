@@ -4,7 +4,7 @@ import DateTimeNow from './DateTimeNow';
 import Aos from 'aos';
 import 'aos/dist/aos.css';
 import { useCowrieSocket } from './web-socket/controller';
-import TopPasswordsChart from './chart/CowrieTopPass';
+import TopPasswordsChart from './chart/cowrie/CowrieTopPass';
 
 export type AlertItem = {
     id: number;
