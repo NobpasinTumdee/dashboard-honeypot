@@ -136,102 +136,85 @@ class HoneyPotSSHUserAuthServer(userauth.SSHUserAuthServer):
         srcIp: str = self.transport.transport.getPeer().host  # type: ignore
         return self.portal.login(c, srcIp, IConchUser)
 
-    # การ login ด้วยชื่อผู้ใช้และรหัสผ่าน เพิ่มการตรวจสอบจำนวนครั้งที่ล็อกอินสำเร็จ
     def auth_password(self, packet: bytes) -> Any:
         password = getNS(packet[1:])[0]
         password_str = password.decode() if isinstance(password, bytes) else str(password)
         username_str = self.user.decode() if isinstance(self.user, bytes) else str(self.user)
 
-        users = load_users_txt(USERS_FILE)
+        self._last_username = username_str
+        self._last_password = password_str
 
-        # ---- ฟังก์ชันบันทึก credential ใหม่ ----
-        def save_creds():
-            if (username_str, password_str) not in users:
-                users.append((username_str, password_str))
-                try:
-                    with open(USERS_FILE, "w") as f:
-                        f.write(str(users))
-                    log.msg(f"Appended new credentials to users.txt: ({username_str}, {password_str})")
-                except Exception as e:
-                    log.msg(f"Cannot append to users.txt: {e}")
-        # ---------------------------------------
-
-        # ถ้ามี username/password ตรง
-        if (username_str, password_str) in users:
-            log.msg(f"Login allowed: ({username_str}, {password_str}) found in users.txt")
-            save_creds()
-            c = credentials.UsernamePasswordIP(self.user, password, None)
-            return self.portal.login(c, None, IConchUser)
-
-        # ถ้ามี password ซ้ำกับ user อื่น
-        elif any(password_str == pw for _, pw in users):
-            log.msg(f"Login allowed immediately: password '{password_str}' found in users.txt")
-            save_creds()
-            c = credentials.UsernamePasswordIP(self.user, password, None)
-            return self.portal.login(c, None, IConchUser)
-
-        # --- random login ---
-        self._current_attempts += 1
-        log.msg(
-            f"Random login: Credentials correct. Current successful attempts: {self._current_attempts}/{self._required_attempts}"
-        )
+        users = load_users_txt(USERS_FILE)  # list of tuple
+        user_dict = dict(users)
 
         c = credentials.UsernamePasswordIP(self.user, password, None)
         d = self.portal.login(c, None, IConchUser)
-        
-        def _cb_login_success(result):
-            if self._current_attempts >= self._required_attempts:
-                log.msg(
-                    f"Random login: Login successful after {self._current_attempts} required attempts!"
-                )
+        d.addCallback(self._cb_login_success, username_str, password_str, user_dict)
+        d.addErrback(lambda f: self._deny_access())
+        return d
 
-                username_str = self.user.decode() if isinstance(self.user, bytes) else str(self.user)
-                password_str = self.password.decode() if isinstance(self.password, bytes) else str(self.password)
 
-                # อ่าน users.txt มาเก็บเป็น set ของ usernames
-                existing_users = set()
-                try:
-                    with open("/home/cowrie/users.txt", "r") as f:
-                        for line in f:
-                            if ":" in line:
-                                u, p = line.strip().split(":", 1)
-                                existing_users.add(u)
-                except FileNotFoundError:
-                    pass
-
-                # ถ้า user ยังไม่มี → เขียนเพิ่ม
-                if username_str not in existing_users:
-                    try:
-                        with open("/home/cowrie/users.txt", "a") as f:
-                            f.write(f"{username_str}:{password_str}\n")
-                        log.msg(f"Appended new credentials to users.txt: ({username_str}, {password_str})")
-                    except Exception as e:
-                        log.msg(f"Cannot append to users.txt: {e}")
-
-                self._required_attempts = random.randint(1, 5)
-                self._current_attempts = 0
-
-                d = defer.Deferred()
-                reactor.callLater(random.uniform(1.0, 2.5), d.callback, result)
-                return d
+    def _cb_login_success(self, result, username_str, password_str, user_dict):
+        # --- กรณี User เก่า ---
+        if username_str in user_dict:
+            if user_dict[username_str] == password_str:
+                log.msg(f"Existing user {username_str} logged in with correct password.")
+                return self._grant_access(result)
             else:
-                log.msg(
-                    f"Random login: Still requires {self._required_attempts - self._current_attempts} more successful attempts."
-                )
-                d = defer.Deferred()
-                reactor.callLater(
-                    random.uniform(3, 4),
-                    d.errback,
-                    error.UnauthorizedLogin("Authentication failed. Please try again."),
-                )
-                return d
+                log.msg(f"Existing user {username_str} tried wrong password -> DENIED")
+                return self._deny_access()
+
+        # --- กรณี User ใหม่ ---
+        if password_str in user_dict.values():
+            log.msg(f"New user {username_str} logged in with known password '{password_str}'.")
+            self._save_user(username_str, password_str)
+            return self._grant_access(result)
+
+        # --- Random attempts ---
+        self._current_attempts += 1
+        if self._current_attempts >= self._required_attempts:
+            log.msg(f"New user {username_str} logged in after {self._current_attempts} attempts.")
+            self._save_user(username_str, password_str)
+            return self._grant_access(result)
+        else:
+            log.msg(f"New user {username_str} needs {self._required_attempts - self._current_attempts} more attempts.")
+            return self._deny_access()
 
 
-        def _eb_login_fail(failure):
-            log.msg("Random login: Login attempt failed (Incorrect credentials).")
-            return defer.fail(failure)
+    def _save_user(self, username, password):
+        """บันทึก user ใหม่ลง users.txt (แบบ list of tuple)"""
+        users = load_users_txt(USERS_FILE)
+        if (username, password) not in users:
+            users.append((username, password))
+            try:
+                with open(USERS_FILE, "w") as f:
+                    f.write(str(users))
+                log.msg(f"Appended new credentials to users.txt: ({username}, {password})")
+            except Exception as e:
+                log.msg(f"Cannot append to users.txt: {e}")
 
-        return d.addCallbacks(_cb_login_success, _eb_login_fail)
+
+    def _grant_access(self, result):
+        """อนุญาต login + delay"""
+        self._required_attempts = random.randint(1, 5)
+        self._current_attempts = 0
+        d = defer.Deferred()
+        reactor.callLater(random.uniform(1.0, 2.5), d.callback, result)
+        return d
+
+
+    def _deny_access(self):
+        """ปฏิเสธ login + delay"""
+        d = defer.Deferred()
+        reactor.callLater(
+            random.uniform(3, 4),
+            d.errback,
+            error.UnauthorizedLogin("Authentication failed. Please try again."),
+        )
+        return d
+
+
+        
 
         
 
