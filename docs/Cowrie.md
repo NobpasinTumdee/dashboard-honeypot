@@ -76,7 +76,7 @@ bin/cowrie status
 bin/cowrie stop
 ```
 ตรวจสอบ service ที่เปิด
-```bash
+```
 netstat -tulpn | grep python
 ```
 ไฟล์ถูกเก็บไว้ที่ /cowrie/var/log/cowrie
@@ -84,19 +84,22 @@ netstat -tulpn | grep python
 
 ## การทดสอบ
 - Telnet
-```bash
+```
 telnet localhost 23
 ```
 ลองพยายาม login  
 (ออกจาก telnet ด้วย ctrl+] และ telnet> quit)
 
 - SSH
-```bash
+```
 ssh cowrie@localhost -p 22
 ```
 ลองพยายาม login  
 หมายเหตุ : username/password ที่ใช้ login ไม่ได้ สามารถดูใน etc/userdb.txt
 
-
+- monitor log
+```
+tail -f /home/cowrie/cowrie/var/log/cowrie/cowrie.log
+```
 
 
