@@ -4,6 +4,7 @@ import DateTimeNow from './DateTimeNow';
 import Aos from 'aos';
 import 'aos/dist/aos.css';
 import { useCowrieSocket } from './web-socket/controller';
+import TopPasswordsChart from './chart/CowrieTopPass';
 
 export type AlertItem = {
     id: number;
@@ -110,6 +111,9 @@ const CowriePage = () => {
             <div style={{ margin: '10px 5% 20px', textAlign: 'left' }} data-aos="fade-down">
                 <h1>Cowrie</h1>
             </div>
+            <div style={{margin: '10px 0 5%'}}>
+                <TopPasswordsChart data={data} />
+            </div>
             <div className='dashboard-container-box'>
                 <div className='box-alert' data-aos="fade-down" data-aos-duration="200">
                     <div>
@@ -170,6 +174,7 @@ const CowriePage = () => {
                         </div>
                     ) : (
                         <>
+
                             <div className="table-container" data-aos="fade-up">
                                 <table style={{ width: "100%", borderCollapse: "collapse" }}>
                                     <thead>
@@ -187,7 +192,7 @@ const CowriePage = () => {
                                             <th className="thStyle">password</th>
                                             <th className="thStyle">input</th>
                                             <th className="thStyle">command</th>
-                                            <th className="thStyle">Session</th>
+                                            {/* <th className="thStyle">Session</th> */}
                                             <th className="thStyle">Duration</th>
                                         </tr>
                                     </thead>
@@ -207,7 +212,7 @@ const CowriePage = () => {
                                                 <td className="tdStyle">{item.password || <p className="tdStyle-null">null</p>}</td>
                                                 <td className="tdStyle">{item.input || <p className="tdStyle-null">null</p>}</td>
                                                 <td className="tdStyle">{item.command || <p className="tdStyle-null">null</p>}</td>
-                                                <td className="tdStyle">{item.session || <p className="tdStyle-null">null</p>}</td>
+                                                {/* <td className="tdStyle">{item.session || <p className="tdStyle-null">null</p>}</td> */}
                                                 <td className="tdStyle">{item.duration || <p className="tdStyle-null">null</p>}</td>
                                             </tr>
                                         ))}
@@ -217,7 +222,7 @@ const CowriePage = () => {
                             <div data-aos="flip-left">
                                 <DateTimeNow />
                             </div>
-                            <div style={{ margin: "2% 0 10%", textAlign: "center" }} data-aos="fade-down">
+                            <div style={{ margin: "2% 0 10%", textAlign: "center" }}>
                                 <button
                                     onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                                     disabled={currentPage === 1}
