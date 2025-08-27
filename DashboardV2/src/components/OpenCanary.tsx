@@ -211,7 +211,7 @@ const OpenCanary = () => {
               <div data-aos="flip-left">
                 <DateTimeNow />
               </div>
-              <div style={{ margin: "2% 0 10%", textAlign: "center" }} data-aos="fade-down">
+              <div style={{ margin: "2% 0 10%", textAlign: "center" }}>
                 <button
                   onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
