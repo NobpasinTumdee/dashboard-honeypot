@@ -83,6 +83,7 @@ const Login: React.FC = () => {
 
     const [Url, setUrl] = useState<string>("");
     const [UrlNgrok, setUrlNgrok] = useState<string>("");
+    const [UrlNgrokOllama, setUrlNgrokOllama] = useState<string>("");
     const [Port, setPort] = useState<string>("");
     const UrlApi = localStorage.getItem("apiUrl");
 
@@ -98,6 +99,10 @@ const Login: React.FC = () => {
         e.preventDefault();
         if (UrlNgrok) {
             localStorage.setItem("apiUrl", UrlNgrok);
+            if (UrlNgrokOllama) {
+                localStorage.setItem("apiUrlOllama", UrlNgrokOllama);
+                console.log(UrlNgrokOllama);
+            }
             alert(`Url Ngrok saved: ${UrlNgrok}`);
             window.location.reload();
         }
@@ -243,6 +248,14 @@ const Login: React.FC = () => {
                                 onChange={(e) => setUrlNgrok(e.target.value)}
                                 placeholder="Ngrok Url"
                                 required
+                                aria-label="input-text"
+                                className="input-url"
+                            />
+                            <input
+                                type="text"
+                                value={UrlNgrokOllama}
+                                onChange={(e) => setUrlNgrokOllama(e.target.value)}
+                                placeholder="Ngrok Url for Ollama"
                                 aria-label="input-text"
                                 className="input-url"
                             />

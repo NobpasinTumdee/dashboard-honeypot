@@ -10,6 +10,9 @@ const md = new MarkdownIt({
     typographer: true  // ปรับปรุงการจัดวางเครื่องหมายวรรคตอนบางอย่าง
 });
 
+const Url = localStorage.getItem("apiUrlOllama");
+const apiUrl = `${Url || 'http://localhost:11434'}`
+
 const ChatBot = () => {
     const [input, setInput] = useState('');
     const [response, setResponse] = useState('');
@@ -21,7 +24,7 @@ const ChatBot = () => {
         setLoading(true);
         setResponse('');
 
-        const res = await fetch('http://localhost:11434/api/generate', {
+        const res = await fetch(`${apiUrl}/api/generate`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
