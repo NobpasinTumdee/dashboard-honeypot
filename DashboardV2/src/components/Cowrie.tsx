@@ -111,7 +111,7 @@ const CowriePage = () => {
             <div style={{ margin: '10px 5% 20px', textAlign: 'left' }} data-aos="fade-down">
                 <h1>Cowrie</h1>
             </div>
-            <div style={{margin: '10px 0 5%'}}>
+            <div style={{ margin: '10px 0 5%' }}>
                 <TopPasswordsChart data={data} />
             </div>
             <div className='dashboard-container-box'>
@@ -180,7 +180,7 @@ const CowriePage = () => {
                                     <thead>
                                         <tr style={{ backdropFilter: "blur(10px)" }}>
                                             <th className="thStyle">#</th>
-                                            <th className="thStyle">Timestamp</th>
+                                            <th className="thStyle">Date</th>
                                             <th className="thStyle">Event</th>
                                             <th className="thStyle">Message</th>
                                             <th className="thStyle">Protocol</th>
@@ -190,17 +190,24 @@ const CowriePage = () => {
                                             <th className="thStyle">Dst Port</th>
                                             <th className="thStyle">username</th>
                                             <th className="thStyle">password</th>
-                                            <th className="thStyle">input</th>
-                                            <th className="thStyle">command</th>
+                                            <th className="thStyle">Command</th>
+                                            {/* <th className="thStyle">command</th> */}
                                             {/* <th className="thStyle">Session</th> */}
+                                            <th className="thStyle">Time Stamp</th>
                                             <th className="thStyle">Duration</th>
                                         </tr>
                                     </thead>
+
                                     <tbody>
                                         {currentItems.map((item, index) => (
-                                            <tr key={item.id || index}>
+                                            <tr key={item.id || index} style={{ backgroundColor: item.eventid.slice(-7) === 'connect' ? '#a9ff6f5b' : item.eventid.slice(-6) === 'closed' ? '#ffb77d5b' : '' }}>
                                                 <td className="tdStyle">{startIndex + index + 1}</td>
-                                                <td className="tdStyle">{item.timestamp.slice(0, 10) || <p className="tdStyle-null">null</p>}</td>
+                                                <td className="tdStyle">
+                                                    {new Date(item.timestamp).toLocaleDateString("en-EN", {
+                                                        day: "2-digit",
+                                                        month: "2-digit",
+                                                        year: "numeric",
+                                                    }) || <p className="tdStyle-null">null</p>}</td>
                                                 <td className="tdStyle">{item.eventid || <p className="tdStyle-null">null</p>}</td>
                                                 <td className="tdStyleMessage">{item.message || <p className="tdStyle-null">null</p>}</td>
                                                 <td className="tdStyle">{item.protocol || <p className="tdStyle-null">null</p>}</td>
@@ -211,9 +218,15 @@ const CowriePage = () => {
                                                 <td className="tdStyle">{item.username || <p className="tdStyle-null">null</p>}</td>
                                                 <td className="tdStyle">{item.password || <p className="tdStyle-null">null</p>}</td>
                                                 <td className="tdStyle">{item.input || <p className="tdStyle-null">null</p>}</td>
-                                                <td className="tdStyle">{item.command || <p className="tdStyle-null">null</p>}</td>
+                                                {/* <td className="tdStyle">{item.command || <p className="tdStyle-null">null</p>}</td> */}
                                                 {/* <td className="tdStyle">{item.session || <p className="tdStyle-null">null</p>}</td> */}
-                                                <td className="tdStyle">{item.duration || <p className="tdStyle-null">null</p>}</td>
+                                                <td className="tdStyle">
+                                                    {new Date(item.timestamp).toLocaleTimeString("en-EN", {
+                                                        hour: "2-digit",
+                                                        minute: "2-digit",
+                                                        hour12: true,
+                                                    }) || <p className="tdStyle-null">null</p>}</td>
+                                                <td className="tdStyle">{item.duration ? (Number(item.duration) / 60).toFixed(2) + " min" : <p className="tdStyle-null">null</p>}</td>
                                             </tr>
                                         ))}
                                     </tbody>
