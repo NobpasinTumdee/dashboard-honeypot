@@ -50,7 +50,7 @@ const Navbar = () => {
                             <>
                                 <Link to={'cowrie'} className={`Link-button ${isActive('/cowrie') ? 'active' : ''}`}>Cowrie </Link>
                                 <Link to="open-canary" className={`Link-button ${isActive('/open-canary') ? 'active' : ''}`}>OpenCanary </Link>
-                                <Link to="socket" className={`Link-button ${isActive('/socket') ? 'active' : ''}`}>Packets </Link>
+                                <Link to="wireshark" className={`Link-button ${isActive('/wireshark') ? 'active' : ''}`}>Wireshark </Link>
                                 <Link to="document" className={`Link-button ${isActive('/document') ? 'active' : ''}`}> Document </Link>
                             </>
                         ) : (
