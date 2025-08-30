@@ -192,7 +192,7 @@ export const usePacketStatsSocket = (
             socket.emit("request-time-series-logs");
             socket.emit("request-protocol-logs");
             socket.emit("request-source-ip-logs");
-            socket.emit("rrequest-dest-port-logs");
+            socket.emit("request-dest-port-logs");
         });
 
         socket.on("disconnect", () => {
@@ -233,7 +233,7 @@ export const usePacketStatsSocket = (
             console.log("New ip data:", new Date().toString());
             console.log("New ip[ data:", newLogs);
         });
-        socket.on("rreal-time-port-stats", (newLogs: DstPortStats[]) => {
+        socket.on("real-time-port-stats", (newLogs: DstPortStats[]) => {
             setDstPort(newLogs);
             console.log("New port data:", new Date().toString());
             console.log("New port data:", newLogs);

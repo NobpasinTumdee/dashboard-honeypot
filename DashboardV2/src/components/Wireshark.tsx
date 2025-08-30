@@ -167,16 +167,37 @@ const Wireshark: React.FC = () => {
         {protocol.length > 0 && (
           <div style={{ margin: "20px 5% 10px", textAlign: "left" }}>
             <h2>Top Protocols</h2>
+            {protocol.map((p) => (
+              <div key={p.id} style={{ display: "flex", justifyContent: "space-between", padding: "5px 0" }}>
+                <span>{p.protocol}</span>
+                <span>{p.timestamp}</span>
+                <span>{p.count}</span>
+              </div>
+            ))}
           </div>
         )}
         {ip.length > 0 && (
           <div style={{ margin: "20px 5% 10px", textAlign: "left" }}>
             <h2>Top Source IPs</h2>
+            {ip.map((p) => (
+              <div key={p.id} style={{ display: "flex", justifyContent: "space-between", padding: "5px 0" }}>
+                <span>{p.src_ip}</span>
+                <span>{p.timestamp}</span>
+                <span>{p.count}</span>
+              </div>
+            ))}
           </div>
         )}
         {port.length > 0 && (
           <div style={{ margin: "20px 5% 10px", textAlign: "left" }}>
             <h2>Top Destination Ports</h2>
+            {port.map((p) => (
+              <div key={p.id} style={{ display: "flex", justifyContent: "space-between", padding: "5px 0" }}>
+                <span>{p.dst_port}</span>
+                <span>{p.timestamp}</span>
+                <span>{p.count}</span>
+              </div>              
+            ))}
           </div>
         )}
       </div>
