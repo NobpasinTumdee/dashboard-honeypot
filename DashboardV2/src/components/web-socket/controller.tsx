@@ -3,6 +3,7 @@ import { io, Socket } from "socket.io-client";
 import type { AlertItem } from "../Cowrie";
 import type { AlertItemCanary } from "../OpenCanary";
 import type { HttpsPacket } from "./Packet";
+import type { TimeSeriesPackets, ProtocolStats, SrcIpStats, DstPortStats } from "../wireshark/type";
 
 const Url = localStorage.getItem("apiUrl");
 
@@ -150,6 +151,92 @@ export const usePacketSocket = (
         socket.on("real-time", (newLogs: HttpsPacket[]) => {
             setData(newLogs);
             console.log("New data:", new Date().toString());
+        });
+
+        socket.on("Welcome-Message", (msg) => {
+            console.log("Message:", msg);
+        });
+
+        return () => {
+            socket.disconnect();
+            socket.off();
+        };
+    }, []);
+};
+
+// packets stats
+export const usePacketStatsSocket = (
+    setData: (data: TimeSeriesPackets[]) => void,
+    setProtocol: (protocol: ProtocolStats[]) => void,
+    setSrcIp: (ip: SrcIpStats[]) => void,
+    setDstPort: (port: DstPortStats[]) => void,
+    setIsConnected: (status: boolean) => void,
+    setIsLogin: (status: boolean) => void
+) => {
+    const socketRef = useRef<Socket | null>(null);
+
+    useEffect(() => {
+        const token = getToken();
+        if (!token) {
+            console.log("No token found. Cannot connect to WebSocket.");
+            return;
+        } else {
+            setIsLogin(true);
+        }
+
+        const socket = io(apiUrl, { auth: { token }, transports: ['websocket'], withCredentials: true });
+        socketRef.current = socket;
+
+        socket.on("connect", () => {
+            setIsConnected(true);
+            socket.emit("request-time-series-logs");
+            socket.emit("request-protocol-logs");
+            socket.emit("request-source-ip-logs");
+            socket.emit("rrequest-dest-port-logs");
+        });
+
+        socket.on("disconnect", () => {
+            setIsConnected(false);
+        });
+
+        /* Update */
+        socket.on("Update-packet-overtime", (newLogs: TimeSeriesPackets[]) => {
+            setData(newLogs);
+            console.log("Update logs:", new Date().toString());
+        });
+        socket.on("Update-protocol", (newLogs: ProtocolStats[]) => {
+            setProtocol(newLogs);
+            console.log("Update logs:", new Date().toString());
+        });
+        socket.on("Update-source-ip", (newLogs: SrcIpStats[]) => {
+            setSrcIp(newLogs);
+            console.log("Update logs:", new Date().toString());
+        });
+        socket.on("Update-dest-port", (newLogs: DstPortStats[]) => {
+            setDstPort(newLogs);
+            console.log("Update logs:", new Date().toString());
+        });
+
+        /* real-time */
+        socket.on("real-time-packet-stats", (newLogs: TimeSeriesPackets[]) => {
+            setData(newLogs);
+            console.log("New data:", new Date().toString());
+            console.log("New data:", newLogs);
+        });
+        socket.on("real-time-protocol-stats", (newLogs: ProtocolStats[]) => {
+            setProtocol(newLogs);
+            console.log("New protocol data:", new Date().toString());
+            console.log("New protocol data:", newLogs);
+        });
+        socket.on("real-time-ip-stats", (newLogs: SrcIpStats[]) => {
+            setSrcIp(newLogs);
+            console.log("New ip data:", new Date().toString());
+            console.log("New ip[ data:", newLogs);
+        });
+        socket.on("rreal-time-port-stats", (newLogs: DstPortStats[]) => {
+            setDstPort(newLogs);
+            console.log("New port data:", new Date().toString());
+            console.log("New port data:", newLogs);
         });
 
         socket.on("Welcome-Message", (msg) => {
