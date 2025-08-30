@@ -10,7 +10,7 @@ import FuzzyText from './components/Login/FuzzyText';
 import Doclayout from './components/documentation/Doclayout';
 import DocumentPage from './components/documentation/DocumentPage';
 import DocumentCowrie from './components/documentation/DocumentCowrie';
-import LogDisplay from './components/web-socket/Packet';
+import Wireshark from './components/Wireshark';
 
 const router = createBrowserRouter([
   {
@@ -23,7 +23,7 @@ const router = createBrowserRouter([
       { path: "open-canary", element: <OpenCanary /> },
       { path: "chatbot", element: <ChatBot /> },
       { path: "login", element: <Login /> },
-      { path: "socket", element: <LogDisplay /> },
+      { path: "wireshark", element: <Wireshark /> },
     ]
   },
   {
