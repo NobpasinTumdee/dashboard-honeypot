@@ -81,8 +81,8 @@ const Wireshark: React.FC = () => {
         height: "80vh",
         textAlign: "center"
       }}>
-        <h2>คุณยังไม่ได้ล็อกอิน โปรดล็อกอินเพื่อดูภาพรวมจาก Wireshark</h2>
-        <Button type="primary" onClick={() => navigate("/login")}>ล็อกอิน</Button>
+        <h2>You are not logged in. Please log in to view the Wireshark overview.</h2>
+        <Button type="primary" onClick={() => navigate("/login")}>Login</Button>
       </div>
     );
   }
@@ -161,6 +161,26 @@ const Wireshark: React.FC = () => {
         </LineChart>
       </ResponsiveContainer>
       <LogDisplay></LogDisplay>
+
+      <div>
+        {/* เดะมาเอาออกนะ ขอ deploy ได้ก่อน */}
+        {protocol.length > 0 && (
+          <div style={{ margin: "20px 5% 10px", textAlign: "left" }}>
+            <h2>Top Protocols</h2>
+          </div>
+        )}
+        {ip.length > 0 && (
+          <div style={{ margin: "20px 5% 10px", textAlign: "left" }}>
+            <h2>Top Source IPs</h2>
+          </div>
+        )}
+        {port.length > 0 && (
+          <div style={{ margin: "20px 5% 10px", textAlign: "left" }}>
+            <h2>Top Destination Ports</h2>
+          </div>
+        )}
+      </div>
+
     </>
   );
 };
