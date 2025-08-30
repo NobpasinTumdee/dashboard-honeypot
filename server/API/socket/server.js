@@ -98,6 +98,7 @@ io.on('connection', (socket) => {
   });
 
 
+  // Event handler สำหรับการดึง logs https packets
   socket.on('requestlogs', async () => {
     try {
       const logs = await prisma.HttpsPackets.findMany({
@@ -187,6 +188,9 @@ io.on('connection', (socket) => {
       console.error('Error fetching real-time honeypot logs opencanary:', error);
     }
 
+
+
+    // real-time logs https packets
     try {
       const logs = await prisma.HttpsPackets.findMany({
         orderBy: { id: 'desc' },

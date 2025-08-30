@@ -10,9 +10,9 @@ OPENCANARY_LOG_PATH = '/var/tmp/opencanary.log'
 SQLITE_DB_PATH = '/home/cpe27/dashboard-honeypot/server/API/socket/HeneyPot.db'
 
 # กำหนดเส้นทางไฟล์ windows
-# COWRIE_JSON_LOG_PATH = 'C:/Users/ACER/Documents/GitHub/dashboard-honeypot/server/cowrie.json'
-# OPENCANARY_LOG_PATH = 'C:/Users/ACER/Documents/GitHub/dashboard-honeypot/server/opencanary.log'
-# SQLITE_DB_PATH = 'C:/Users/ACER/Documents/GitHub/dashboard-honeypot/server/API/backend/HeneyPot.db'
+# COWRIE_JSON_LOG_PATH = 'C:/Users/ACER/Documents/GitHub/dashboard-honeypot/server/plugin/convertData/cowrie.json'
+# OPENCANARY_LOG_PATH = 'C:/Users/ACER/Documents/GitHub/dashboard-honeypot/server/plugin/convertData/opencanary.log'
+# SQLITE_DB_PATH = 'C:/Users/ACER/Documents/GitHub/dashboard-honeypot/server/API/socket/HeneyPot.db'
 
 # Dictionary เก็บตำแหน่งสุดท้ายที่อ่านของแต่ละไฟล์
 last_file_positions = {
@@ -78,6 +78,55 @@ def setup_database():
             updatedAt DATETIME DEFAULT (CURRENT_TIMESTAMP),
             deletedAt DATETIME
         )
+    ''')
+
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS TimeSeriesPackets (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            timestamp TEXT,
+            count INTEGER
+        )
+    ''')
+
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS ProtocolStats (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        protocol TEXT,
+        timestamp TEXT,
+        count INTEGER
+    )
+    ''')
+
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS SrcIpStats (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        src_ip TEXT,
+        timestamp TEXT,
+        count INTEGER
+    )
+    ''')
+
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS DstPortStats (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        dst_port TEXT,
+        timestamp TEXT,
+        count INTEGER
+    )
+    ''')
+
+    cursor.execute('''
+    CREATE TABLE IF NOT EXISTS HttpsPackets (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        timestamp TEXT,
+        src_ip TEXT,
+        src_port TEXT,
+        dst_ip TEXT,
+        dst_port TEXT,
+        method TEXT,
+        request_uri TEXT,
+        userAgent TEXT
+    )
     ''')
 
     conn.commit()
