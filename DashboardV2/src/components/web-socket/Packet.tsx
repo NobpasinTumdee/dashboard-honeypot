@@ -52,7 +52,7 @@ const LogDisplay = () => {
     return (
         <>
             <div style={{ margin: '10px 5% 20px', textAlign: 'left' }} data-aos="zoom-in-down">
-                <h1>Packets Logs</h1>
+                <h1>Http/Https Logs</h1>
             </div>
             <div className='dashboard-container-box'>
                 <div className='box-alert' data-aos="fade-down" data-aos-duration="200">
