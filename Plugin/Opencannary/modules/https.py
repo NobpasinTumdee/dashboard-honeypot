@@ -132,28 +132,36 @@ class CanaryHTTPS(CanaryService):
         page = BasicLogin(factory=self)
         root = Resource()
 
-        skin_path = "/home/admin/Honeypot/Opencanary_env/lib/python3.12/site-packages/opencanary/modules/data/http/skin/test_skin"
+        skin_path = "/home/admin/Honeypot/Opencanary_env/lib/python3.12/site-packages/opencanary/modules/data/http/skin/Admin"
         static_path = os.path.join(skin_path, "static")
         
         #print("STATIC DIR =", self.staticdir)
         #print("DEBUG: self.staticdir =", self.staticdir)
 
-        root.putChild(b"static", File(self.staticdir))
+        root.putChild(b"static", File(static_path))
 
-        root.putChild(b"", page)
-        root.putChild(b"index.html", page)
+        # root = File(skin_path)   # serve ทั้งโฟลเดอร์ AdminPage
+        # root.putChild(b"static", File(static_path))
+
+        root = File(skin_path)
+        root.putChild(b"css", File(os.path.join(static_path, "css")))
+        root.putChild(b"js", File(os.path.join(static_path, "js")))
+        root.putChild(b"img", File(os.path.join(static_path, "img")))
+        root.putChild(b"fonts", File(os.path.join(static_path, "fonts")))
+        root.putChild(b"static", File(static_path))
+
+        
 
         wrapped = EncodingResourceWrapper(root, [GzipEncoderFactory()])
         site = Site(wrapped)
-
-        # ---- Force TLSv1.2 only ----
+        
+        
         ctx_factory = DefaultOpenSSLContextFactory(
             privateKeyFileName=str(self.key_path),
             certificateFileName=str(self.certificate_path),
         )
         ctx = ctx_factory.getContext()
 
-        # ปิด TLS เวอร์ชันอื่นทั้งหมด ยกเว้น TLSv1.2
         ctx.set_options(SSL.OP_NO_TLSv1)      # ปิด TLSv1.0
         ctx.set_options(SSL.OP_NO_TLSv1_1)    # ปิด TLSv1.1
         ctx.set_options(SSL.OP_NO_TLSv1_3)    # ปิด TLSv1.3
@@ -164,3 +172,5 @@ class CanaryHTTPS(CanaryService):
             ctx_factory,
             interface=self.listen_addr,
         )
+
+
