@@ -201,10 +201,25 @@ option:checked {
     gap: 20px;
     padding: 10px 20px;
     border-radius: 10px;
-    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+    box-shadow: var(--body_hover_text_color) 0px 2px 5px -1px, var(--body_hover_text_color) 0px 1px 3px -1px;
 }
 
+.container-table-packet {
+    width: 90%;
+    margin: 0 5% 20px;
+    display: flex;
+    justify-content: space-around;
+    gap: 10px;
+}
 
+.container-table-packet h2 {
+    text-align: center;
+}
+
+.table-packet {
+    max-height: 350px;
+    overflow-y: scroll;
+}
 
 @media screen and (max-width: 860px) {
     .dashboard-container-box {
@@ -214,6 +229,10 @@ option:checked {
     .dashboard-container-box svg {
         width: 25px;
         height: 25px
+    }
+
+    .container-table-packet {
+        flex-direction: column;
     }
 }
 
@@ -259,5 +278,9 @@ option:checked {
     .chart-in-sub {
         width: 100%;
         padding: 0;
+    }
+
+    .container-table-packet {
+        font-size: 0.7rem;
     }
 }
