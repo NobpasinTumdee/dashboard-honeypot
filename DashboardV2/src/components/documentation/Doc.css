@@ -104,6 +104,7 @@
     align-items: center;
     width: 90%;
     margin:  5%;
+    gap: 2rem;
     color: var(--text-ui);
 }
 
@@ -112,6 +113,7 @@
     flex-direction: column;
     justify-content: center;
     gap: 1rem;
+    width: 50%;
 }
 
 .next-step p {
@@ -162,4 +164,25 @@
         transform: translateY(320px);
         opacity: 0.5;
     }
+}
+
+@media screen and (max-width: 768px) {
+    .terminal-container {
+        flex-direction: column;
+        gap: 2rem;
+        width: 90%;
+        margin: 2rem 5%;
+    }
+
+    .move-step {
+        top: 20%;
+        z-index: 10;
+    }
+
+    .next-step {
+        text-align: center;
+        width: 100%;
+        font-size: 0.7rem;
+    }
+    
 }

@@ -11,7 +11,7 @@ const NavDoc = () => {
                     <Link to="/" className={`Link-button-doc ${isActive('/') ? 'active' : ''}`}>Dashboard</Link>
                     <Link to="/document" className={`Link-button-doc ${isActive('/document') ? 'active' : ''}`}>Home</Link>
                     <Link to="/document/cowrie-guide" className={`Link-button-doc ${isActive('/cowrie-guide') ? 'active' : ''}`}>Cowrie</Link>
-                    <Link to="/document/cowrie-guide" className={`Link-button-doc ${isActive('/') ? 'active' : ''}`}>OpenCanary</Link>
+                    <Link to="/document/canary-guide" className={`Link-button-doc ${isActive('/canary-guide') ? 'active' : ''}`}>OpenCanary</Link>
                     <Link to="/document/cowrie-guide" className={`Link-button-doc ${isActive('/') ? 'active' : ''}`}>Get Start</Link>
                 </nav>
             </div>

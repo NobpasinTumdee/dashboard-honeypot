@@ -29,26 +29,26 @@ const DocumentPage = () => {
 
             <h1 className="terminal-title" data-aos="fade-down" id='step1'>Quick Start</h1>
             <div className='terminal-container'>
-                <div style={{ width: '55%' }} data-aos="fade-left">
-                    <TerminalCode headertext='clone repository from github' type='git' code="clone https://github.com/NobpasinTumdee/dashboard-honeypot.git" />
-                    <TerminalCode headertext='change directory' type='cd' code=".\dashboard-honeypot" />
-                </div>
-                <div className='next-step' style={{ width: '30%' }} data-aos="fade-right" data-aos-duration="2000">
+                <div className='next-step' data-aos="fade-up" data-aos-duration="2000">
                     <h1>Step 1 - Clone the Dashboard Repository</h1>
                     <p>Before we can start building our honeypot dashboard, we need the source code. Think of this step as downloading the “blueprint” for your entire system. Run the command below to pull the project straight from GitHub. Once it’s done, move into the project folder — that’s where all the magic will happen in the next steps.</p>
                     <p>By the end of this step, you’ll have the complete dashboard code sitting on your machine, ready for customization, configuration, and a bit of hacking fun.</p>
+                </div>
+                <div data-aos="fade-up" className='next-step'>
+                    <TerminalCode headertext='clone repository from github' type='git' code="clone https://github.com/NobpasinTumdee/dashboard-honeypot.git" />
+                    <TerminalCode headertext='change directory' type='cd' code=".\dashboard-honeypot" />
                 </div>
             </div>
 
 
             <div className='terminal-container' id='step2'>
-                <div className='next-step' style={{ width: '30%' }} data-aos="fade-left" data-aos-duration="2000">
+                <div className='next-step' data-aos="fade-up" data-aos-duration="2000">
                     <h1>Step 2 - Install and Launch the Frontend</h1>
                     <p>Now that you’ve got the main dashboard project, it’s time to fire up the frontend — the part that you’ll actually see and interact with in your browser.</p>
                     <p>First, head into the DashboardV2 directory. This is where all the frontend code lives. Then, run npm install to grab all the packages and dependencies it needs (think of it as stocking your toolbox with the right tools).</p>
                     <p>Once that’s done, launch the development server with npm run dev. This will spin up your dashboard locally so you can see changes in real time as we build things out.</p>
                 </div>
-                <div style={{ width: '55%' }} data-aos="fade-right">
+                <div data-aos="fade-up" className='next-step'>
                     <TerminalCode headertext='change directory' type='cd' code=".\DashboardV2" />
                     <TerminalCode headertext='install libraries' type='npm' code="install" />
                     <TerminalCode headertext='run frontend' type='npm' code="run dev" />
@@ -57,16 +57,7 @@ const DocumentPage = () => {
 
 
             <div className='terminal-container' id='step3'>
-                <div style={{ width: '55%' }} data-aos="fade-left">
-                    <p>set up backend</p>
-                    <TerminalCode headertext='change directory' type='cd' code=".\server\API\socket" />
-                    <TerminalCode headertext='install libraries' type='npm' code="install express cors morgan bcryptjs jsonwebtoken prisma socket.io dotenv nodemon sqlite3" />
-                    <p>prisma</p>
-                    <TerminalCode headertext='prisma library (pull database)' type='npx' code="prisma db pull" />
-                    <TerminalCode headertext='prisma library (generate)' type='npx' code="prisma generate" />
-                    <TerminalCode headertext='run backend' type='npm' code="run dev" />
-                </div>
-                <div className='next-step' style={{ width: '30%' }} data-aos="fade-right" data-aos-duration="2000">
+                <div className='next-step' data-aos="fade-up" data-aos-duration="2000">
                     <h1>Step 3 - Install and Run the Backend</h1>
                     <p>With the frontend up and running,<br />it’s time to give it a brain — the backend.<br />This is where all the data handling, authentication, and socket connections happen. Without it, your dashboard is just a pretty face with no substance.<br /><br />First, navigate into the backend directory</p>
                     <p>Next, install all the required packages in one go. Here’s what you’re getting:<br /><br />
@@ -84,18 +75,27 @@ const DocumentPage = () => {
                     <p>After that, sync Prisma with your existing database and generate the client.</p>
                     <p>Finally, start your backend in development mode.</p>
                 </div>
+                <div data-aos="fade-up" className='next-step'>
+                    <p>set up backend</p>
+                    <TerminalCode headertext='change directory' type='cd' code=".\server\API\socket" />
+                    <TerminalCode headertext='install libraries' type='npm' code="install express cors morgan bcryptjs jsonwebtoken prisma socket.io dotenv nodemon sqlite3" />
+                    <p>prisma</p>
+                    <TerminalCode headertext='prisma library (pull database)' type='npx' code="prisma db pull" />
+                    <TerminalCode headertext='prisma library (generate)' type='npx' code="prisma generate" />
+                    <TerminalCode headertext='run backend' type='npm' code="run dev" />
+                </div>
             </div>
 
 
             <div className='terminal-container' id='step4'>
-                <div className='next-step' style={{ width: '30%' }} data-aos="fade-left" data-aos-duration="2000">
+                <div className='next-step' data-aos="fade-up" data-aos-duration="2000">
                     <h1>Step 4 - run python script</h1>
                     <p>Now that both your frontend and backend are ready, it’s time to process some honeypot log data!</p>
                     <p>Navigate into the folder where the Python script lives</p>
                     <p>This script, Honeypot_Log_Processor.py, is responsible for converting raw honeypot logs into a format your dashboard can understand and display. Running it will prepare your data so you can visualize attacks and sessions more clearly.</p>
                     <p>Next, run the Python script to process the data.</p>
                 </div>
-                <div style={{ width: '55%' }} data-aos="fade-right">
+                <div data-aos="fade-up" className='next-step'>
                     <TerminalCode headertext='change directory' type='cd' code=".\server\plugin\convertData" />
                     <TerminalCode headertext='run python script' type='python3' code=".\Honeypot_Log_Processor.py" />
                 </div>
