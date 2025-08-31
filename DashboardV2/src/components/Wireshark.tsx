@@ -162,6 +162,17 @@ const Wireshark: React.FC = () => {
           <Line type="monotone" dataKey="count" stroke="#2563eb" name="Total" />
         </LineChart>
       </ResponsiveContainer>
+      <div style={{ width: "90%", margin: "10px auto", textAlign: "right" }}>
+        <Select
+          value={timeRange}
+          onChange={(value) => setTimeRange(value as Range)}
+          style={{ width: 180, marginBottom: 16 }}
+        >
+          <Select.Option value="day">Daily (per hour)</Select.Option>
+          <Select.Option value="week">Weekly (per day)</Select.Option>
+          <Select.Option value="month">Monthly (per day)</Select.Option>
+        </Select>
+      </div>
 
 
       <div className="container-table-packet">
@@ -235,19 +246,7 @@ const Wireshark: React.FC = () => {
           </div>
         )}
       </div>
-
-      <div style={{ width: "90%", margin: "10px auto", textAlign: "right" }}>
-        <Select
-          value={timeRange}
-          onChange={(value) => setTimeRange(value as Range)}
-          style={{ width: 180, marginBottom: 16 }}
-        >
-          <Select.Option value="day">Daily (per hour)</Select.Option>
-          <Select.Option value="week">Weekly (per day)</Select.Option>
-          <Select.Option value="month">Monthly (per day)</Select.Option>
-        </Select>
-      </div>
-      <LogDisplay></LogDisplay>
+      <LogDisplay />
 
     </>
   );
