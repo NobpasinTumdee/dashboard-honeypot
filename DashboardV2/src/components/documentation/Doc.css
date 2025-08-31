@@ -103,7 +103,7 @@
     justify-content: space-around;
     align-items: center;
     width: 90%;
-    margin:  5%;
+    margin: 5%;
     gap: 2rem;
     color: var(--text-ui);
 }
@@ -156,7 +156,7 @@
     transform: translateY(300px);
     cursor: pointer;
     transition: 0.3s ease-in-out;
-    animation: scrolldown 2s ease-in-out infinite ;
+    animation: scrolldown 2s ease-in-out infinite;
 }
 
 @keyframes scrolldown {
@@ -184,5 +184,45 @@
         width: 100%;
         font-size: 0.7rem;
     }
-    
+
+    .doc-container {
+        width: 90%;
+        margin: 0 5%;
+    }
+
+    .doc-title {
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+    }
+
+    .doc-container h2 {
+        font-size: 0.7rem;
+        font-weight: 300;
+    }
+    .doc-container p {
+        font-size: 0.6rem;
+    }
+
+    .doc-subtitle {
+        font-size: 0.6rem;
+        font-weight: 200;
+        max-width: 600px;
+        margin-bottom: 2rem;
+    }
+
+    .doc-button {
+        padding: 12px 24px;
+        backdrop-filter: blur(10px);
+        background-color: #ffffff1a;
+        border: none;
+        border-radius: 8px;
+        color: #fff;
+        font-size: 1rem;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background-color 0.3s;
+    }
+
+
 }
