@@ -11,6 +11,7 @@ import Doclayout from './components/documentation/Doclayout';
 import DocumentPage from './components/documentation/DocumentPage';
 import DocumentCowrie from './components/documentation/DocumentCowrie';
 import Wireshark from './components/Wireshark';
+import DocumentCanary from './components/documentation/DocumentCanary';
 
 const router = createBrowserRouter([
   {
@@ -32,6 +33,7 @@ const router = createBrowserRouter([
     children: [
       { index: true, element: <DocumentPage /> },
       { path: "cowrie-guide", element: <DocumentCowrie /> },
+      { path: "canary-guide", element: <DocumentCanary /> },
     ]
   }
 ]);
