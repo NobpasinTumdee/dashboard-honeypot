@@ -45,6 +45,11 @@ const LogDisplay = () => {
     const currentItems = filteredData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
     const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
 
+    // Calculate counts for each method
+    const getCount = data.filter(item => item.method?.toUpperCase() === 'GET').length;
+    const postCount = data.filter(item => item.method?.toUpperCase() === 'POST').length;
+    const putCount = data.filter(item => item.method?.toUpperCase() === 'PUT').length;
+    const deleteCount = data.filter(item => item.method?.toUpperCase() === 'DELETE').length;
 
     useEffect(() => { Aos.init({ duration: 1000, once: true, }); }, []);
 
@@ -65,28 +70,28 @@ const LogDisplay = () => {
                 <div className='box-alert' data-aos="fade-down" data-aos-duration="400">
                     <div>
                         <h2 style={{ margin: '0' }}>GET</h2>
-                        <h1 style={{ margin: '0' }}>{data.length}</h1>
+                        <h1 style={{ margin: '0' }}>{getCount}</h1>
                     </div>
                     <svg xmlns="http://www.w3.org/2000/svg" height="45px" viewBox="0 -960 960 960" width="45px" fill="#12a022ff"><path d="M200-120q-33 0-56.5-23.5T120-200v-400q0-33 23.5-56.5T200-680h160v80H200v400h560v-400H600v-80h160q33 0 56.5 23.5T840-600v400q0 33-23.5 56.5T760-120H200Zm280-200L320-480l56-56 64 63v-487h80v487l64-63 56 56-160 160Z"/></svg>
                 </div>
                 <div className='box-alert' data-aos="fade-down" data-aos-duration="600">
                     <div>
                         <h2 style={{ margin: '0' }}>POST</h2>
-                        <h1 style={{ margin: '0' }}>{data.length}</h1>
+                        <h1 style={{ margin: '0' }}>{postCount}</h1>
                     </div>
                     <svg xmlns="http://www.w3.org/2000/svg" height="45px" viewBox="0 -960 960 960" width="45px" fill="#e57803ff"><path d="M240-40q-33 0-56.5-23.5T160-120v-440q0-33 23.5-56.5T240-640h120v80H240v440h480v-440H600v-80h120q33 0 56.5 23.5T800-560v440q0 33-23.5 56.5T720-40H240Zm200-280v-447l-64 64-56-57 160-160 160 160-56 57-64-64v447h-80Z"/></svg>
                 </div>
                 <div className='box-alert' data-aos="fade-down" data-aos-duration="800">
                     <div>
                         <h2 style={{ margin: '0' }}>PUT</h2>
-                        <h1 style={{ margin: '0' }}>{data.length}</h1>
+                        <h1 style={{ margin: '0' }}>{putCount}</h1>
                     </div>
                     <svg xmlns="http://www.w3.org/2000/svg" height="45px" viewBox="0 -960 960 960" width="45px" fill="#c4ae25ff"><path d="M560-80v-123l221-220q9-9 20-13t22-4q12 0 23 4.5t20 13.5l37 37q8 9 12.5 20t4.5 22q0 11-4 22.5T903-300L683-80H560Zm300-263-37-37 37 37ZM620-140h38l121-122-18-19-19-18-122 121v38ZM240-80q-33 0-56.5-23.5T160-160v-640q0-33 23.5-56.5T240-880h320l240 240v120h-80v-80H520v-200H240v640h240v80H240Zm280-400Zm241 199-19-18 37 37-18-19Z"/></svg>
                 </div>
                 <div className='box-alert' data-aos="fade-down" data-aos-duration="1000">
                     <div>
                         <h2 style={{ margin: '0' }}>DELETE</h2>
-                        <h1 style={{ margin: '0' }}>{data.length}</h1>
+                        <h1 style={{ margin: '0' }}>{deleteCount}</h1>
                     </div>
                     <svg xmlns="http://www.w3.org/2000/svg" height="45px" viewBox="0 -960 960 960" width="45px" fill="#ff0000ff"><path d="M580-280h80q25 0 42.5-17.5T720-340v-160h40v-60H660v-40h-80v40H480v60h40v160q0 25 17.5 42.5T580-280Zm0-220h80v160h-80v-160ZM160-160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h240l80 80h320q33 0 56.5 23.5T880-640v400q0 33-23.5 56.5T800-160H160Zm0-80h640v-400H447l-80-80H160v480Zm0 0v-480 480Z"/></svg>
                 </div>
