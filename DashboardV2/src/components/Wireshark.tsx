@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   LineChart,
   Line,
@@ -14,6 +14,10 @@ import "../Styles/Dashborad.css";
 import { useNavigate } from "react-router-dom";
 import type { TimeSeriesPackets, ProtocolStats, SrcIpStats, DstPortStats } from "./wireshark/type";
 import LogDisplay from "./web-socket/Packet";
+import Aos from 'aos';
+import 'aos/dist/aos.css';
+import '../Styles/Dashborad.css';
+import CombinedPieChart from "./chart/wireshark/ChartWireShark";
 
 type Range = "day" | "week" | "month";
 
@@ -71,6 +75,8 @@ const Wireshark: React.FC = () => {
     }
   };
 
+  useEffect(() => { Aos.init({ duration: 1000, once: true, }); }, []);
+
   if (!isLogin) {
     return (
       <div style={{
@@ -89,12 +95,20 @@ const Wireshark: React.FC = () => {
 
   return (
     <>
-      <div style={{ margin: "10px 5% 20px", textAlign: "left" }}>
-        <h1>Traffic Over Time</h1>
+      <div style={{ margin: "10px 5% 20px", textAlign: "center" }}>
+        <h1 data-aos="zoom-in-down">Traffic Over Time</h1>
+      </div>
+
+      <div className="container-table-packet">
+        <CombinedPieChart
+          protocolData={protocol}
+          srcIpData={ip}
+          dstPortData={port}
+        />
       </div>
 
       <div className="dashboard-container-box">
-        <div className="box-alert">
+        <div className="box-alert" data-aos="zoom-in-down">
           <div>
             <h2 style={{ margin: 0 }}>Total Packets</h2>
             <h1 style={{ margin: 0 }}>
@@ -108,7 +122,7 @@ const Wireshark: React.FC = () => {
           />
         </div>
 
-        <div className="box-alert">
+        <div className="box-alert" data-aos="zoom-in-down">
           <div>
             <h2 style={{ margin: 0 }}>Status WebSocket</h2>
             <h3 style={{ margin: 0 }}>
@@ -139,7 +153,90 @@ const Wireshark: React.FC = () => {
         </div>
       </div>
 
-      <div style={{ marginLeft: "20px" }}>
+      <ResponsiveContainer width="90%" height={320} style={{ margin: "0 auto" }}>
+        <LineChart data={aggregatedData}>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="time" tickFormatter={formatXAxis} />
+          <YAxis allowDecimals={false} />
+          <Tooltip labelFormatter={(label) => new Date(label).toLocaleString()} />
+          <Line type="monotone" dataKey="count" stroke="#2563eb" name="Total" />
+        </LineChart>
+      </ResponsiveContainer>
+
+
+      <div className="container-table-packet">
+        {protocol.length > 0 && (
+          <div className="table-packet" data-aos="zoom-in-down">
+            <h2>Top Protocols</h2>
+            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+              <thead>
+                <tr>
+                  <th className="thStyle">Protocol</th>
+                  <th className="thStyle">Last Detected</th>
+                  <th className="thStyle">Count</th>
+                </tr>
+              </thead>
+              <tbody>
+                {protocol.map((p) => (
+                  <tr key={p.id}>
+                    <td className="tdStyle">{p.protocol}</td>
+                    <td className="tdStyle">{p.timestamp}</td>
+                    <td className="tdStyle">{p.count}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+        {ip.length > 0 && (
+          <div className="table-packet" data-aos="zoom-in-down">
+            <h2>Top Source IPs</h2>
+            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+              <thead>
+                <tr>
+                  <th className="thStyle">Source IP</th>
+                  <th className="thStyle">Last Detected</th>
+                  <th className="thStyle">Count</th>
+                </tr>
+              </thead>
+              <tbody>
+                {ip.map((p) => (
+                  <tr key={p.id}>
+                    <td className="tdStyle">{p.src_ip}</td>
+                    <td className="tdStyle">{p.timestamp}</td>
+                    <td className="tdStyle">{p.count}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+        {port.length > 0 && (
+          <div className="table-packet" data-aos="zoom-in-down">
+            <h2>Top Destination Ports</h2>
+            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+              <thead>
+                <tr>
+                  <th className="thStyle">Destination Port</th>
+                  <th className="thStyle">Count</th>
+                  <th className="thStyle">Last Detected</th>
+                </tr>
+              </thead>
+              <tbody>
+                {port.map((p) => (
+                  <tr key={p.id}>
+                    <td className="tdStyle">{p.dst_port}</td>
+                    <td className="tdStyle">{p.count}</td>
+                    <td className="tdStyle">{p.timestamp}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      <div style={{ width: "90%", margin: "10px auto", textAlign: "right" }}>
         <Select
           value={timeRange}
           onChange={(value) => setTimeRange(value as Range)}
@@ -150,57 +247,7 @@ const Wireshark: React.FC = () => {
           <Select.Option value="month">Monthly (per day)</Select.Option>
         </Select>
       </div>
-
-      <ResponsiveContainer width="90%" height={320}>
-        <LineChart data={aggregatedData}>
-          <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="time" tickFormatter={formatXAxis} />
-          <YAxis allowDecimals={false} />
-          <Tooltip labelFormatter={(label) => new Date(label).toLocaleString()} />
-          <Line type="monotone" dataKey="count" stroke="#2563eb" name="Total" />
-        </LineChart>
-      </ResponsiveContainer>
       <LogDisplay></LogDisplay>
-
-      <div>
-        {/* เดะมาเอาออกนะ ขอ deploy ได้ก่อน */}
-        {protocol.length > 0 && (
-          <div style={{ margin: "20px 5% 10px", textAlign: "left" }}>
-            <h2>Top Protocols</h2>
-            {protocol.map((p) => (
-              <div key={p.id} style={{ display: "flex", justifyContent: "space-between", padding: "5px 0" }}>
-                <span>{p.protocol}</span>
-                <span>{p.timestamp}</span>
-                <span>{p.count}</span>
-              </div>
-            ))}
-          </div>
-        )}
-        {ip.length > 0 && (
-          <div style={{ margin: "20px 5% 10px", textAlign: "left" }}>
-            <h2>Top Source IPs</h2>
-            {ip.map((p) => (
-              <div key={p.id} style={{ display: "flex", justifyContent: "space-between", padding: "5px 0" }}>
-                <span>{p.src_ip}</span>
-                <span>{p.timestamp}</span>
-                <span>{p.count}</span>
-              </div>
-            ))}
-          </div>
-        )}
-        {port.length > 0 && (
-          <div style={{ margin: "20px 5% 10px", textAlign: "left" }}>
-            <h2>Top Destination Ports</h2>
-            {port.map((p) => (
-              <div key={p.id} style={{ display: "flex", justifyContent: "space-between", padding: "5px 0" }}>
-                <span>{p.dst_port}</span>
-                <span>{p.timestamp}</span>
-                <span>{p.count}</span>
-              </div>              
-            ))}
-          </div>
-        )}
-      </div>
 
     </>
   );
