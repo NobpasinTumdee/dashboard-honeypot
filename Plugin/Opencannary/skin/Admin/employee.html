@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Employee</title>
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+    <link rel="stylesheet" href="/static/css/sidebar.css">
+    <link rel="stylesheet" href="/static/css/employee.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+
+<body>
+
+    <div class="sidebar">
+        <div class="logo">Admin Panel</div>
+        <ul class="nav">
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li class="active"><a href="employee.html">Employee</a></li>
+            <li><a href="cctv.html">CCTV</a></li>
+            
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <header>
+            <h1>Employee Data</h1>
+        </header>
+
+        <div class="recent-activity">
+            <h2>Employee List</h2>
+            <table id="employeeTable">
+                <thead id="tableHead"></thead>
+                <tbody id="tableBody"></tbody>
+            </table>
+            <div class="pagination" id="pagination"></div>
+        </div>
+    </div>
+
+    <script>
+        let employees = [];
+        let currentPage = 1;
+        const rowsPerPage = 10;
+
+        // โหลด Excel
+        fetch("/static/data/Employee.xlsx")
+          .then(res => res.arrayBuffer())
+          .then(data => {
+            let workbook = XLSX.read(data, { type: "array" });
+            let sheet = workbook.Sheets[workbook.SheetNames[0]];
+            employees = XLSX.utils.sheet_to_json(sheet, { defval: "" });
+            renderTable();
+            renderPagination();
+          });
+
+        function renderTable() {
+            const head = document.getElementById("tableHead");
+            const body = document.getElementById("tableBody");
+            head.innerHTML = "";
+            body.innerHTML = "";
+
+            if (employees.length === 0) return;
+
+            // หัวตาราง
+            let headerRow = "<tr>";
+            Object.keys(employees[0]).forEach(col => headerRow += `<th>${col}</th>`);
+            headerRow += "</tr>";
+            head.innerHTML = headerRow;
+
+            // slice ข้อมูลตามหน้า
+            let start = (currentPage - 1) * rowsPerPage;
+            let end = start + rowsPerPage;
+            let pageData = employees.slice(start, end);
+
+            pageData.forEach(row => {
+                let tr = "<tr>";
+                Object.values(row).forEach(val => tr += `<td>${val}</td>`);
+                tr += "</tr>";
+                body.innerHTML += tr;
+            });
+        }
+
+        function renderPagination() {
+            const totalPages = Math.ceil(employees.length / rowsPerPage);
+            const pagination = document.getElementById("pagination");
+            pagination.innerHTML = "";
+
+            for (let i = 1; i <= totalPages; i++) {
+                let btn = document.createElement("button");
+                btn.innerText = i;
+                if (i === currentPage) btn.classList.add("active");
+                btn.onclick = () => {
+                    currentPage = i;
+                    renderTable();
+                    renderPagination();
+                };
+                pagination.appendChild(btn);
+            }
+        }
+    </script>
+
+</body>
+</html>

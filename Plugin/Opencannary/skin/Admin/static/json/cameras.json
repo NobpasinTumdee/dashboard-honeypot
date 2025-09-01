@@ -1,0 +1,33 @@
+
+{
+  "summary": {
+    "online": 2,
+    "offline": 1,
+    "recording": 2
+  },
+  "cameras": [
+    {
+      "id": "CAM-001",
+      "name": "CAM-001 - ทางเข้า",
+      "quality": "1080p",
+      "status": "online",
+      "recording": true,
+      "poster": "https://placehold.co/600x400?text=Live+Feed"
+    },
+    {
+      "id": "CAM-002",
+      "name": "CAM-002 - ลานจอดรถ",
+      "quality": "720p",
+      "status": "online",
+      "recording": true,
+      "poster": "https://placehold.co/600x400?text=Live+Feed"
+    },
+    {
+      "id": "CAM-003",
+      "name": "CAM-003 - ชั้น 2",
+      "quality": "480p",
+      "status": "offline",
+      "recording": false
+    }
+  ]
+}

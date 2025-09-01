@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/static/css/dashboard.css">
+    <link rel="stylesheet" href="/static/css/sidebar.css">
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="logo">Admin Panel</div>
+        <ul class="nav">
+            <li class="active"><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="employee.html">Employee</a></li>
+            <li><a href="cctv.html">CCTV</a></li>
+            
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <header>
+            <h1>Dashboard Overview</h1>
+        </header>
+
+        <div class="cards">
+            <div class="card">
+                <h3>Total Employee</h3>
+                <p id="total-employee">Loading...</p>
+            </div>
+            <div class="card">
+                <h3>Total Products</h3>
+                <p id="total-products">Loading...</p>
+            </div>
+            <div class="card">
+                <h3>Sales This Month</h3>
+                <p id="sales-month">Loading...</p>
+            </div>
+            <div class="card">
+                <h3>Total Orders</h3>
+                <p id="total-orders">Loading...</p>
+            </div>
+        </div>
+
+        <div class="recent-activity">
+            <h2>Recent Events</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Activity</th>
+                        <th>User</th>
+                        <th>Time</th>
+                    </tr>
+                </thead>
+                <tbody id="activity-body">
+                    <tr><td colspan="3">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        async function loadStats() {
+            const res = await fetch("static/json/stats.json");
+            const data = await res.json();
+
+            document.getElementById("total-employee").innerText = data.total_employee;
+            document.getElementById("total-products").innerText = data.total_products;
+            document.getElementById("sales-month").innerText = "$" + data.sales_this_month;
+            document.getElementById("total-orders").innerText = data.total_orders;
+        }
+
+        async function loadLogs() {
+            const res = await fetch("static/data/logs.json");
+            const logs = await res.json();
+
+            const tbody = document.getElementById("activity-body");
+            tbody.innerHTML = "";
+            logs.forEach(log => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td>${log.activity}</td>
+                        <td>${log.user}</td>
+                        <td>${log.time}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        loadStats();
+        loadLogs();
+    </script>
+</body>
+</html>

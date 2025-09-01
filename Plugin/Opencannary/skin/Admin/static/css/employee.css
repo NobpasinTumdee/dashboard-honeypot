@@ -1,0 +1,49 @@
+/* Employee Table Styles */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+    font-size: 14px;
+}
+
+th, td {
+    border: 1px solid #e5e7eb;
+    padding: 10px 12px;
+    text-align: left;
+}
+
+th {
+    background: #f4f6f9;
+    color: #111827;
+    font-weight: 600;
+}
+
+tbody tr:hover {
+    background-color: #f9fafb;
+}
+
+/* Pagination Styles */
+.pagination {
+    margin-top: 15px;
+    text-align: center;
+}
+
+.pagination button {
+    margin: 2px;
+    padding: 6px 12px;
+    border: 1px solid #ccc;
+    background: #fff;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.pagination button:hover {
+    background: #f3f4f6;
+}
+
+.pagination button.active {
+    background: #3b82f6;
+    color: #fff;
+    border-color: #3b82f6;
+}
