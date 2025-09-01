@@ -166,7 +166,7 @@ const Wireshark: React.FC = () => {
         <Select
           value={timeRange}
           onChange={(value) => setTimeRange(value as Range)}
-          style={{ width: 180, marginBottom: 16 }}
+          style={{ width: "auto", marginBottom: 16 }}
         >
           <Select.Option value="day">Daily (per hour)</Select.Option>
           <Select.Option value="week">Weekly (per day)</Select.Option>
