@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>จองห้องประชุม</title>
+    <link rel="stylesheet" href="page.css">
+</head>
+
+<body>
+
+    <div class="main-container">
+        <header class="navbar">
+            <div class="navbar-brand">
+                <h1>User Service</h1>
+            </div>
+            <div class="user-profile">
+                <span class="user-name">Parin Sornlertlamvanich</span>
+                <img src="https://i.pravatar.cc/40" alt="User Profile" class="user-avatar">
+            </div>
+        </header>
+        <div class="content-wrapper">
+            <aside class="sidebar">
+                <nav class="sidebar-nav">
+                    <ul>
+                        <li class="nav-item"><a href="user.html">ขอใช้ Wi-Fi</a></li>
+                        <li class="nav-item"><a href="cloud-access.html">ขอเข้าถึงข้อมูล Cloud</a></li>
+                        <li class="nav-item"><a href="vpn-access.html">ขอสิทธิ์ VPN</a></li>
+                        <li class="nav-item"><a href="report-issue.html">แจ้งปัญหาระบบ</a></li>
+                        <li class="nav-item"><a href="install-software.html">ขอติดตั้งซอฟต์แวร์</a></li>
+                        <li class="nav-item"><a href="ip-phone-request.html">ขอใช้งานโทรศัพท์ IP</a></li>
+                        <li class="nav-item active"><a href="meeting-room-booking.html">จองห้องประชุม</a></li>
+                        <li class="nav-item"><a href="new-account-request.html">ขอเพิ่มบัญชีผู้ใช้</a></li>
+                        <li class="nav-item"><a href="maintenance-report.html">รายงานการซ่อมบำรุง</a></li>
+                        <li class="nav-item"><a href="storage-request.html">ขอใช้พื้นที่เก็บข้อมูล</a></li>
+                        <li class="nav-item"><a href="erp-access.html">ขอสิทธิ์เข้าถึงระบบ ERP</a></li>
+                        <li class="nav-item"><a href="new-email-request.html">ขอเปิดสิทธิ์อีเมลใหม่</a></li>
+                    </ul>
+                </nav>
+            </aside>
+            <main class="content-container">
+                <h2 class="content-title">จองห้องประชุม</h2>
+                <form class="request-form">
+                    <div class="form-group">
+                        <label for="room-name">ชื่อห้องประชุม</label>
+                        <select id="room-name">
+                            <option value="">-- เลือกห้องประชุม --</option>
+                            <option value="A">ห้องประชุม A (5-10 คน)</option>
+                            <option value="B">ห้องประชุม B (10-20 คน)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="date">วันที่</label>
+                        <input type="date" id="date">
+                    </div>
+                    <div class="form-group">
+                        <label for="time">เวลา</label>
+                        <input type="time" id="time">
+                    </div>
+                    <div class="form-group">
+                        <label for="purpose">หัวข้อการประชุม</label>
+                        <textarea id="purpose" rows="3" placeholder="ระบุหัวข้อ"></textarea>
+                    </div>
+                    <button type="submit" class="form-button">ยืนยันการจอง</button>
+                </form>
+            </main>
+        </div>
+    </div>
+
+</body>
+
+</html>
