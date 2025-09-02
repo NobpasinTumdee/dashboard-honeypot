@@ -10,8 +10,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ทำเหมือนตรวจสอบจริง
     if (username.length > 0 && password.length > 0) {
-      // เข้าสู่ dashboard เสมอ
-      window.location.href = "dashboard.html";
+      const firstChar = username.charAt(0).toLowerCase(); // เอาตัวแรกแล้วทำเป็น lowercase
+      if (["a", "r"].includes(firstChar)) {
+        window.location.href = "dashboard.html";
+      }else{
+        window.location.href = "user/hero.html";
+      }
     } else {
       errorMsg.textContent = "Invalid credentials, please try again.";
     }
