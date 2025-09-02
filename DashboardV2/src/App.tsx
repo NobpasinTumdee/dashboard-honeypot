@@ -4,7 +4,7 @@ import Rootlayout from './layouts/Rootlayout'
 import CowriePage from './components/Cowrie'
 import Home from './components/Home'
 import OpenCanary from './components/OpenCanary'
-import ChatBot from './components/ChatBot';
+import ChatBot from './components/ai/ChatBot';
 import Login from './components/Login/Login';
 import FuzzyText from './components/Login/FuzzyText';
 import Doclayout from './components/documentation/Doclayout';

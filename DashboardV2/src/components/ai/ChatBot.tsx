@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import '../Styles/Chat.css'
+import '../../Styles/Chat.css'
 import Aos from 'aos';
 import 'aos/dist/aos.css';
 import MarkdownIt from 'markdown-it';
