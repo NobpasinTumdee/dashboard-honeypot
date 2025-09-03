@@ -26,9 +26,9 @@ const Login: React.FC = () => {
                 console.log('Login successful!', response.data);
                 alert('Login successful!');
                 localStorage.setItem("isLogin", "true");
+                localStorage.setItem("status", response.data.payload.Status);
                 localStorage.setItem("token_type", response.data.token_type);
                 localStorage.setItem("token", response.data.token);
-                localStorage.setItem("UserName", response.data.payload.UserName);
                 window.location.reload();
             } else {
                 const errorMessage = response?.data?.message || 'Gmail or Password is incorrect';

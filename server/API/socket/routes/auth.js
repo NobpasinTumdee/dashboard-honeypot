@@ -11,6 +11,16 @@ const router = express.Router();
 // REGISTER
 router.post("/register", async (req, res) => {
     try {
+        const existingUser = await prisma.users.findFirst({
+            where: {
+                Email: req.body.Email,
+            },
+        });
+
+        if (existingUser) {
+            return res.status(409).json({ message: "Email is already registered." });
+        }
+
         const hashedPassword = await bcrypt.hash(req.body.Password, 10); // Hash password
 
         const newUser = await prisma.users.create({
