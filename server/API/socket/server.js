@@ -18,10 +18,12 @@ app.use(express.json()); // For read JSON
 // Import Routes
 import authRoute from "./routes/auth.js";
 import dataRoute from './routes/data.js';
+import userRoute from './routes/user.js';
 import { verifyToken } from './middlewares/verifyToken.js';
 
 // API Routes
 app.use("/auth", authRoute);
+app.use("/user", verifyToken, userRoute);
 // app.use("/get", verifyToken, dataRoute);
 app.use("/get", dataRoute);
 app.get('/', (req, res) => {
@@ -252,5 +254,5 @@ io.on('connection', (socket) => {
 
 server.listen(port, () => {
   console.log(`🌐 Server running at http://localhost:${port}`);
-  console.log(`🚀 Server zerotier running at http://172.29.26.44:${port}`);
+  console.log(`🚀 Server zerotier running at http://172.29.169.27:${port}`);
 });

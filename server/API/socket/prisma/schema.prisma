@@ -51,6 +51,7 @@ model users {
   createdAt DateTime? @default(now())
   updatedAt DateTime? @default(now())
   deletedAt DateTime?
+  Status    String?
 }
 
 model HttpsPackets {
@@ -66,28 +67,28 @@ model HttpsPackets {
 }
 
 model TimeSeriesPackets {
-  id        Int      @id @default(autoincrement())
-  timestamp String
-  count     Int
+  id        Int     @id @default(autoincrement())
+  timestamp String?
+  count     Int?
 }
 
 model ProtocolStats {
-  id        Int      @id @default(autoincrement())
-  protocol  String
-  timestamp String
-  count     Int
+  id        Int     @id @default(autoincrement())
+  protocol  String?
+  timestamp String?
+  count     Int?
 }
 
 model SrcIpStats {
-  id        Int      @id @default(autoincrement())
-  src_ip    String
-  timestamp String
-  count     Int
+  id        Int     @id @default(autoincrement())
+  src_ip    String?
+  timestamp String?
+  count     Int?
 }
 
 model DstPortStats {
-  id        Int      @id @default(autoincrement())
-  dst_port  String
-  timestamp String
-  count     Int
+  id        Int     @id @default(autoincrement())
+  dst_port  String?
+  timestamp String?
+  count     Int?
 }

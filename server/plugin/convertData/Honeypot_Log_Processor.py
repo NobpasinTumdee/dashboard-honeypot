@@ -74,6 +74,7 @@ def setup_database():
             Email TEXT NOT NULL,
             UserName TEXT NOT NULL,
             Password TEXT NOT NULL,
+            Status TEXT,
             createdAt DATETIME DEFAULT (CURRENT_TIMESTAMP),
             updatedAt DATETIME DEFAULT (CURRENT_TIMESTAMP),
             deletedAt DATETIME

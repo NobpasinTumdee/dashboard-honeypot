@@ -18,8 +18,6 @@ router.post("/register", async (req, res) => {
                 Email: req.body.Email,
                 UserName: req.body.UserName,
                 Password: hashedPassword,
-                // กำหนด isAdmin หากต้องการให้มี role นี้ตั้งแต่แรก
-                // isAdmin: req.body.isAdmin || false,
             },
             select: {
                 UserID: true,
