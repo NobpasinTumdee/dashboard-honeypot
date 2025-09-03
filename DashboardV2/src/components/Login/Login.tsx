@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './Login.css';
 import { LignIn, SignUp } from '../../serviceApi/index';
+import { Link } from 'react-router-dom';
 
 
 const Login: React.FC = () => {
@@ -25,9 +26,9 @@ const Login: React.FC = () => {
                 console.log('Login successful!', response.data);
                 alert('Login successful!');
                 localStorage.setItem("isLogin", "true");
+                localStorage.setItem("status", response.data.payload.Status);
                 localStorage.setItem("token_type", response.data.token_type);
                 localStorage.setItem("token", response.data.token);
-                localStorage.setItem("UserName", response.data.payload.UserName);
                 window.location.reload();
             } else {
                 const errorMessage = response?.data?.message || 'Gmail or Password is incorrect';
@@ -51,7 +52,7 @@ const Login: React.FC = () => {
             const credentials = { Email: email, Password: password, UserName: UserName };
             const response = await SignUp(credentials);
 
-            if (response?.status === 200) {
+            if (response?.status === 201) {
                 console.log('SignUp successful!', response.data);
                 alert('SignUp successful!');
                 window.location.reload();
@@ -118,6 +119,9 @@ const Login: React.FC = () => {
                         <h3 className='add-url' onClick={() => setPopup(!isPopup)}>{isPopup ? "Close" : "Add Url"}</h3>
                         <button onClick={Logout} className='logout'>Logout</button>
                     </div>
+                    <div style={{ textAlign: 'center',margin: '30px 0' }}>
+                        <Link to="/auth-user" style={{ textDecoration: 'none', color: 'inherit' }}>Authenticated User</Link>
+                    </div>
                 </>
             ) : (
                 <>
@@ -155,7 +159,7 @@ const Login: React.FC = () => {
                                         {isLoading ? 'Login...' : 'Log In'}
                                     </button>
 
-                                    <a href="#" onClick={() => setmode(!mode)} className="sign-up">Forget Password?</a>
+                                    <a href="#" onClick={() => setmode(!mode)} className="sign-up">Sign Up</a>
                                 </form>
                             </>
                         ) : (

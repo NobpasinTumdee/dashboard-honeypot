@@ -18,10 +18,12 @@ app.use(express.json()); // For read JSON
 // Import Routes
 import authRoute from "./routes/auth.js";
 import dataRoute from './routes/data.js';
+import userRoute from './routes/user.js';
 import { verifyToken } from './middlewares/verifyToken.js';
 
 // API Routes
 app.use("/auth", authRoute);
+app.use("/user", verifyToken, userRoute);
 // app.use("/get", verifyToken, dataRoute);
 app.use("/get", dataRoute);
 app.get('/', (req, res) => {
@@ -58,7 +60,7 @@ io.use((socket, next) => {
 });
 
 io.on('connection', (socket) => {
-  console.log(`🟢 A client connected: ${socket.id} (User ID: ${socket.user.UserID}, Role: ${socket.user.isAdmin ? 'Admin' : 'User'})`);
+  console.log(`🟢 A client connected: ${socket.id} (User Name: ${socket.user.UserName}, Role: ${socket.user.Status})`);
 
   // ส่งข้อความต้อนรับเมื่อเชื่อมต่อสำเร็จ
   socket.emit('Welcome-Message', `Welcome, User ID ${socket.user.UserID}!`);
@@ -252,5 +254,5 @@ io.on('connection', (socket) => {
 
 server.listen(port, () => {
   console.log(`🌐 Server running at http://localhost:${port}`);
-  console.log(`🚀 Server zerotier running at http://172.29.26.44:${port}`);
+  console.log(`🚀 Server zerotier running at http://172.29.169.27:${port}`);
 });

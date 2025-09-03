@@ -11,6 +11,16 @@ const router = express.Router();
 // REGISTER
 router.post("/register", async (req, res) => {
     try {
+        const existingUser = await prisma.users.findFirst({
+            where: {
+                Email: req.body.Email,
+            },
+        });
+
+        if (existingUser) {
+            return res.status(409).json({ message: "Email is already registered." });
+        }
+
         const hashedPassword = await bcrypt.hash(req.body.Password, 10); // Hash password
 
         const newUser = await prisma.users.create({
@@ -18,8 +28,6 @@ router.post("/register", async (req, res) => {
                 Email: req.body.Email,
                 UserName: req.body.UserName,
                 Password: hashedPassword,
-                // กำหนด isAdmin หากต้องการให้มี role นี้ตั้งแต่แรก
-                // isAdmin: req.body.isAdmin || false,
             },
             select: {
                 UserID: true,
@@ -63,6 +71,7 @@ router.post("/login", async (req, res) => {
         const payload = {
             UserID: user.UserID,
             UserName: user.UserName,
+            Status: user.Status,
         };
         const accessToken = jwt.sign(
             payload,

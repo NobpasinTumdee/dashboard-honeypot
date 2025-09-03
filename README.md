@@ -100,6 +100,9 @@ npx prisma migrate dev --name updated-schema รันทุกครั้ง�
 npx prisma db pull
 ```
 ```
+npx prisma db push
+```
+```
 npx prisma generate
 ```
 
