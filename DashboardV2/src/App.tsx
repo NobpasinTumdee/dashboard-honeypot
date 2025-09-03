@@ -12,6 +12,7 @@ import DocumentPage from './components/documentation/DocumentPage';
 import DocumentCowrie from './components/documentation/DocumentCowrie';
 import Wireshark from './components/Wireshark';
 import DocumentCanary from './components/documentation/DocumentCanary';
+import ProtectedRoute from './layouts/ProtectedRoute';
 
 const router = createBrowserRouter([
   {
@@ -20,11 +21,11 @@ const router = createBrowserRouter([
     errorElement: <div style={{position: 'fixed',width: '100vw',height:'100vh',backgroundColor:'#242424',display:'flex',justifyContent:'center',alignItems:'center'}}><FuzzyText baseIntensity={0.2} >404 Not found this page...</FuzzyText></div>,
     children: [
       { index: true, element: <Home /> },
-      { path: "cowrie", element: <CowriePage /> },
-      { path: "open-canary", element: <OpenCanary /> },
-      { path: "chatbot", element: <ChatBot /> },
       { path: "login", element: <Login /> },
-      { path: "wireshark", element: <Wireshark /> },
+      { path: "cowrie", element: <ProtectedRoute><CowriePage /></ProtectedRoute> },
+      { path: "open-canary", element: <ProtectedRoute><OpenCanary /></ProtectedRoute> },
+      { path: "wireshark", element: <ProtectedRoute><Wireshark /></ProtectedRoute> },
+      { path: "chatbot", element: <ProtectedRoute><ChatBot /></ProtectedRoute> },
     ]
   },
   {
