@@ -234,3 +234,171 @@
     font-weight: 600;
     cursor: pointer;
 }
+
+
+
+
+
+
+
+/* Auth User */
+
+.auth-container {
+  padding: 40px 20px;
+  max-width: 900px;
+  margin: 0 auto;
+  color: var(--body_text_color);
+}
+
+/* Titles and Headers */
+.auth-title {
+  text-align: center;
+  font-size: 2.5em;
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.auth-subtitle {
+  text-align: center;
+  font-size: 1.1em;
+  margin-bottom: 30px;
+}
+
+/* User List and Card Styles */
+.user-list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.user-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-color: var(--body_main_sidebar);
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.user-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.user-avatar-placeholder {
+  width: 50px;
+  height: 50px;
+  background-color: #3498db;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  font-size: 1.5em;
+  font-weight: 600;
+  margin-right: 20px;
+}
+
+.initials {
+  text-transform: uppercase;
+}
+
+.user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name {
+  margin: 0;
+  font-size: 1.2em;
+  font-weight: 600;
+  color: var(--body_text_color);
+}
+
+.user-email {
+  margin: 5px 0 0;
+  font-size: 0.9em;
+  color: #7f8c8d;
+}
+
+.user-status {
+  margin-top: 5px;
+  font-size: 0.9em;
+  font-weight: 500;
+}
+
+.status- {
+  color: #e67e22; /* Orange for pending */
+  font-weight: bold;
+}
+
+.status-authenticated {
+  color: #2ecc71; /* Green for active */
+  font-weight: bold;
+}
+
+.user-timestamps {
+  font-size: 0.8em;
+  color: #95a5a6;
+  text-align: right;
+  margin-right: 20px;
+}
+
+/* Button Styles */
+.auth-button {
+  padding: 10px 20px;
+  background-color: var(--body_hover_text_color);
+  color: black;
+  border: none;
+  border-radius: 6px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.2s ease;
+}
+
+.auth-button:hover {
+  background-color: #27ae60;
+  transform: translateY(-2px);
+}
+
+.auth-button:active {
+  transform: translateY(0);
+}
+
+/* Empty State Message */
+.no-users-message {
+  text-align: center;
+  font-size: 1.2em;
+  color: #7f8c8d;
+  margin-top: 50px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .user-card {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .user-info {
+    margin-bottom: 15px;
+  }
+
+  .user-timestamps {
+    text-align: left;
+    margin-right: 0;
+    margin-bottom: 15px;
+  }
+
+  .auth-button {
+    width: 100%;
+  }
+}

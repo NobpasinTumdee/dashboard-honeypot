@@ -30,6 +30,17 @@ export interface SignInInterface {
     Password?: string;
 }
 
+export interface Users {
+    UserID: string;
+    UserName: string;
+    Email: string;
+    Password: string;
+    Status: string;
+    createdAt: Date;
+    updatedAt: Date;
+    deletedAt: Date;
+}
+
 //login
 async function LignIn(data: SignInInterface) {
 
@@ -105,6 +116,31 @@ async function getOpenCanaryAuth() {
         .catch((e) => e.response);
 
 }
+
+async function getAllUsers() {
+
+    return await axios
+
+        .get(`${apiUrl}/user/all`, requestOptions )
+
+        .then((res) => res)
+
+        .catch((e) => e.response);
+
+}
+
+async function AuthNewUser(id: string) {
+    
+    return await axios
+
+        .put(`${apiUrl}/user/${id}/status`, {}, requestOptions )
+
+        .then((res) => res)
+
+        .catch((e) => e.response);
+
+}
+
 export {
     LignIn,
     SignUp,
@@ -112,4 +148,6 @@ export {
     getCowrieAuth,
     getOpenCanary,
     getOpenCanaryAuth,
+    getAllUsers,
+    AuthNewUser,
 }

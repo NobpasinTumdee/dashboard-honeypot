@@ -60,7 +60,7 @@ io.use((socket, next) => {
 });
 
 io.on('connection', (socket) => {
-  console.log(`🟢 A client connected: ${socket.id} (User ID: ${socket.user.UserID}, Role: ${socket.user.isAdmin ? 'Admin' : 'User'})`);
+  console.log(`🟢 A client connected: ${socket.id} (User Name: ${socket.user.UserName}, Role: ${socket.user.Status})`);
 
   // ส่งข้อความต้อนรับเมื่อเชื่อมต่อสำเร็จ
   socket.emit('Welcome-Message', `Welcome, User ID ${socket.user.UserID}!`);

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './Login.css';
 import { LignIn, SignUp } from '../../serviceApi/index';
+import { Link } from 'react-router-dom';
 
 
 const Login: React.FC = () => {
@@ -117,6 +118,9 @@ const Login: React.FC = () => {
                         <h3>{"listening on " + UrlApi || "Url not found"}</h3>
                         <h3 className='add-url' onClick={() => setPopup(!isPopup)}>{isPopup ? "Close" : "Add Url"}</h3>
                         <button onClick={Logout} className='logout'>Logout</button>
+                    </div>
+                    <div style={{ textAlign: 'center',margin: '30px 0' }}>
+                        <Link to="/auth-user" style={{ textDecoration: 'none', color: 'inherit' }}>Authenticated User</Link>
                     </div>
                 </>
             ) : (

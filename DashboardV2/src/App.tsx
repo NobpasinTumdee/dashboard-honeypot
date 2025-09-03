@@ -13,6 +13,7 @@ import DocumentCowrie from './components/documentation/DocumentCowrie';
 import Wireshark from './components/Wireshark';
 import DocumentCanary from './components/documentation/DocumentCanary';
 import ProtectedRoute from './layouts/ProtectedRoute';
+import AuthUser from './components/Login/AuthUser';
 
 const router = createBrowserRouter([
   {
@@ -26,6 +27,7 @@ const router = createBrowserRouter([
       { path: "open-canary", element: <ProtectedRoute><OpenCanary /></ProtectedRoute> },
       { path: "wireshark", element: <ProtectedRoute><Wireshark /></ProtectedRoute> },
       { path: "chatbot", element: <ProtectedRoute><ChatBot /></ProtectedRoute> },
+      { path: "auth-user", element: <ProtectedRoute><AuthUser /></ProtectedRoute> },
     ]
   },
   {

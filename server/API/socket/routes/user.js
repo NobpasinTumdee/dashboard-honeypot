@@ -23,7 +23,7 @@ router.put("/:id/status", async (req, res) => {
                 UserID: parseInt(id),
             },
             data: {
-                Status: "user",
+                Status: "Authenticated",
             },
         });
         res.json(updatedUser);
