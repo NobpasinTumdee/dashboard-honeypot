@@ -4,6 +4,7 @@ import type { AlertItem } from "../Cowrie";
 import type { AlertItemCanary } from "../OpenCanary";
 import type { HttpsPacket } from "./Packet";
 import type { TimeSeriesPackets, ProtocolStats, SrcIpStats, DstPortStats } from "../wireshark/type";
+import type { Users } from "../../serviceApi";
 
 const Url = localStorage.getItem("apiUrl");
 
@@ -237,6 +238,64 @@ export const usePacketStatsSocket = (
             setDstPort(newLogs);
             console.log("New port data:", new Date().toString());
             console.log("New port data:", newLogs);
+        });
+
+        socket.on("Welcome-Message", (msg) => {
+            console.log("Message:", msg);
+        });
+
+        return () => {
+            socket.disconnect();
+            socket.off();
+        };
+    }, []);
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// user
+export const UsersSocket = (
+    setData: (data: Users[]) => void,
+    setIsConnected: (status: boolean) => void,
+    setIsLogin: (status: boolean) => void
+) => {
+    const socketRef = useRef<Socket | null>(null);
+
+    useEffect(() => {
+        const token = getToken();
+        if (!token) {
+            console.log("No token found. Cannot connect to WebSocket.");
+            return;
+        } else {
+            setIsLogin(true);
+        }
+
+        const socket = io(apiUrl, { auth: { token }, transports: ['websocket'], withCredentials: true });
+        socketRef.current = socket;
+
+        socket.on("connect", () => {
+            setIsConnected(true);
+            socket.emit("request-users");
+        });
+
+        socket.on("disconnect", () => {
+            setIsConnected(false);
+        });
+
+        socket.on("Update-users", (items: Users[]) => {
+            setData(items);
+            console.log("Update users logs:", new Date().toString());
         });
 
         socket.on("Welcome-Message", (msg) => {
