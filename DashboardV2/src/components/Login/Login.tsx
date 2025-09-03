@@ -51,7 +51,7 @@ const Login: React.FC = () => {
             const credentials = { Email: email, Password: password, UserName: UserName };
             const response = await SignUp(credentials);
 
-            if (response?.status === 200) {
+            if (response?.status === 201) {
                 console.log('SignUp successful!', response.data);
                 alert('SignUp successful!');
                 window.location.reload();
@@ -155,7 +155,7 @@ const Login: React.FC = () => {
                                         {isLoading ? 'Login...' : 'Log In'}
                                     </button>
 
-                                    <a href="#" onClick={() => setmode(!mode)} className="sign-up">Forget Password?</a>
+                                    <a href="#" onClick={() => setmode(!mode)} className="sign-up">Sign Up</a>
                                 </form>
                             </>
                         ) : (
