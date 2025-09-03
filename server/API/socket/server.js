@@ -24,7 +24,6 @@ import { verifyToken } from './middlewares/verifyToken.js';
 // API Routes
 app.use("/auth", authRoute);
 app.use("/user", verifyToken, userRoute);
-// app.use("/get", verifyToken, dataRoute);
 app.use("/get", dataRoute);
 app.get('/', (req, res) => {
   res.send('API Server is running!');
@@ -63,7 +62,7 @@ io.on('connection', (socket) => {
   console.log(`🟢 A client connected: ${socket.id} (User Name: ${socket.user.UserName}, Role: ${socket.user.Status})`);
 
   // ส่งข้อความต้อนรับเมื่อเชื่อมต่อสำเร็จ
-  socket.emit('Welcome-Message', `Welcome, User ID ${socket.user.UserID}!`);
+  socket.emit('Welcome-Message', `Welcome, User ${socket.user.UserName}!`);
 
   // Event handler สำหรับการดึง logs honeypot
   socket.on('request-cowrie-logs', async () => {
@@ -71,9 +70,6 @@ io.on('connection', (socket) => {
       const logs = await prisma.honeypot_logs.findMany({
         orderBy: { id: 'desc' },
         take: 1000,
-        // select: {
-        //   id: true, timestamp: true, eventid: true, message: true,protocol: true, src_ip: true, src_port: true,username: true, password: true, command: true
-        // }
       });
       socket.emit('Update-cowrie-logs', logs);
     } catch (error) {
@@ -88,9 +84,6 @@ io.on('connection', (socket) => {
       const logs = await prisma.opencanary_logs.findMany({
         orderBy: { id: 'desc' },
         take: 1000,
-        // select: {
-        //   id: true, local_time: true, src_host: true, dst_host: true,logdata_msg_logdata: true, logtype: true, full_json_line: true
-        // }
       });
       socket.emit('Update-opencanary-logs', logs);
     } catch (error) {
@@ -99,7 +92,26 @@ io.on('connection', (socket) => {
     }
   });
 
+  // Event handler สำหรับการดึงข้อมูลผู้ใช้
+  socket.on('request-users', async () => {
+    try {
+      const users = await prisma.users.findMany({});
+      socket.emit('Update-users', users);
+    } catch (error) {
+      console.error('Error fetching users via WebSocket:', error);
+      socket.emit('error', 'Failed to fetch users.');
+    }
+  });
 
+
+
+
+
+
+
+
+
+  // ================================================================================
   // Event handler สำหรับการดึง logs https packets
   socket.on('requestlogs', async () => {
     try {
@@ -125,7 +137,7 @@ io.on('connection', (socket) => {
     }
   });
 
-    socket.on('request-protocol-logs', async () => {
+  socket.on('request-protocol-logs', async () => {
     try {
       const logs = await prisma.ProtocolStats.findMany({
         orderBy: { id: 'desc' },
@@ -137,7 +149,7 @@ io.on('connection', (socket) => {
     }
   });
 
-    socket.on('request-source-ip-logs', async () => {
+  socket.on('request-source-ip-logs', async () => {
     try {
       const logs = await prisma.SrcIpStats.findMany({
         orderBy: { id: 'desc' },
@@ -149,7 +161,7 @@ io.on('connection', (socket) => {
     }
   });
 
-    socket.on('request-dest-port-logs', async () => {
+  socket.on('request-dest-port-logs', async () => {
     try {
       const logs = await prisma.DstPortStats.findMany({
         orderBy: { id: 'desc' },
@@ -160,6 +172,13 @@ io.on('connection', (socket) => {
       console.error('Error fetching honeypot logs via WebSocket:', error);
     }
   });
+  // ================================================================================
+
+
+
+
+
+
 
 
   // ส่งข้อมูล Real-time
@@ -168,9 +187,6 @@ io.on('connection', (socket) => {
       const logs = await prisma.honeypot_logs.findMany({
         orderBy: { id: 'desc' },
         take: 1000,
-        // select: {
-        //   id: true, timestamp: true, eventid: true, message: true,src_ip: true, username: true, password: true
-        // }
       });
       socket.emit('real-time-cowrie', logs);
     } catch (error) {
@@ -181,9 +197,6 @@ io.on('connection', (socket) => {
       const logs = await prisma.opencanary_logs.findMany({
         orderBy: { id: 'desc' },
         take: 1000,
-        // select: {
-        //   id: true, local_time: true, src_host: true, dst_host: true,logdata_msg_logdata: true, logtype: true, full_json_line: true
-        // }
       });
       socket.emit('real-time-canary', logs);
     } catch (error) {
