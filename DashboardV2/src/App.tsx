@@ -6,7 +6,7 @@ import Home from './components/Home'
 import OpenCanary from './components/OpenCanary'
 import ChatBot from './components/ai/ChatBot';
 import Login from './components/Login/Login';
-import FuzzyText from './components/Login/FuzzyText';
+import FuzzyText from './components/reactbits/ui/FuzzyText';
 import Doclayout from './components/documentation/Doclayout';
 import DocumentPage from './components/documentation/DocumentPage';
 import DocumentCowrie from './components/documentation/DocumentCowrie';

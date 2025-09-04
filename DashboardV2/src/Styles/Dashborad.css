@@ -221,6 +221,67 @@ option:checked {
     overflow-y: scroll;
 }
 
+
+
+.not-login {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 60vh;
+    transition: 0.3s ease-in-out;
+}
+
+.not-login p {
+    font-size: 0.8rem;
+    margin: 0;
+    border-radius: 50px;
+    border: 1px solid var(--body_text_color);
+    padding: 5px 15px;
+    backdrop-filter: blur(10px);
+    background-color: #ffffff0e;
+}
+
+.not-login h1 {
+    font-size: 4rem;
+    margin: 20px 0;
+    text-align: center;
+}
+
+.not-login h2 {
+    font-size: 1.5rem;
+    margin: 10px 0 30px;
+    text-align: center;
+    font-weight: 300;
+}
+
+.btn-home {
+    display: flex;
+    gap: 20px;
+}
+
+.buttonLink {
+    text-decoration: none;
+    padding: 15px 40px;
+    font-size: 1rem;
+    font-weight: 300;
+    border: 1px solid var(--body_text_color);
+    border-radius: 50px;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    background-color: #ffffff0e;
+    color: var(--body_text_color);
+    box-shadow: rgba(17, 17, 26, 0.05) 0px 1px 0px, rgba(17, 17, 26, 0.1) 0px 0px 8px;
+    transition: 0.3s ease-in-out;
+}
+
+.buttonLink:hover {
+    scale: 1.1;
+    background-color: var(--body_text_color);
+    color: var(--body_main_background);
+}
+
+
 @media screen and (max-width: 860px) {
     .dashboard-container-box {
         font-size: 0.5rem;
@@ -239,6 +300,13 @@ option:checked {
 @media screen and (max-width: 700px) {
     .dashboard-container-box svg {
         display: none;
+    }
+
+    .not-login {
+        scale: 0.6;
+    }
+    .not-login h1{
+        font-size: 2.4rem;
     }
 }
 

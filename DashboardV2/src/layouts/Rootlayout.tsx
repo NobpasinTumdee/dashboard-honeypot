@@ -30,8 +30,8 @@ const Rootlayout = () => {
             raysOrigin="top-center"
             raysColor="#F1EAB9"
             raysSpeed={1}
-            lightSpread={4}
-            rayLength={10}
+            lightSpread={0.5}
+            rayLength={3}
             followMouse={true}
             mouseInfluence={0.1}
             noiseAmount={0.1}
