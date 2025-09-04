@@ -9,7 +9,7 @@ import {
     Tooltip,
     Legend,
 } from 'chart.js';
-import type { AlertItem } from '../../Cowrie';
+import type { AlertItem } from '../../service/cowriePage/Cowrie';
 import '../chart.css'
 
 ChartJS.register(

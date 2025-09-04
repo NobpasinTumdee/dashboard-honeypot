@@ -10,7 +10,7 @@ import {
   Legend,
   type ChartOptions
 } from 'chart.js';
-import type { HttpsPacket } from '../web-socket/Packet';
+import type { HttpsPacket } from '../service/wireShark/Packet';
 
 // ลงทะเบียน components ที่ต้องใช้กับ Chart.js สำหรับกราฟเส้น
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend);

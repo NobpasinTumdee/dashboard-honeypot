@@ -6,7 +6,7 @@ const DateTimeNow = () => {
     useEffect(() => {
         const updateTime = () => {
             const now = new Date();
-            const formatted = now.toLocaleString("th-TH", {
+            const formatted = now.toLocaleString("en-EN", {
                 dateStyle: "full",
                 timeStyle: "medium",
             });
@@ -22,7 +22,7 @@ const DateTimeNow = () => {
     return (
         <>
             <p style={{ textAlign: "center", fontWeight: "300" }}>
-                เวลาปัจจุบัน: {currentTime}
+                Current Time : {currentTime}
             </p>
         </>
     );

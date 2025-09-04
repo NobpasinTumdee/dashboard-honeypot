@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
-import { usePacketSocket } from './controller';
+import { usePacketSocket } from '../../web-socket/controller';
+
 import Aos from 'aos';
 import 'aos/dist/aos.css';
-import '../../Styles/Dashborad.css';
+import '../../../Styles/Dashborad.css';
+
 import DateTimeNow from '../DateTimeNow';
 
 export interface HttpsPacket {
