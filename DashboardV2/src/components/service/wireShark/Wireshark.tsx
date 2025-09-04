@@ -1,23 +1,16 @@
-import React, { useEffect, useMemo, useState } from "react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer
-} from "recharts";
-import { Select, Button } from "antd";
-import { usePacketStatsSocket } from "./web-socket/controller";
-import "../Styles/Dashborad.css";
 import { useNavigate } from "react-router-dom";
-import type { TimeSeriesPackets, ProtocolStats, SrcIpStats, DstPortStats } from "./wireshark/type";
-import LogDisplay from "./web-socket/Packet";
+import React, { useEffect, useMemo, useState } from "react";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+import { Select, Button } from "antd";
+
 import Aos from 'aos';
 import 'aos/dist/aos.css';
-import '../Styles/Dashborad.css';
-import CombinedPieChart from "./chart/wireshark/ChartWireShark";
+import '../../../Styles/Dashborad.css';
+
+import LogDisplay from "./Packet";
+import { usePacketStatsSocket } from "../../web-socket/controller";
+import CombinedPieChart from "../../chart/wireshark/ChartWireShark";
+import type { TimeSeriesPackets, ProtocolStats, SrcIpStats, DstPortStats } from "./type";
 
 type Range = "day" | "week" | "month";
 

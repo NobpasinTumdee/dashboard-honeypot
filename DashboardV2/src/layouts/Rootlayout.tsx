@@ -1,8 +1,10 @@
-import { Outlet } from 'react-router-dom'
-import Navbar from '../components/Navbar'
-import '../Styles/Navbar.css'
-import LightRays from '../components/documentation/components/LightRays'
 import { useEffect, useState } from 'react'
+import { Outlet } from 'react-router-dom'
+
+import '../Styles/Navbar.css'
+
+import Navbar from './Navbar'
+import LightRays from '../components/documentation/components/LightRays'
 import ChatBotPopUp from '../components/ai/ChatBotPopUp'
 
 const Rootlayout = () => {

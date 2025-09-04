@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
-import '../Styles/Dashborad.css'
-import DateTimeNow from './DateTimeNow';
+
 import Aos from 'aos';
 import 'aos/dist/aos.css';
-import { useCowrieSocket } from './web-socket/controller';
-import TopPasswordsChart from './chart/cowrie/CowrieTopPass';
+import '../../../Styles/Dashborad.css';
+
+import DateTimeNow from '../DateTimeNow';
+import TopPasswordsChart from '../../chart/cowrie/CowrieTopPass';
+import { useCowrieSocket } from '../../web-socket/controller';
 
 export type AlertItem = {
     id: number;

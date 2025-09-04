@@ -11,7 +11,7 @@ import {
     PointElement,
     LineElement,
 } from 'chart.js';
-import type { AlertItemCanary } from '../../OpenCanary';
+import type { AlertItemCanary } from '../../service/openCanary/OpenCanary';
 import '../chart.css'
 
 ChartJS.register(

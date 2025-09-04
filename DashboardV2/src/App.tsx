@@ -1,16 +1,16 @@
 import { createBrowserRouter } from 'react-router-dom'
 import { RouterProvider } from 'react-router-dom';
 import Rootlayout from './layouts/Rootlayout'
-import CowriePage from './components/Cowrie'
+import CowriePage from './components/service/cowriePage/Cowrie'
 import Home from './components/Home'
-import OpenCanary from './components/OpenCanary'
+import OpenCanary from './components/service/openCanary/OpenCanary'
 import ChatBot from './components/ai/ChatBot';
 import Login from './components/Login/Login';
 import FuzzyText from './components/reactbits/ui/FuzzyText';
 import Doclayout from './components/documentation/Doclayout';
 import DocumentPage from './components/documentation/DocumentPage';
 import DocumentCowrie from './components/documentation/DocumentCowrie';
-import Wireshark from './components/Wireshark';
+import Wireshark from './components/service/wireShark/Wireshark';
 import DocumentCanary from './components/documentation/DocumentCanary';
 import ProtectedRoute from './layouts/ProtectedRoute';
 import AuthUser from './components/Login/AuthUser';

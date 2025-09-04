@@ -1,9 +1,10 @@
 import { useEffect, useRef } from "react";
 import { io, Socket } from "socket.io-client";
-import type { AlertItem } from "../Cowrie";
-import type { AlertItemCanary } from "../OpenCanary";
-import type { HttpsPacket } from "./Packet";
-import type { TimeSeriesPackets, ProtocolStats, SrcIpStats, DstPortStats } from "../wireshark/type";
+
+import type { AlertItem } from "../service/cowriePage/Cowrie";
+import type { AlertItemCanary } from "../service/openCanary/OpenCanary";
+import type { HttpsPacket } from "../service/wireShark/Packet";
+import type { TimeSeriesPackets, ProtocolStats, SrcIpStats, DstPortStats } from "../service/wireShark/type";
 import type { Users } from "../../serviceApi";
 
 const Url = localStorage.getItem("apiUrl");
@@ -222,22 +223,18 @@ export const usePacketStatsSocket = (
         socket.on("real-time-packet-stats", (newLogs: TimeSeriesPackets[]) => {
             setData(newLogs);
             console.log("New data:", new Date().toString());
-            console.log("New data:", newLogs);
         });
         socket.on("real-time-protocol-stats", (newLogs: ProtocolStats[]) => {
             setProtocol(newLogs);
             console.log("New protocol data:", new Date().toString());
-            console.log("New protocol data:", newLogs);
         });
         socket.on("real-time-ip-stats", (newLogs: SrcIpStats[]) => {
             setSrcIp(newLogs);
             console.log("New ip data:", new Date().toString());
-            console.log("New ip[ data:", newLogs);
         });
         socket.on("real-time-port-stats", (newLogs: DstPortStats[]) => {
             setDstPort(newLogs);
             console.log("New port data:", new Date().toString());
-            console.log("New port data:", newLogs);
         });
 
         socket.on("Welcome-Message", (msg) => {

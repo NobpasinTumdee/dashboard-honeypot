@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
+
 import Aos from 'aos';
 import 'aos/dist/aos.css';
-import '../Styles/Dashborad.css';
-import DateTimeNow from './DateTimeNow';
-import { useCanarySocket } from './web-socket/controller';
-import CanaryAlertsChart from './chart/canary/CanaryChartPage';
+import '../../../Styles/Dashborad.css';
+
+import DateTimeNow from '../DateTimeNow';
+import { useCanarySocket } from '../../web-socket/controller';
+import CanaryAlertsChart from '../../chart/canary/CanaryChartPage';
 
 export type AlertItemCanary = {
   id: number;
