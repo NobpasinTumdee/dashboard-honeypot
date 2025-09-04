@@ -28,7 +28,7 @@ const Rootlayout = () => {
         <div style={{ width: '100vw', height: '100vh', position: 'fixed', zIndex: -1, top: 0 }}>
           <LightRays
             raysOrigin="top-center"
-            raysColor="#F1EAB9"
+            raysColor="#ffffff"
             raysSpeed={1}
             lightSpread={0.5}
             rayLength={3}
