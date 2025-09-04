@@ -11,3 +11,26 @@
 ### dashboard-honeypot
 * [Dashborad Frontend](/docs/Dashboard/Dashboard.md)
 * [Dashborad Backend](/docs/Dashboard/Backend.md)
+
+
+# Graph ระบบโดยรวม
+```mermaid
+graph LR
+A[client] --> B( Web Deployed Version )
+A -- ip web server --> C( Web local Server )
+B -- web socket --> D(Ngrok url)
+B -- Ai ChatBot--> B1(Ollama Model)
+C -- web socket --> E
+D -- Tunnel Port --> E( Server ubuntu )
+E --prisma--> F( SQLite )
+F --> G(Honeypot Log)
+F --> H(Packet Log)
+H --> I(Wirshark)
+G --> J( Cowrie )
+G --> K( Open Canary )
+J --> L1( attacker SSH )
+J --> L2( attacker telent )
+K --> L3( http )
+K --> L4( https )
+K --> L5( FTP )
+```
