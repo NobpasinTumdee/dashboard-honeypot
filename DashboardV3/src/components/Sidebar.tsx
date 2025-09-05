@@ -1,24 +1,10 @@
-import React from 'react';
-import { Shield } from 'lucide-react';
-import ThemeToggle from './ThemeToggle';
-import type { NavItem } from '../types';
+import { Shield } from 'lucide-react'
+import ThemeToggle from './ThemeToggle'
+import { Link, useLocation } from 'react-router-dom'
 
-interface SidebarProps {
-  currentPage: string;
-  onNavigate: (page: string) => void;
-}
-
-const navItems: NavItem[] = [
-  { id: 'home', label: 'Dashboard', path: 'home', icon: '📊' },
-  { id: 'hero', label: 'Hero', path: 'hero', icon: '🎯' },
-  { id: 'cowrie', label: 'Cowrie', path: 'cowrie', icon: '🐄' },
-  { id: 'opencanary', label: 'OpenCanary', path: 'opencanary', icon: '🐦' },
-  { id: 'wireshark', label: 'Wireshark', path: 'wireshark', icon: '🦈' },
-  { id: 'users', label: 'User Management', path: 'users', icon: '👥' },
-  { id: 'login', label: 'Login', path: 'login', icon: '🔐' },
-];
-
-const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate }) => {
+const Sidebar = () => {
+  const location = useLocation();
+    const isActive = (path: string) => location.pathname === path;
   return (
     <aside className="sidebar">
       <div className="sidebar-header">
@@ -28,24 +14,55 @@ const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate }) => {
         </h1>
         <ThemeToggle />
       </div>
-      
+
       <nav>
         <ul className="nav-list">
-          {navItems.map((item) => (
-            <li key={item.id} className="nav-item">
-              <button
-                className={`nav-link ${currentPage === item.path ? 'active' : ''}`}
-                onClick={() => onNavigate(item.path)}
-              >
-                <span className="nav-icon">{item.icon}</span>
-                {item.label}
-              </button>
+            <li className="nav-item">
+              <Link to="/" className={`nav-link ${isActive('/') ? 'active' : ''}`}>
+                <span className="nav-icon">🎯</span>
+                Hero
+              </Link>
             </li>
-          ))}
+            <li className="nav-item">
+              <Link to="/home" className={`nav-link ${isActive('/home') ? 'active' : ''}`}>
+                <span className="nav-icon">📊</span>
+                Dashboard
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link to="/cowrie" className={`nav-link ${isActive('/cowrie') ? 'active' : ''}`}>
+                <span className="nav-icon">🐄</span>
+                Cowrie
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link to="/open-canary" className={`nav-link ${isActive('/open-canary') ? 'active' : ''}`}>
+                <span className="nav-icon">🐦</span>
+                OpenCanary
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link to="/wireshark" className={`nav-link ${isActive('/wireshark') ? 'active' : ''}`}>
+                <span className="nav-icon">🦈</span>
+                Wireshark
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link to="/users" className={`nav-link ${isActive('/users') ? 'active' : ''}`}>
+                <span className="nav-icon">👥</span>
+                User Management
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link to="/login" className={`nav-link ${isActive('/login') ? 'active' : ''}`}>
+                <span className="nav-icon">🔐</span>
+                Login
+              </Link>
+            </li>
         </ul>
       </nav>
     </aside>
-  );
-};
+  )
+}
 
-export default Sidebar;
+export default Sidebar

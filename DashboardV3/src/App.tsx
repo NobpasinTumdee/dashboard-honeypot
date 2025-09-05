@@ -1,6 +1,9 @@
-import { useState } from 'react';
+// react router dom
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
-import Sidebar from './components/Sidebar';
+
+// pages
+import Rootlayout from './layouts/Rootlayout';
 import HomePage from './pages/HomePage';
 import HeroPage from './pages/HeroPage';
 import CowriePage from './pages/CowriePage';
@@ -8,48 +11,32 @@ import OpenCanaryPage from './pages/OpenCanaryPage';
 import WiresharkPage from './pages/WiresharkPage';
 import LoginPage from './pages/LoginPage';
 import UsersPage from './pages/UsersPage';
+
+// styles
 import './index.css';
 
-function App() {
-  const [currentPage, setCurrentPage] = useState('home');
-
-  const renderPage = () => {
-    switch (currentPage) {
-      case 'home':
-        return <HomePage />;
-      case 'hero':
-        return <HeroPage />;
-      case 'cowrie':
-        return <CowriePage />;
-      case 'opencanary':
-        return <OpenCanaryPage />;
-      case 'wireshark':
-        return <WiresharkPage />;
-      case 'login':
-        return <LoginPage />;
-      case 'users':
-        return <UsersPage />;
-      default:
-        return <HomePage />;
-    }
-  };
-
-  // Special case for login page - full screen without sidebar
-  if (currentPage === 'login') {
-    return (
-      <ThemeProvider>
-        <LoginPage />
-      </ThemeProvider>
-    );
+const router = createBrowserRouter([
+  {
+    path: "/",
+    element: <Rootlayout />,
+    errorElement: <div style={{ position: 'fixed', width: '100vw', height: '100vh', backgroundColor: '#242424', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>404 Not found this page...</div>,
+    children: [
+      { index: true, element: <HeroPage /> },
+      { path: "home", element: <HomePage /> },
+      { path: "cowrie", element: <CowriePage /> },
+      { path: "open-canary", element: <OpenCanaryPage /> },
+      { path: "wireshark", element: <WiresharkPage /> },
+      { path: "login", element: <LoginPage /> },
+      { path: "users", element: <UsersPage /> },
+    ]
   }
+]);
+function App() {
 
   return (
     <ThemeProvider>
       <div className="app-container">
-        <Sidebar currentPage={currentPage} onNavigate={setCurrentPage} />
-        <main className="main-content">
-          {renderPage()}
-        </main>
+        <RouterProvider router={router} />
       </div>
     </ThemeProvider>
   );
