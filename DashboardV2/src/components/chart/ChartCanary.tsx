@@ -35,22 +35,36 @@ interface Props {
 const ChartCanary: React.FC<Props> = ({ logs }) => {
   const chartRef = useRef<any>(null);
 
-  // นับจำนวน log ตามข้อความ (message)
-  const messageCounts = logs.reduce<Record<string, number>>((acc, log) => {
-    const message = log.logdata_msg_logdata || "Unknown";
-    acc[message] = (acc[message] || 0) + 1;
-    return acc;
-  }, {});
+  const logdataCounts: Record<string, number> = {};
+  logs.forEach(item => {
+    const message = item.logdata_msg_logdata || 'Other';
+    logdataCounts[message] = (logdataCounts[message] || 0) + 1;
+  });
 
-  const labels = Object.keys(messageCounts);
-  const values = Object.values(messageCounts);
+  const sortedLogdata = Object.entries(logdataCounts)
+    .sort(([, countA], [, countB]) => countB - countA);
+
+  const labels = sortedLogdata.map(([message]) => {
+    if (message === 'Added service from class CanaryHTTP in opencanary.modules.http to fake') {
+      return 'HTTP';
+    } else if (message === 'Added service from class CanaryHTTPS in opencanary.modules.https to fake') {
+      return 'HTTPS';
+    } else if (message === 'Added service from class CanaryFTP in opencanary.modules.ftp to fake') {
+      return 'FTP';
+    } else if (message === 'Canary running!!!') {
+      return 'running';
+    } else {
+      return message.slice(0, 20) + '...';
+    }
+  });
+  const counts = sortedLogdata.map(([, count]) => count);
 
   const data = {
     labels,
     datasets: [
       {
         label: "Log Message Count",
-        data: values,
+        data: counts,
         backgroundColor: (ctx: any) => {
           const chart = ctx.chart;
           const { ctx: canvas } = chart;

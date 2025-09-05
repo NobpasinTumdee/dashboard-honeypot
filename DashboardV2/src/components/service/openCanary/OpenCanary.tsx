@@ -55,6 +55,34 @@ const OpenCanary = () => {
       : true
   );
 
+  const showLogDataPopup = (jsonData: string) => {
+    try {
+      const data = JSON.parse(jsonData); // Parse the JSON string
+      let content = '<h3 style="margin-bottom: 10px; color: #333;">Log Details</h3>';
+      content += '<ul style="list-style-type: none; padding: 0;">';
+      for (const key in data) {
+        if (Object.hasOwnProperty.call(data, key)) {
+          const value = data[key];
+          content += `<li style="padding: 8px 0; border-bottom: 1px solid #eee;"><strong>${key}:</strong> ${value}</li>`;
+        }
+      }
+      content += '</ul>';
+
+      const popup = window.open("", "Log Data", "width=600,height=400,scrollbars=yes,resizable=yes");
+      if (popup) {
+        popup.document.body.style.fontFamily = "Arial, sans-serif";
+        popup.document.body.style.padding = "20px";
+        popup.document.body.style.backgroundColor = "#f9f9f9";
+        popup.document.body.innerHTML = content;
+      } else {
+        alert("Please allow pop-ups for this website to view the log data.");
+      }
+    } catch (e) {
+      console.error("Failed to parse JSON string:", e);
+      alert("Invalid log data format.");
+    }
+  };
+
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 10;
@@ -186,7 +214,7 @@ const OpenCanary = () => {
                       <th className="thStyle">Time</th>
                       <th className="thStyle">Log Message</th>
                       <th className="thStyle">Log Type</th>
-                      <th className="thStyle">Node ID</th>
+                      {/* <th className="thStyle">Node ID</th> */}
                       {/* <th className="thStyle">Raw Log Data</th> */}
                       <th className="thStyle">Source Host</th>
                       <th className="thStyle">Source Port</th>
@@ -201,13 +229,32 @@ const OpenCanary = () => {
                         {/* <td className="tdStyle">{item.dst_host || <p className="tdStyle-null">null</p>}</td> */}
                         {/* <td className="tdStyle">{item.local_time || <p className="tdStyle-null">null</p>}</td> */}
                         <td className="tdStyle">{(item.local_time_adjusted).slice(0, 10) || <p className="tdStyle-null">null</p>}</td>
-                        <td className="tdStyleMessage">{item.logdata_msg_logdata || <p className="tdStyle-null">null</p>}</td>
+                        <td className="tdStyleMessage" onClick={() => {
+                          try {
+                            JSON.parse(item.logdata_msg_logdata);
+                            showLogDataPopup(item.logdata_msg_logdata);
+                          } catch (e) {
+                            console.error("Not a valid JSON string, not showing popup.");
+                          }
+                        }}>
+                          {item.logdata_msg_logdata && item.logdata_msg_logdata.startsWith('{') && item.logdata_msg_logdata.endsWith('}') ?
+                            <p style={{ cursor: 'pointer', color: '#007bff', textDecoration: 'underline' }}>Click to view log</p> :
+                            <p>{item.logdata_msg_logdata || <span className="tdStyle-null">null</span>}</p>}
+                        </td>
                         <td className="tdStyle">{item.logtype || <p className="tdStyle-null">null</p>}</td>
-                        <td className="tdStyle">{item.node_id || <p className="tdStyle-null">null</p>}</td>
+                        {/* <td className="tdStyle">{item.node_id || <p className="tdStyle-null">null</p>}</td> */}
                         {/* <td className="tdStyleMessage">{item.logdata_raw || <p className="tdStyle-null">null</p>}</td> */}
                         <td className="tdStyle">{item.src_host || <p className="tdStyle-null">null</p>}</td>
-                        <td className="tdStyle">{item.src_port || <p className="tdStyle-null">null</p>}</td>
-                        <td className="tdStyle">{item.dst_port || <p className="tdStyle-null">null</p>}</td>
+                        <td className="tdStyle">
+                          {item.src_port !== null && item.src_port.toString() === '-1'
+                            ? 'System operation'
+                            : item.src_port || <p className="tdStyle-null">null</p>}
+                        </td>
+                        <td className="tdStyle">
+                          {item.dst_port !== null && item.dst_port.toString() === '-1'
+                            ? 'System operation'
+                            : item.dst_port || <p className="tdStyle-null">null</p>}
+                        </td>
                         {/* <td className="tdStyle">{item.utc_time || <p className="tdStyle-null">null</p>}</td> */}
                       </tr>
                     ))}
