@@ -14,21 +14,21 @@ export interface Users {
 export type CowrieLog = {
     id: number;
     timestamp: string;
-    eventid: string;
-    session: string;
-    message: string;
-    protocol: string;
-    src_ip: string;
-    src_port: number;
-    dst_ip: string;
-    dst_port: number;
-    username: string;
-    password: string;
+    eventid?: string;
+    session?: string;
+    message?: string;
+    protocol?: string;
+    src_ip?: string;
+    src_port?: number;
+    dst_ip?: string;
+    dst_port?: number;
+    username?: string;
+    password?: string;
     input: string;
     command: string;
-    duration: number;
-    ttylog: string;
-    json_data: string;
+    duration?: number;
+    ttylog?: string;
+    json_data?: string;
 };
 
 // OpenCanary Types
