@@ -1,13 +1,13 @@
 // User Types
 export interface Users {
-    UserID: string;
+    UserID?: string;
     UserName: string;
     Email: string;
     Password: string;
-    Status: string;
-    createdAt: Date;
-    updatedAt: Date;
-    deletedAt: Date;
+    Status?: string;
+    createdAt?: Date;
+    updatedAt?: Date;
+    deletedAt?: Date;
 }
 
 // Cowrie Honeypot Types
