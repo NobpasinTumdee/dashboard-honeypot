@@ -51,9 +51,9 @@ const CanaryAlertsChart: React.FC<CanaryAlertsChartProps> = ({ data }) => {
                 return 'FTP';
             } else if (message === 'Canary running!!!') {
                 return 'running';
+            } else {
+                return message.slice(0, 20) + '...';
             }
-            // ถ้าไม่ใช่ชื่อที่ต้องการ ก็ใช้ชื่อเดิม
-            return message;
         });
         const counts = sortedLogdata.map(([, count]) => count);
 

@@ -166,6 +166,8 @@ def process_opencanary_log_entry(cursor, log_entry_json):
 
         logdata_raw = json.dumps(log_data.get('logdata')) if log_data.get('logdata') else None
         logdata_msg_logdata = log_data.get('logdata', {}).get('msg', {}).get('logdata')
+        if not logdata_msg_logdata:
+            logdata_msg_logdata = logdata_raw
 
         cursor.execute('''
             INSERT INTO opencanary_logs (
