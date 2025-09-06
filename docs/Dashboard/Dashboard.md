@@ -41,12 +41,18 @@ D --> E( Server ubuntu )
         set OLLAMA_HOST=0.0.0.0
         
         ```
+        ```
+        set OLLAMA_ORIGINS=*
+        ```
         
     -   **macOS/Linux**:
         
         ```
         export OLLAMA_HOST=0.0.0.0
         
+        ```
+        ```
+        export OLLAMA_ORIGINS=*
         ```
         
 3.  หลังจากตั้งค่าแล้ว ให้รันคำสั่งเพื่อเริ่มเซิร์ฟเวอร์ Ollama:
