@@ -28,6 +28,7 @@ router.post("/register", async (req, res) => {
                 Email: req.body.Email,
                 UserName: req.body.UserName,
                 Password: hashedPassword,
+                Status: "Unauthenticated",
             },
             select: {
                 UserID: true,
