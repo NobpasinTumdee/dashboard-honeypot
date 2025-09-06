@@ -1,6 +1,7 @@
 // react router dom
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
+import ProtectedRoute from './layouts/ProtectedRoute';
 
 // pages
 import Rootlayout from './layouts/Rootlayout';
@@ -22,12 +23,12 @@ const router = createBrowserRouter([
     errorElement: <div style={{ position: 'fixed', width: '100vw', height: '100vh', backgroundColor: '#242424', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>404 Not found this page...</div>,
     children: [
       { index: true, element: <HeroPage /> },
-      { path: "home", element: <HomePage /> },
-      { path: "cowrie", element: <CowriePage /> },
-      { path: "open-canary", element: <OpenCanaryPage /> },
-      { path: "wireshark", element: <WiresharkPage /> },
+      { path: "home", element: <ProtectedRoute><HomePage /></ProtectedRoute> },
+      { path: "cowrie", element: <ProtectedRoute><CowriePage /></ProtectedRoute> },
+      { path: "open-canary", element: <ProtectedRoute><OpenCanaryPage /></ProtectedRoute> },
+      { path: "wireshark", element: <ProtectedRoute><WiresharkPage /></ProtectedRoute> },
       { path: "login", element: <LoginPage /> },
-      { path: "users", element: <UsersPage /> },
+      { path: "users", element: <ProtectedRoute><UsersPage /></ProtectedRoute> },
     ]
   }
 ]);

@@ -1,43 +1,77 @@
 import React, { useState } from 'react';
+
 import StatCard from '../components/StatCard';
-import DataTable from '../components/DataTable';
-import { mockUsersData } from '../mockData';
+
 import type { Users } from '../types';
+import { mockUsersData } from '../mockData';
+import { UsersSocket } from '../service/websocket';
+import { AuthNewUser } from '../service/api';
 
 const UsersPage: React.FC = () => {
+  const [user, setUser] = useState<Users[]>([])
+  const [isConnected, setIsConnected] = useState(false);
+  const [isLogin, setIsLogin] = useState(false);
+
+  // Custom hook to manage WebSocket connection
+  UsersSocket(setUser, setIsConnected, setIsLogin);
+
+  const handleAuthUser = async (id: string) => {
+    try {
+      console.log(id)
+      const res = await AuthNewUser(id)
+      if (res.status === 200) {
+        alert('Change Status User Success')
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+
   const [users] = useState<Users[]>(mockUsersData);
 
   const userColumns = [
     { key: 'UserID', header: 'User ID' },
     { key: 'UserName', header: 'Username' },
     { key: 'Email', header: 'Email' },
-    { 
-      key: 'Status', 
+    {
+      key: 'Status',
       header: 'Status',
       render: (value: string) => (
-        <span className={`stat-change ${
-          value === 'active' ? 'text-success' : 'text-warning'
-        }`}>
+        <span className={`stat-change ${value === 'Authenticated' ? 'text-success' : 'text-warning'
+          }`}>
           {value.toUpperCase()}
         </span>
       )
     },
-    { 
-      key: 'createdAt', 
+    {
+      key: 'createdAt',
       header: 'Created',
       render: (value: Date) => value.toLocaleDateString()
     },
-    { 
-      key: 'updatedAt', 
+    {
+      key: 'updatedAt',
       header: 'Last Updated',
       render: (value: Date) => value.toLocaleDateString()
+    },
+    {
+      Key: 'Action',
+      header: 'Action',
     }
   ];
 
   // Calculate stats
-  const totalUsers = users.length;
-  const activeUsers = users.filter(user => user.Status === 'active').length;
-  const inactiveUsers = users.filter(user => user.Status === 'inactive').length;
+  const activeUsers = user.filter(user => user.Status === 'Authenticated').length;
+  const inactiveUsers = user.filter(user => user.Status === 'Unauthenticated').length;
+
+  if (!isLogin) {
+    return (
+      <>
+        <h1>You are not logged in</h1>
+      </>
+    )
+  }
 
   return (
     <div>
@@ -49,14 +83,14 @@ const UsersPage: React.FC = () => {
       <div className="stats-grid">
         <StatCard
           title="Total Users"
-          value={totalUsers}
+          value={users.length}
           icon="👥"
           variant="primary"
         />
         <StatCard
           title="Active Users"
           value={activeUsers}
-          change={`${Math.round((activeUsers / totalUsers) * 100)}%`}
+          change={`${Math.round((activeUsers / users.length) * 100)}%`}
           changeType="positive"
           icon="✅"
           variant="success"
@@ -64,14 +98,14 @@ const UsersPage: React.FC = () => {
         <StatCard
           title="Inactive Users"
           value={inactiveUsers}
-          change={`${Math.round((inactiveUsers / totalUsers) * 100)}%`}
+          change={`${Math.round((inactiveUsers / users.length) * 100)}%`}
           changeType="negative"
           icon="⏸️"
           variant="warning"
         />
         <StatCard
-          title="System Roles"
-          value="Admin, Analyst, Monitor"
+          title="websocket"
+          value={isConnected ? 'Connected' : 'Disconnected'}
           icon="🔐"
           variant="primary"
         />
@@ -100,16 +134,16 @@ const UsersPage: React.FC = () => {
       </div>
 
       <div style={{ display: 'flex', gap: '1rem', marginBottom: '2rem' }}>
-        <button 
-          className="form-button" 
+        <button
+          className="form-button"
           style={{ width: 'auto', padding: '0.75rem 1.5rem' }}
         >
           Add New User
         </button>
-        <button 
-          className="form-button" 
-          style={{ 
-            width: 'auto', 
+        <button
+          className="form-button"
+          style={{
+            width: 'auto',
             padding: '0.75rem 1.5rem',
             background: 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)'
           }}
@@ -118,11 +152,44 @@ const UsersPage: React.FC = () => {
         </button>
       </div>
 
-      <DataTable
-        title="System Users"
-        data={users}
-        columns={userColumns}
-      />
+      <div className="table-container">
+        <div className="table-header">
+          <h3 className="table-title">System Users</h3>
+        </div>
+        <div style={{ overflowX: 'auto' }}>
+          <table className="data-table">
+            <thead>
+              <tr>
+                {userColumns.map((column) => (
+                  <th key={column.key}>{column.header}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {user.map((row) => (
+                <tr key={row.UserID}>
+                  <td>{row.UserID}</td>
+                  <td>{row.UserName}</td>
+                  <td>{row.Email}</td>
+                  <td style={{ color: row.Status === 'Authenticated' ? '#DDD3C3' : '#4b4b4bff' }}>{row.Status}</td>
+                  <td>{String(row.createdAt)}</td>
+                  <td>{String(row.updatedAt)}</td>
+                  <td>
+                    {row.Status !== 'Authenticated' &&
+                      <button
+                        className="auth-button"
+                        onClick={() => handleAuthUser(String(row.UserID))}
+                      >
+                        approve
+                      </button>
+                    }
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
 };

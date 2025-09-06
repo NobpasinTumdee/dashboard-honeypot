@@ -79,6 +79,7 @@ const LoginPage: React.FC = () => {
     localStorage.removeItem("token_type");
     localStorage.removeItem("token");
     localStorage.removeItem("UserName");
+    localStorage.removeItem("status");
     alert('Logout successful!');
   };
 
@@ -97,7 +98,6 @@ const LoginPage: React.FC = () => {
                 : 'Sign in to your honeypot monitoring account'
               }
             </p>
-            <p>{formData.UserName}{formData.Email}{formData.Password}{confirmPassword}</p>
           </div>
 
 
