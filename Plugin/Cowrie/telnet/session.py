@@ -50,56 +50,6 @@ from cowrie.shell.fs import (
 class HoneyPotTelnetSession(TelnetBootstrapProtocol):
     id = 0  # telnet can only have 1 simultaneous session, unlike SSH
 
-    def cleanup_home_directory(self,current_username):
-        """
-        Removes home directories of other users to keep the filesystem clean.
-        """
-        honeyfs_path = CowrieConfig.get("honeypot", "contents_path")
-        home_path = os.path.join(honeyfs_path, "home")
-
-        try:
-            # Get a list of all directories in the honeyfs /home
-            all_dirs = [d for d in os.listdir(home_path) if os.path.isdir(os.path.join(home_path, d))]
-            
-            # Define a list of default users you want to keep
-            default_users = ["andre", "frank", "james", "janelle", "mary"]
-
-            # Loop through each directory and remove it if it's not the current user
-            # or one of the default users.
-            for d in all_dirs:
-                if d != current_username and d not in default_users:
-                    full_path_to_remove = os.path.join(home_path, d)
-                    shutil.rmtree(full_path_to_remove)
-                    log.msg(f"Removed old user directory: {full_path_to_remove}")
-        except Exception as e:
-            log.msg(f"Error during home directory cleanup: {e}")
-
-
-    def update_timestamp(self, path):
-        """
-        Updates the access and modification times of a file or directory
-        to a random time between 2023 and 2024.
-        """
-        try:
-            honeyfs_path = CowrieConfig.get("honeypot", "contents_path")
-            full_path = os.path.join(honeyfs_path, path[1:])
-            
-            # ย้ายโค้ดสร้าง timestamp มาไว้ในฟังก์ชันนี้โดยตรง
-            start_date = datetime(2023, 1, 1, 0, 0, 0)
-            end_date = datetime(2024, 12, 31, 23, 59, 59)
-            
-            time_between_dates = end_date - start_date
-            total_seconds = time_between_dates.total_seconds()
-            
-            random_seconds = random.randrange(int(total_seconds))
-            random_date = start_date + timedelta(seconds=random_seconds)
-            random_time = random_date.timestamp()
-            
-            os.utime(full_path, (random_time, random_time))
-            log.msg(f"Updated timestamp for '{full_path}' to a random time.")
-        except Exception as e:
-            log.msg(f"Error updating timestamp for '{path}': {e}")
-
 
     def create_login_user(self, username):
         """
@@ -120,10 +70,25 @@ class HoneyPotTelnetSession(TelnetBootstrapProtocol):
         if self.server.fs.exists(home_dir_path):
             log.msg(f"Directory '{home_dir_path}' already exists. No action needed.")
             # เพิ่มโค้ดที่นี่เพื่อแก้ไข etc/passwd สำหรับผู้ใช้เก่า
-            self.cleanup_home_directory(username)
+            
             self.update_etc_passwd(username)
-            self.update_timestamp(home_dir_path)
+
+            start_date = datetime(2023, 1, 1, 0, 0, 0)
+            end_date = datetime(2024, 12, 31, 23, 59, 59)
+            time_between_dates = end_date - start_date
+            total_seconds = time_between_dates.total_seconds()
+            random_seconds = random.randrange(int(total_seconds))
+            random_date = start_date + timedelta(seconds=random_seconds)
+            random_time = random_date.timestamp()
+            
+            # แก้ไข: ใช้ chown และ update_mtime/atime
+            self.server.fs.chown(home_dir_path, uid=1001, gid=1001)
+            self.server.fs.utime(home_dir_path, random_time, random_time)
+
+
         
+            log.msg(f"Updated timestamp for '{home_dir_path}' to a random time.")
+
             return
 
         # ใช้เมธอด mkdir() ของ HoneyPotFilesystem เพื่อสร้าง directory
@@ -137,28 +102,53 @@ class HoneyPotTelnetSession(TelnetBootstrapProtocol):
             )
             log.msg(f"Successfully created new directory '{home_dir_path}'.")
             
-            self.cleanup_home_directory(username)
+            
             self.update_etc_passwd(username)
-            self.update_timestamp(home_dir_path)
+            
+            start_date = datetime(2023, 1, 1, 0, 0, 0)
+            end_date = datetime(2024, 12, 31, 23, 59, 59)
+            time_between_dates = end_date - start_date
+            total_seconds = time_between_dates.total_seconds()
+            random_seconds = random.randrange(int(total_seconds))
+            random_date = start_date + timedelta(seconds=random_seconds)
+            random_time = random_date.timestamp()
+            
+            # แก้ไข: ใช้ chown และ update_mtime/atime
+            self.server.fs.chown(home_dir_path, uid=1001, gid=1001)
+            self.server.fs.utime(home_dir_path, random_time, random_time)
+
+
+            
+            log.msg(f"Updated timestamp for '{home_dir_path}' to a random time.")
             
         except Exception as e:
             log.msg(f"Error creating directory for user: {e}")
 
     def update_etc_passwd(self, username):
         """
-        Adds or updates a user entry in the /etc/passwd file.
+        Adds or updates a user and group entry in the /etc/passwd and /etc/group files.
         """
         user_id = 1001
         etc_dir = "/home/cowrie/cowrie/honeyfs/etc"
+
+        # Update /etc/passwd file
         try:
             passwd_path = os.path.join(etc_dir, "passwd")
+            
+            # Read all lines from the file
+            lines = []
             if os.path.exists(passwd_path):
                 with open(passwd_path, "r") as f:
                     lines = f.readlines()
-                lines = [line for line in lines if f":{user_id}:" not in line]
-                with open(passwd_path, "w") as f:
-                    f.writelines(lines)
+            
+            # Remove any line that contains the user_id (1001)
+            lines = [line for line in lines if f":{user_id}:" not in line]
 
+            # Write the filtered lines back to the file
+            with open(passwd_path, "w") as f:
+                f.writelines(lines)
+            
+            # Append the new user line
             with open(passwd_path, "a") as f:
                 f.write(f"{username}:x:{user_id}:{user_id}:{username}:/home/{username}:/bin/bash\n")
 
@@ -166,23 +156,70 @@ class HoneyPotTelnetSession(TelnetBootstrapProtocol):
         except Exception as e:
             log.msg(f"Error updating passwd: {e}")
 
-
-        # อัปเดตไฟล์ /etc/group
+        # Update /etc/group file
         try:
             group_path = os.path.join(etc_dir, "group")
-            
+
+            # Read all lines from the file
+            lines = []
             if os.path.exists(group_path):
                 with open(group_path, "r") as f:
                     lines = f.readlines()
-                lines = [line for line in lines if not line.startswith(f"{username}:")]
-                with open(group_path, "w") as f:
-                    f.writelines(lines)
 
+            # Remove any line that contains the group_id (1001)
+            lines = [line for line in lines if f":{user_id}:" not in line]
+
+            # Write the filtered lines back to the file
+            with open(group_path, "w") as f:
+                f.writelines(lines)
+
+            # Append the new group line
             with open(group_path, "a") as f:
                 f.write(f"{username}:x:{user_id}:\n")
+            
             log.msg(f"Updated {group_path} for gid={user_id}")
         except Exception as e:
             log.msg(f"Error updating group file: {e}")
+
+    # def update_etc_passwd(self, username):
+    #     """
+    #     Adds or updates a user entry in the /etc/passwd file.
+    #     """
+    #     user_id = 1001
+    #     etc_dir = "/home/cowrie/cowrie/honeyfs/etc"
+    #     try:
+    #         passwd_path = os.path.join(etc_dir, "passwd")
+    #         if os.path.exists(passwd_path):
+    #             with open(passwd_path, "r") as f:
+    #                 lines = f.readlines()
+    #             lines = [line for line in lines if f":{user_id}:" not in line]
+    #             with open(passwd_path, "w") as f:
+    #                 f.writelines(lines)
+
+    #         with open(passwd_path, "a") as f:
+    #             f.write(f"{username}:x:{user_id}:{user_id}:{username}:/home/{username}:/bin/bash\n")
+
+    #         log.msg(f"Updated {passwd_path} for uid={user_id}")
+    #     except Exception as e:
+    #         log.msg(f"Error updating passwd: {e}")
+
+
+    #     # อัปเดตไฟล์ /etc/group
+    #     try:
+    #         group_path = os.path.join(etc_dir, "group")
+            
+    #         if os.path.exists(group_path):
+    #             with open(group_path, "r") as f:
+    #                 lines = f.readlines()
+    #             lines = [line for line in lines if not line.startswith(f"{username}:")]
+    #             with open(group_path, "w") as f:
+    #                 f.writelines(lines)
+
+    #         with open(group_path, "a") as f:
+    #             f.write(f"{username}:x:{user_id}:\n")
+    #         log.msg(f"Updated {group_path} for gid={user_id}")
+    #     except Exception as e:
+    #         log.msg(f"Error updating group file: {e}")
 
 
     def __init__(self, username, server):
