@@ -510,6 +510,35 @@ body {
   text-decoration: underline;
 }
 
+.group-button-url {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  justify-content: center;
+}
+
+.group-button-url button {
+  padding: 5px 10px;
+  border: 2px solid var(--border-color);
+  color: var(--text-primary);
+  background-color: transparent;
+  border-radius: 5px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.group-button-url button:hover {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
+.group-button-url button.active {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+}
+
 /* Hero Section */
 .hero-section {
   display: flex;

@@ -1,10 +1,14 @@
 import React, { useState } from 'react';
+import { message } from 'antd';
 import { LignIn, SignUp } from '../service/api';
 import type { Users } from '../types';
 
 const LoginPage: React.FC = () => {
+  const [messageApi, contextHolder] = message.useMessage();
   const [isSignUp, setIsSignUp] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isPopupUrl, setPopupUrl] = useState(false);
+  const [isLocalUrl, setLocalUrl] = useState(true);
 
   const [confirmPassword, setconfirmPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -19,25 +23,27 @@ const LoginPage: React.FC = () => {
     setError(null);
     if (!formData.Email || !formData.Password) {
       setError('Please fill in all required fields.');
+      messageApi.info('Please fill in all required fields.', 3)
       return;
     }
     try {
       setIsLoading(true);
       const response = await LignIn(formData);
       if (response?.status === 200) {
-        alert('Login successful!');
         localStorage.setItem("isLogin", "true");
         localStorage.setItem("status", response.data.payload.Status);
         localStorage.setItem("token_type", response.data.token_type);
         localStorage.setItem("token", response.data.token);
-        window.location.reload(); // มาแก้ด้วย
+        messageApi.success('Login successful!', 3)
+        setIsLoading(false);
       } else {
         const errorMessage = response?.data?.message || 'Gmail or Password is incorrect';
+        messageApi.error(errorMessage, 3)
         setError(errorMessage);
+        setIsLoading(false);
       }
     } catch (err) {
       setError('Network or unexpected error');
-    } finally {
       setIsLoading(false);
     }
   };
@@ -45,30 +51,32 @@ const LoginPage: React.FC = () => {
   const handleSignUp = async (event: React.FormEvent) => {
     event.preventDefault();
     setError(null);
-    setIsLoading(true);
 
     if (formData.Password !== confirmPassword) {
       setError('Passwords do not match');
+      messageApi.info('Passwords do not match', 3)
       return;
     }
 
     if (!formData.UserName || !formData.Email || !formData.Password) {
       setError('Please fill in all required fields.');
+      messageApi.info('Please fill in all required fields.', 3)
       return;
     }
 
     try {
+      setIsLoading(true);
       const res = await SignUp(formData);
       if (res?.status === 201) {
-        alert('SignUp successful!');
-        window.location.reload();
+        messageApi.success('SignUp successful!', 3)
+        setIsLoading(false);
       } else {
         const errorMessage = res?.data?.message || 'Gmail or Password is incorrect';
         setError(errorMessage);
+        setIsLoading(false);
       }
     } catch (err) {
       setError('Network or unexpected error');
-    } finally {
       setIsLoading(false);
     }
   };
@@ -80,12 +88,52 @@ const LoginPage: React.FC = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("UserName");
     localStorage.removeItem("status");
-    alert('Logout successful!');
+    messageApi.success('Logout successful!', 3)
+  };
+
+  const ClearUrl = () => {
+    // localStorage.clear();
+    localStorage.removeItem("apiUrl");
+    localStorage.removeItem("apiUrlOllama");
+    messageApi.info('Clear Url', 3)
+  };
+
+
+
+  // =================================
+  // Ngrok set up
+  // =================================
+  const [Url, setUrl] = useState<string>("");
+  const [UrlNgrok, setUrlNgrok] = useState<string>("");
+  const [UrlNgrokOllama, setUrlNgrokOllama] = useState<string>("");
+  const [Port, setPort] = useState<string>("");
+  const UrlApi = localStorage.getItem("apiUrl");
+
+  const handleUrlapi = (e: any) => {
+    e.preventDefault();
+    if (Url && Port) {
+      localStorage.setItem("apiUrl", Url + ":" + Port);
+      messageApi.success(`Url saved: ${Url + ":" + Port}`, 10)
+      window.location.reload();
+    }
+  };
+  const handleUrlNgrok = (e: any) => {
+    e.preventDefault();
+    if (UrlNgrok) {
+      localStorage.setItem("apiUrl", UrlNgrok);
+      if (UrlNgrokOllama) {
+        localStorage.setItem("apiUrlOllama", UrlNgrokOllama);
+        console.log(UrlNgrokOllama);
+      }
+      messageApi.success(`Url Ngrok saved: ${UrlNgrok}`, 10)
+      window.location.reload();
+    }
   };
 
 
   return (
     <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      {contextHolder}
       <div className="form-container">
         <div className="form-card">
           <div className="form-header">
@@ -237,10 +285,124 @@ const LoginPage: React.FC = () => {
                 {isSignUp ? 'Sign In' : 'Sign Up'}
               </button>
             </p>
-            <p className="form-switch-text" onClick={Logout}>Log out</p>
+            <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
+              <p className="form-switch-text" onClick={Logout} style={{ cursor: 'pointer' }}>Log out</p>
+              <p className="form-switch-text" onClick={() => setPopupUrl(true)} style={{ cursor: 'pointer' }}>set url</p>
+            </div>
           </div>
         </div>
       </div>
+
+
+
+
+
+
+      {isPopupUrl && (
+        <div className="form-container">
+          <div className="form-card" style={{ width: '400px' }}>
+            <div className="form-header">
+              <h1 className="form-title">
+                Ngrok
+              </h1>
+              <p className="form-subtitle">
+                Set up your Ngrok Url and Ollama <br /> Your Url : {UrlApi ? UrlApi : 'http://localhost:3000'}
+              </p>
+            </div>
+
+            <div className='group-button-url'>
+              <button onClick={() => setLocalUrl(false)} className={isLocalUrl ? '' : 'active'}>Local Url</button>
+              <button onClick={() => setLocalUrl(true)} className={isLocalUrl ? 'active' : ''}>Ngrok Url</button>
+            </div>
+
+            {!isLocalUrl ? (
+              <form onSubmit={handleUrlapi} className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                <label htmlFor="Local ip" className="form-label">
+                  Local ip
+                </label>
+                <input
+                  type="text"
+                  value={Url}
+                  onChange={(e) => setUrl(e.target.value)}
+                  placeholder="Url : http://localhost"
+                  required
+                  aria-label="input-text"
+                  className="form-input"
+                />
+
+                <label htmlFor="Local port" className="form-label">
+                  Local port
+                </label>
+                <input
+                  type="text"
+                  value={Port}
+                  onChange={(e) => setPort(e.target.value)}
+                  placeholder="port : 3000"
+                  required
+                  className="form-input"
+                />
+                <button type="submit" className="form-button" >
+                  Submit
+                </button>
+              </form>
+            ) : (
+              <form onSubmit={handleUrlNgrok} className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+                <label htmlFor="Ngrok Url" className="form-label">
+                  Ngrok Url
+                </label>
+                <input
+                  type="text"
+                  value={UrlNgrok}
+                  onChange={(e) => setUrlNgrok(e.target.value)}
+                  placeholder="Ngrok Url"
+                  required
+                  aria-label="input-text"
+                  className="form-input"
+                />
+                <label htmlFor="Ngrok Ollama" className="form-label">
+                  Ngrok Ollama
+                </label>
+                <input
+                  type="text"
+                  value={UrlNgrokOllama}
+                  onChange={(e) => setUrlNgrokOllama(e.target.value)}
+                  placeholder="Ngrok Url for Ollama"
+                  aria-label="input-text"
+                  className="form-input"
+                />
+                <button type="submit" className="form-button" >
+                  Submit
+                </button>
+              </form>
+            )}
+
+
+
+
+            <div className="form-switch">
+              <p className="form-switch-text">
+                <button
+                  type="button"
+                  className="form-switch-link"
+                  onClick={() => setPopupUrl(false)}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', marginLeft: '0.5rem' }}
+                >
+                  close
+                </button>
+                <button
+                  type="button"
+                  className="form-switch-link"
+                  onClick={ClearUrl}
+                  style={{ background: 'none', border: 'none', cursor: 'pointer', marginLeft: '0.5rem' }}
+                >
+                  clear
+                </button>
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };
