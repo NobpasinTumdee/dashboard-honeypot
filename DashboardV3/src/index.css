@@ -511,9 +511,14 @@ body {
 
 /* Hero Section */
 .hero-section {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 90vh;
+  width: 90vw;
   text-align: center;
   padding: 4rem 2rem;
-  background: var(--gradient-card);
   border-radius: 16px;
   margin-bottom: 3rem;
   position: relative;
@@ -528,7 +533,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background: radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
+  background: radial-gradient(circle at 50% 50%, #5252521a 0%, transparent 70%);
   pointer-events: none;
 }
 
@@ -717,6 +722,11 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-secondary);
+}
+
+*::selection {
+  background: var(--accent-primary);
+  color: var(--bg-primary);
 }
 
 
