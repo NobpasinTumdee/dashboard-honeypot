@@ -77,7 +77,7 @@ const CowriePage: React.FC = () => {
     datasets: [{
       data: [data.filter(log => log.protocol === 'ssh').length,
       data.filter(log => log.protocol === 'telnet').length],
-      backgroundColor: ['#3b82f6', '#10b981'],
+      backgroundColor: ['#400C11', '#c9baa2ff'],
       borderWidth: 0,
     }]
   };
@@ -109,7 +109,14 @@ const CowriePage: React.FC = () => {
     datasets: [{
       label: 'Usage Count',
       data: countsPass,
-      backgroundColor: '#ef4444',
+      backgroundColor: (ctx: any) => {
+        const chart = ctx.chart;
+        const { ctx: canvas } = chart;
+        const gradient = canvas.createLinearGradient(0, 0, 0, 200);
+        gradient.addColorStop(0, "#BAAE98");
+        gradient.addColorStop(1, "#5f523dff");
+        return gradient;
+      },
       borderRadius: 4,
     }]
   };
@@ -141,13 +148,44 @@ const CowriePage: React.FC = () => {
     datasets: [{
       label: 'Usage Count',
       data: countsUser,
-      backgroundColor: '#f59e0b',
+      backgroundColor: (ctx: any) => {
+        const chart = ctx.chart;
+        const { ctx: canvas } = chart;
+        const gradient = canvas.createLinearGradient(0, 0, 0, 200);
+        gradient.addColorStop(0, "#BAAE98");
+        gradient.addColorStop(1, "#400C11");
+        return gradient;
+      },
       borderRadius: 4,
     }]
   };
   // Top 10 usernames ===========================================================================================
 
 
+
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'bottom' as const,
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: 'Number of times'
+        }
+      },
+      x: {
+        title: {
+          display: true,
+          text: 'Password or Username'
+        }
+      }
+    }
+  };
 
 
 
@@ -237,19 +275,19 @@ const CowriePage: React.FC = () => {
           title="Protocol Distribution"
           subtitle="SSH vs Telnet connections"
         >
-          <Chart type="pie" data={protocolData} height={250} />
+          <Chart type="pie" data={protocolData} height={250} options={options} />
         </ChartCard>
         <ChartCard
           title="Top 10 Passwords"
           subtitle="Most commonly used passwords"
         >
-          <Chart type="bar" data={passwordData} height={250} />
+          <Chart type="bar" data={passwordData} height={250} options={options} />
         </ChartCard>
         <ChartCard
           title="Top 10 Usernames"
           subtitle="Most commonly used usernames"
         >
-          <Chart type="bar" data={usernameData} height={250} />
+          <Chart type="bar" data={usernameData} height={250} options={options} />
         </ChartCard>
       </div>
 
