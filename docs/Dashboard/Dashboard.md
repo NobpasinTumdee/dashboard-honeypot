@@ -117,4 +117,6 @@ D --> E( Server ubuntu )
     npm install --save-dev @types/aos
     npm add chart.js react-chartjs-2
     npm i recharts
+    npm install socket.io-client
+    npm install --save-dev @types/socket.io-client
     ```
