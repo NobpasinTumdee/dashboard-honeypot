@@ -24,9 +24,28 @@ from twisted.conch.telnet import (
 )
 from twisted.internet.protocol import connectionDone
 from twisted.python import failure, log
-
+import time
 from cowrie.core.config import CowrieConfig
 from cowrie.core.credentials import UsernamePasswordIP
+# เพิ่มการ import ที่จำเป็น
+import os
+import random
+import datetime
+import subprocess
+import shutil
+import subprocess
+import os
+from twisted.python import log
+
+import shutil
+import subprocess
+import os
+from twisted.python import log
+from cowrie.shell import fs
+from cowrie.shell import server
+
+
+
 
 def normalize(val):
     if isinstance(val, bytes):
@@ -92,6 +111,15 @@ def get_user_entry(filename, username):
         except (FileNotFoundError, SyntaxError, ValueError):
             return None
         return None
+    
+import pickle
+
+import datetime
+from twisted.python import log
+from cowrie.core.config import CowrieConfig
+
+
+
 
 
 class HoneyPotTelnetAuthProtocol(AuthenticatingTelnetProtocol):
@@ -104,6 +132,9 @@ class HoneyPotTelnetAuthProtocol(AuthenticatingTelnetProtocol):
     passwordPrompt = b"Password: "
     windowSize: list[int]
 
+    
+
+    
     def connectionMade(self):
         
         self.windowSize = [40, 80]
@@ -162,6 +193,7 @@ class HoneyPotTelnetAuthProtocol(AuthenticatingTelnetProtocol):
                 if normalize(username_data[1]) == normalize(password):
                     self.login_attempts_made = self.required_login_attempts
                     log.msg("Telnet: username/password ตรงกับที่เคยใช้แล้ว")
+                    
                 else:
                     self.login_attempts_made = 0
                     log.msg("Telnet: username นี้มีอยู่แล้ว แต่ password ไม่ตรง รีเซ็ตจำนวนครั้ง login")
@@ -183,6 +215,7 @@ class HoneyPotTelnetAuthProtocol(AuthenticatingTelnetProtocol):
             elif password_status:
                 self.login_attempts_made = self.required_login_attempts
                 log.msg("Telnet: password นี้เคยถูกใช้แล้ว แต่ username ไม่เคยใช้")
+                
             else:
                 self.login_attempts_made += 1
                 log.msg(f"Telnet: พยายามล็อกอินครั้งที่ {self.login_attempts_made}/{self.required_login_attempts}")
@@ -247,7 +280,6 @@ class HoneyPotTelnetAuthProtocol(AuthenticatingTelnetProtocol):
         
         
         # เมื่อ login สำเร็จ จะบันทึก username และ password ลงไฟล์ users.txt
-        
         userfile_path = "/home/cowrie/users.txt"
         try:
             write_user(userfile_path, self._last_success_username, self._last_success_password)
@@ -255,14 +287,27 @@ class HoneyPotTelnetAuthProtocol(AuthenticatingTelnetProtocol):
             log.msg(f"Error writing login: {e}")
 
 
-        # Remove the short timeout of the login prompt.
-        self.transport.setTimeout(
-            CowrieConfig.getint("honeypot", "idle_timeout", fallback=300)
-        )
+        # เรียกใช้ create_login_user และรอให้ทำงานเสร็จ
+        try:
+            self.protocol.create_login_user(self._last_success_username)
+        except Exception as e:
+            log.msg(f"Error creating login user: {e}")
+        
 
-        # replace myself with avatar protocol
-        protocol.makeConnection(self.transport)
-        self.transport.protocol = protocol
+        # เพิ่มการหน่วงเวลา 2 วินาทีหลังจาก create_login_user ทำงานเสร็จ
+        def continue_after_delay():
+            self.transport.write(b"$ ")  # แสดง prompt ถัดไป
+
+            # Remove the short timeout of the login prompt.
+            self.transport.setTimeout(
+                CowrieConfig.getint("honeypot", "idle_timeout", fallback=300)
+            )
+
+            # replace myself with avatar protocol
+            protocol.makeConnection(self.transport)
+            self.transport.protocol = protocol
+
+        reactor.callLater(2.0, continue_after_delay)
 
     def _ebLogin(self, failure):
         # TODO: provide a way to have user configurable strings for wrong password
