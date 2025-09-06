@@ -160,8 +160,8 @@ const UsersPage: React.FC = () => {
           <table className="data-table">
             <thead>
               <tr>
-                {userColumns.map((column) => (
-                  <th key={column.key}>{column.header}</th>
+                {userColumns.map((column , index) => (
+                  <th key={index}>{column.header}</th>
                 ))}
               </tr>
             </thead>

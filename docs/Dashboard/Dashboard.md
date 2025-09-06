@@ -115,4 +115,6 @@ D --> E( Server ubuntu )
     npm install react@latest react-dom@latest
     npm install aos --save
     npm install --save-dev @types/aos
+    npm add chart.js react-chartjs-2
+    npm i recharts
     ```

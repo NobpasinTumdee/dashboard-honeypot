@@ -85,7 +85,7 @@ const LoginPage: React.FC = () => {
 
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'linear-gradient(135deg, #0f1419 0%, #1a1f2e 50%, #2d3748 100%)' }}>
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       <div className="form-container">
         <div className="form-card">
           <div className="form-header">

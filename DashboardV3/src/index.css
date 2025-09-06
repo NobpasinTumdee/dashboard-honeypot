@@ -14,7 +14,7 @@
   --accent-danger: #ef4444;
   --shadow: rgba(0, 0, 0, 0.3);
   --gradient-primary: linear-gradient(135deg, #BAAE98 0%, #32271C 100%);
-  --gradient-card: linear-gradient(35deg, #000000 0%, #97896f 100%);
+  --gradient-card: linear-gradient(35deg, #000000 0%, #443e39 100%);
 }
 
 :root[data-theme="light"] {
