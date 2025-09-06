@@ -136,6 +136,7 @@ body {
 .nav-item:nth-child(5) { animation-delay: 0.5s; }
 .nav-item:nth-child(6) { animation-delay: 0.6s; }
 .nav-item:nth-child(7) { animation-delay: 0.7s; }
+.nav-item:nth-child(8) { animation-delay: 0.8s; }
 
 .nav-link {
   display: flex;
@@ -729,4 +730,7 @@ body {
   color: var(--bg-primary);
 }
 
+html {
+  scroll-behavior: smooth;
+}
 

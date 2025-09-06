@@ -16,6 +16,12 @@ import UsersPage from './pages/UsersPage';
 // styles
 import './index.css';
 
+// documentation
+import Doclayout from './pages/documentation/Doclayout';
+import DocumentPage from './pages/documentation/DocumentPage';
+import DocumentCowrie from './pages/documentation/DocumentCowrie';
+import DocumentCanary from './pages/documentation/DocumentCanary';
+
 const router = createBrowserRouter([
   {
     path: "/",
@@ -29,6 +35,15 @@ const router = createBrowserRouter([
       { path: "wireshark", element: <ProtectedRoute><WiresharkPage /></ProtectedRoute> },
       { path: "login", element: <LoginPage /> },
       { path: "users", element: <ProtectedRoute><UsersPage /></ProtectedRoute> },
+    ]
+  },
+  {
+    path: "/document",
+    element: <Doclayout />,
+    children: [
+      { index: true, element: <DocumentPage /> },
+      { path: "cowrie-guide", element: <DocumentCowrie /> },
+      { path: "canary-guide", element: <DocumentCanary /> },
     ]
   }
 ]);

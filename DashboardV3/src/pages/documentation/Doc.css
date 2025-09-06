@@ -1,0 +1,228 @@
+.doc-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: radial-gradient(circle, #3aa48c 0%, #000000 59%);
+    z-index: -1;
+}
+
+.doc-container {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    color: var(--text-ui);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.doc-title {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+}
+
+.doc-subtitle {
+    font-size: 1rem;
+    font-weight: 200;
+    max-width: 600px;
+    margin-bottom: 2rem;
+}
+
+.doc-button {
+    padding: 12px 24px;
+    backdrop-filter: blur(10px);
+    background-color: #ffffff1a;
+    border: none;
+    border-radius: 8px;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.3s;
+}
+
+.doc-button:hover {
+    background-color: #ffffff3b;
+}
+
+
+
+
+.doc-nav-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    z-index: 10;
+}
+
+.doc-nav {
+    width: auto;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    z-index: 1;
+    backdrop-filter: blur(10px);
+    padding: 0px 40px;
+    box-shadow: #ffffff42 0px 2px 7px 0px inset;
+    border-radius: 0 0 30px 30px;
+}
+
+.Link-button-doc {
+    text-decoration: none;
+    color: var(--text-ui);
+    transition: 0.3s ease-in-out;
+}
+
+.Link-button-doc:hover {
+    padding: 0 10px;
+    scale: 1.2;
+}
+
+
+.terminal-title {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 3rem;
+    color: var(--text-ui);
+    text-align: center;
+}
+
+
+.terminal-container {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 90%;
+    margin: 5%;
+    gap: 2rem;
+    color: var(--text-ui);
+}
+
+.next-step {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 1rem;
+    width: 50%;
+}
+
+.next-step p {
+    font-weight: 200;
+}
+
+
+.move-step {
+    position: fixed;
+    left: 10px;
+    top: 40%;
+    display: flex;
+    flex-direction: column;
+
+}
+
+.move-step a {
+    color: #3aa48c;
+    text-decoration: none;
+    font-weight: 600;
+    background-color: transparent;
+    border: 2px solid #3aa48c;
+    text-align: center;
+    border-radius: 50px;
+    padding: 7px 10px;
+    cursor: pointer;
+    scale: 0.7;
+}
+
+.move-step a:hover {
+    scale: 1;
+    background-color: #196453;
+}
+
+.scroll-down {
+    text-decoration: none;
+    color: var(--text-ui);
+    position: absolute;
+    font-size: 2rem;
+    transform: translateY(300px);
+    cursor: pointer;
+    transition: 0.3s ease-in-out;
+    animation: scrolldown 2s ease-in-out infinite;
+}
+
+@keyframes scrolldown {
+    50% {
+        transform: translateY(320px);
+        opacity: 0.5;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .terminal-container {
+        flex-direction: column;
+        gap: 2rem;
+        width: 90%;
+        margin: 2rem 5%;
+    }
+
+    .move-step {
+        top: 20%;
+        z-index: 10;
+    }
+
+    .next-step {
+        text-align: center;
+        width: 100%;
+        font-size: 0.7rem;
+    }
+
+    .doc-container {
+        width: 90%;
+        margin: 0 5%;
+    }
+
+    .doc-title {
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 1rem;
+    }
+
+    .doc-container h2 {
+        font-size: 0.7rem;
+        font-weight: 300;
+    }
+    .doc-container p {
+        font-size: 0.6rem;
+    }
+
+    .doc-subtitle {
+        font-size: 0.6rem;
+        font-weight: 200;
+        max-width: 600px;
+        margin-bottom: 2rem;
+    }
+
+    .doc-button {
+        padding: 12px 24px;
+        backdrop-filter: blur(10px);
+        background-color: #ffffff1a;
+        border: none;
+        border-radius: 8px;
+        color: #fff;
+        font-size: 1rem;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background-color 0.3s;
+    }
+
+
+}
