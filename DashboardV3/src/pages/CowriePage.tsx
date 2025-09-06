@@ -291,10 +291,10 @@ const CowriePage: React.FC = () => {
         </ChartCard>
       </div>
 
-      <div style={{ fontWeight: "400", textAlign: "center", display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '0 5%' }}>
+      <div style={{ fontWeight: "400", textAlign: "center", display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '0 5% 20px' }}>
         <p style={{ margin: '0px' }}>
           {protocolFilter && `| Filtered by: ${protocolFilter} `}
-          <select value={protocolFilter} onChange={handleSelectChange}>
+          <select value={protocolFilter} onChange={handleSelectChange} style={{ padding: '0.3rem 1rem', borderRadius: '4px', border: '1px solid #ccc' }}>
             <option value="">All</option>
             <option value="cowrie.session.connect">connect</option>
             <option value="cowrie.session.closed">closed</option>
@@ -302,23 +302,25 @@ const CowriePage: React.FC = () => {
             <option value="cowrie.command.failed">failed</option>
           </select>
         </p>
-        <p style={{ margin: '0px' }}>
-          <button onClick={handleDownload} className='download-button'>
-            Download CSV
-            <svg xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 -960 960 960" width="24px" fill="var(--body_text_color)"><path d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z" /></svg>
-          </button>
-        </p>
+        <button
+          className="form-button"
+          style={{ width: 'auto', padding: '0.75rem 1.5rem' }}
+          onClick={handleDownload}
+        >
+          Download CSV
+        </button>
       </div>
       <DataTable
         title="Recent Cowrie Sessions"
         data={currentItems}
         columns={cowrieColumns}
       />
-      <div style={{ margin: "2% 0 10%", textAlign: "center" }}>
+      <div style={{ margin: "2% 0 10%", textAlign: "center", display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px' }}>
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
-          className="pagination-button"
+          className="form-button"
+          style={{ width: '100px', padding: '0.3rem 1.5rem' }}
         >
           ◀ Prev
         </button>
@@ -326,7 +328,8 @@ const CowriePage: React.FC = () => {
         <button
           onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
           disabled={currentPage === totalPages}
-          className="pagination-button"
+          className="form-button"
+          style={{ width: '100px', padding: '0.3rem 1.5rem' }}
         >
           Next ▶
         </button>

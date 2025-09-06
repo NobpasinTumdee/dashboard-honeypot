@@ -482,7 +482,7 @@ body {
 
 .form-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.4);
+  box-shadow: 0 8px 24px var(--accent-primary);
 }
 
 .form-switch {
@@ -718,3 +718,5 @@ body {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-secondary);
 }
+
+

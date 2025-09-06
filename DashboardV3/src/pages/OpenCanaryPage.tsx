@@ -292,10 +292,10 @@ const OpenCanaryPage: React.FC = () => {
         </ChartCard>
       </div>
 
-      <div style={{ fontWeight: "400", textAlign: "center", display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '0 5%' }}>
+      <div style={{ fontWeight: "400", textAlign: "center", display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '0 5% 20px' }}>
         <p style={{ margin: '0px' }}>
           {protocolFilter && `| Filtered by: `}
-          <select value={protocolFilter} onChange={handleSelectChange}>
+          <select value={protocolFilter} onChange={handleSelectChange} style={{ padding: '0.3rem 1rem', borderRadius: '4px', border: '1px solid #ccc' }}>
             <option value="">All</option>
             <option value="Canary running!!!">Running</option>
             <option value="Added service from class CanaryHTTPS in opencanary.modules.https to fake">Canary HTTPS</option>
@@ -303,9 +303,13 @@ const OpenCanaryPage: React.FC = () => {
             <option value="Added service from class CanaryFTP in opencanary.modules.ftp to fake">Canary FTP</option>
           </select>
         </p>
-        <p style={{ margin: '0px' }}>
-          <button onClick={handleDownload} className='download-button'>Download CSV</button>
-        </p>
+        <button
+          className="form-button"
+          style={{ width: 'auto', padding: '0.75rem 1.5rem' }}
+          onClick={handleDownload}
+        >
+          Download CSV
+        </button>
       </div>
 
 
@@ -357,11 +361,12 @@ const OpenCanaryPage: React.FC = () => {
         </div>
       </div>
 
-      <div style={{ margin: "2% 0 10%", textAlign: "center" }}>
+      <div style={{ margin: "2% 0 10%", textAlign: "center", display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px' }}>
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
           disabled={currentPage === 1}
-          className="pagination-button"
+          className="form-button"
+          style={{ width: '100px', padding: '0.3rem 1.5rem' }}
         >
           ◀ Prev
         </button>
@@ -369,7 +374,8 @@ const OpenCanaryPage: React.FC = () => {
         <button
           onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
           disabled={currentPage === totalPages}
-          className="pagination-button"
+          className="form-button"
+          style={{ width: '100px', padding: '0.3rem 1.5rem' }}
         >
           Next ▶
         </button>
