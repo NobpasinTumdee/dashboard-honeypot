@@ -8,6 +8,7 @@ import DataTable from '../components/DataTable';
 
 import type { CanaryLog, CowrieLog, HttpsPacket } from '../types';
 import { useCanarySocket, useCowrieSocket, usePacketSocket } from '../service/websocket';
+import MapIP from '../components/MapIP';
 
 const HomePage: React.FC = () => {
   // routing
@@ -16,9 +17,11 @@ const HomePage: React.FC = () => {
   const [CowrieData, setCowrieData] = useState<CowrieLog[]>([]);
   const [CanaryData, setCanaryData] = useState<CanaryLog[]>([]);
   const [dataPacket, setDataPacket] = useState<HttpsPacket[]>([]);
+  const [IpMap, setUniqueIPs] = useState<string[]>([]);
   // status
   const [isConnected, setIsConnected] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
+  const [popupMap, setPopupMap] = useState(false);
 
   useCowrieSocket(setCowrieData, setIsConnected, setIsLogin);
   useCanarySocket(setCanaryData, setIsConnected, setIsLogin);
@@ -208,9 +211,31 @@ const HomePage: React.FC = () => {
     }
   };
 
+
+
+  // ============================
+  // แปลง ip และเอาไปปักใน map
+  // ============================
+  const handleFetchIP = () => {
+    setPopupMap(true);
+    try {
+      if (CowrieData.length > 0) {
+        const uniqueIPSet = new Set<string>();
+        CowrieData.forEach(log => {
+          if (log.src_ip) {
+            uniqueIPSet.add(log.src_ip);
+          }
+        });
+        setUniqueIPs(Array.from(uniqueIPSet));
+      }
+    } catch (error) {
+      console.error('Error fetching IP addresses:', error);
+    }
+  }
+
   if (!isLogin) {
     return (
-      <div style={{ position: 'fixed', width: '90vw', height: '100vh', display: 'flex',flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+      <div style={{ position: 'fixed', width: '90vw', height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
         <h2>
           You are not logged in. Please log in to access this page.
         </h2>
@@ -279,6 +304,20 @@ const HomePage: React.FC = () => {
           <Chart type="bar" data={dailyWiresharkData} height={300} options={PacketsOptions} />
         </ChartCard>
       </div>
+
+      {popupMap && (
+        <div className='map-container'>
+          <button className='close-map-button' onClick={() => setPopupMap(false)}>Close Map</button>
+          <MapIP ipAddresses={IpMap} />
+        </div>
+      )}
+      <button
+        className="form-button"
+        style={{ width: 'auto', padding: '0.5rem 1rem', marginBottom: '1rem' }}
+        onClick={handleFetchIP}
+      >
+        Open Map
+      </button>
 
       <DataTable
         title="Recent Activity"

@@ -688,6 +688,28 @@ body {
   to { transform: rotate(360deg); }
 }
 
+
+/* Map */
+.map-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 20px 0;
+  background-color: var(--bg-primary);
+}
+
+.close-map-button {
+  padding: 5px 10px;
+  background-color: #fff;
+  margin: 10px 0;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+
 /* Responsive */
 @media (max-width: 768px) {
   .sidebar {
