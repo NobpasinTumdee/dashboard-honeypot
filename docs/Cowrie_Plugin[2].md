@@ -29,30 +29,32 @@ echo "root:x:0:0:root:/root:/bin/bash" > honeyfs/etc/passwd
 echo "root:*:19000:0:99999:7:::" > honeyfs/etc/shadow
 ```
 
-### สร้าง users ให้ระบบหลอก
+### เพิ่มความแนบเนียน
+- เพิ่ม user ใน directory home
+- สร้าง etc พื้นฐาน
+- ปรับเปลี่ยนเวลา timestamp
 ```
 pwd -> /home/cowrie/
+mkdir script
 nano GenUser.py
+nano etcFile.py
+nano NewTimeStamp.py
 ```
 * [GenUser.py](/Plugin/Cowrie/script/GenUsers.py)
+* [NewTimeStamp.py](/Plugin/Cowrie/script/NewTimeStamp.py)
+* [etcFile.py](/Plugin/Cowrie/script/etcFile.py)
+```
+nano run.py
+```
+* [run.py](/Plugin/Cowrie/script/run.py)
 
 ติดตั้งไลบารี่ที่จำเป็น + Run script (sudo user) 
 ```
 python3 -m venv venv
 source venv/bin/activate
 pip install Faker names
-sudo ./venv/bin/python3 GenUsers.py
+sudo ./venv/bin/python3 run.py
 deactivate
-```
-
-### ปรับเวลา Timestamp
-```
-pwd -> /home/cowrie/
-nano NewTimeStamp.py
-```
-* [NewTimeStamp.py](/Plugin/Cowrie/script/NewTimeStamp.py)
-```
-sudo NewTimeStamp.py
 ```
 
 ### ปรับชื่อให้สอดคล้อง
@@ -61,14 +63,6 @@ pwd -> /home/cowrie/cowrie/etc
 nano cowrie.cfg
 ```
 svr04 -> ubuntu_svr
-
-### เพิ่ม /etc
-```
-pwd -> /home/cowrie/
-nano etcFile.py
-sudo ./venv/bin/python3 GenUsers.py
-```
-* [etcFile.py](/Plugin/Cowrie/script/etcFile.py)
 
 ### สร้าง fs.pickle ใหม่
 ```
