@@ -1,26 +1,43 @@
-import React from 'react';
+import React, { useState } from 'react';
+
 import Chart from '../components/Chart';
 import StatCard from '../components/StatCard';
 import ChartCard from '../components/ChartCard';
 import DataTable from '../components/DataTable';
-import { mockCowrieData, mockCanaryData, mockWiresharkData } from '../mockData';
+
+import type { CanaryLog, CowrieLog, HttpsPacket } from '../types';
+import { useCanarySocket, useCowrieSocket, usePacketSocket } from '../service/websocket';
 
 const HomePage: React.FC = () => {
+  // data services
+  const [CowrieData, setCowrieData] = useState<CowrieLog[]>([]);
+  const [CanaryData, setCanaryData] = useState<CanaryLog[]>([]);
+  const [dataPacket, setDataPacket] = useState<HttpsPacket[]>([]);
+  // status
+  const [isConnected, setIsConnected] = useState(false);
+  const [isLogin, setIsLogin] = useState(false);
+
+  useCowrieSocket(setCowrieData, setIsConnected, setIsLogin);
+  useCanarySocket(setCanaryData, setIsConnected, setIsLogin);
+  usePacketSocket(setDataPacket, setIsConnected, setIsLogin);
+
+
+
   // Combine recent activities from all sources
   const recentActivities = [
-    ...mockCowrieData.slice(0, 2).map(item => ({
+    ...CowrieData.slice(0, 2).map(item => ({
       source: 'Cowrie',
       timestamp: item.timestamp,
       activity: `SSH connection from ${item.src_ip}`,
-      severity: 'medium'
+      severity: 'high'
     })),
-    ...mockCanaryData.slice(0, 2).map(item => ({
+    ...CanaryData.slice(0, 2).map(item => ({
       source: 'OpenCanary',
       timestamp: item.local_time,
       activity: `${item.logdata_msg_logdata}`,
-      severity: 'high'
+      severity: 'medium'
     })),
-    ...mockWiresharkData.slice(0, 2).map(item => ({
+    ...dataPacket.slice(0, 2).map(item => ({
       source: 'Wireshark',
       timestamp: item.timestamp,
       activity: `${item.method} request to ${item.request_uri}`,
@@ -32,42 +49,169 @@ const HomePage: React.FC = () => {
     { key: 'source', header: 'Source' },
     { key: 'timestamp', header: 'Timestamp', render: (value: string) => new Date(value).toLocaleString() },
     { key: 'activity', header: 'Activity' },
-    { 
-      key: 'severity', 
+    {
+      key: 'severity',
       header: 'Severity',
       render: (value: string) => (
-        <span className={`stat-change ${
-          value === 'high' ? 'text-danger' : 
-          value === 'medium' ? 'text-warning' : 
-          'text-success'
-        }`}>
+        <span className={`stat-change ${value === 'high' ? 'text-danger' :
+          value === 'medium' ? 'text-warning' :
+            'text-success'
+          }`}>
           {value.toUpperCase()}
         </span>
       )
     }
   ];
 
-  // Chart data for dashboard
-  const attackTimelineData = {
-    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+
+
+
+
+
+
+  // ========================
+  // Top 10 usernames
+  // ========================
+  const usernameCounts: Record<string, number> = {};
+  CowrieData.forEach(item => {
+    if (item.username) {
+      usernameCounts[item.username] = (usernameCounts[item.username] || 0) + 1;
+    }
+  });
+
+  const sortedUsernames = Object.entries(usernameCounts)
+    .sort(([, countA], [, countB]) => countB - countA)
+    .slice(0, 10);
+
+  const labelsUser = sortedUsernames.map(([username]) => username);
+  const countsUser = sortedUsernames.map(([, count]) => count);
+  const usernameData = {
+    labels: labelsUser,
     datasets: [{
-      label: 'Attacks',
-      data: [120, 190, 300, 500, 200, 300],
+      label: 'Usage Count',
+      data: countsUser,
+      backgroundColor: (ctx: any) => {
+        const chart = ctx.chart;
+        const { ctx: canvas } = chart;
+        const gradient = canvas.createLinearGradient(0, 0, 0, 200);
+        gradient.addColorStop(0, "#ef4444");
+        gradient.addColorStop(1, "#400C11");
+        return gradient;
+      },
+      borderRadius: 4,
+    }]
+  };
+
+  const CowrieOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'bottom' as const,
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: 'Number of times'
+        }
+      },
+      x: {
+        title: {
+          display: true,
+          text: 'Password or Username'
+        }
+      }
+    }
+  };
+
+
+
+  // ========================
+  // Chart จำนวน Packet ตามวัน
+  // ========================
+  const dailyCounts: Record<string, number> = {};
+  CanaryData.forEach(item => {
+    const date = item.local_time_adjusted.split(' ')[0]; // แยกวันที่จาก 'YYYY-MM-DD HH:mm:ss'
+    dailyCounts[date] = (dailyCounts[date] || 0) + 1;
+  });
+
+  const sortedDates = Object.keys(dailyCounts).sort();
+
+  const labelsDaily = sortedDates;
+  const countsDaily = sortedDates.map(date => dailyCounts[date]);
+  const dailyPacketsData = {
+    labels: labelsDaily,
+    datasets: [{
+      label: 'Packets',
+      data: countsDaily,
       borderColor: '#ef4444',
-      backgroundColor: 'rgba(239, 68, 68, 0.1)',
+      backgroundColor: '#400C11',
       fill: true,
       tension: 0.4,
     }]
   };
 
-  const protocolDistributionData = {
-    labels: ['SSH', 'HTTP', 'HTTPS', 'FTP', 'Telnet'],
+
+
+  // ========================
+  // Chart จำนวน Packet Wireshark ตามวัน
+  // ========================
+  const dailyPacketCounts: Record<string, number> = {};
+  dataPacket.forEach(item => {
+    const date = item.timestamp.split(' ')[0]; // แยกวันที่จาก 'YYYY-MM-DD HH:mm:ss'
+    dailyPacketCounts[date] = (dailyPacketCounts[date] || 0) + 1;
+  });
+
+  const sortedPacketDates = Object.keys(dailyPacketCounts).sort();
+
+  const labelsPacketDaily = sortedPacketDates;
+  const countsPacketDaily = sortedPacketDates.map(date => dailyPacketCounts[date]);
+  const dailyWiresharkData = {
+    labels: labelsPacketDaily,
     datasets: [{
-      data: [35, 25, 20, 12, 8],
-      backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'],
-      borderWidth: 0,
+      label: 'Wireshark',
+      data: countsPacketDaily,
+      borderColor: '#ef4444',
+      backgroundColor: '#400C11',
+      fill: true,
+      tension: 0.4,
     }]
   };
+
+
+  const PacketsOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'bottom' as const,
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: 'Number of times'
+        }
+      },
+      x: {
+        title: {
+          display: true,
+          text: 'Date (YYYY-MM-DD)'
+        }
+      }
+    }
+  };
+
+  if (!isLogin) {
+    return (
+      <div>
+        <h1>Unauthorized Access</h1>
+      </div>
+    )
+  }
 
   return (
     <div>
@@ -78,10 +222,8 @@ const HomePage: React.FC = () => {
 
       <div className="stats-grid">
         <StatCard
-          title="Total Attacks"
-          value="1,247"
-          change="+12%"
-          changeType="negative"
+          title="Total Packets"
+          value={CowrieData.length + CanaryData.length + dataPacket.length}
           icon="⚡"
           variant="danger"
         />
@@ -102,10 +244,8 @@ const HomePage: React.FC = () => {
           variant="success"
         />
         <StatCard
-          title="System Health"
-          value="98.5%"
-          change="+0.2%"
-          changeType="positive"
+          title="Server Status"
+          value={isConnected ? 'Online 🌐' : 'Offline 🔴'}
           icon="💚"
           variant="success"
         />
@@ -113,16 +253,22 @@ const HomePage: React.FC = () => {
 
       <div className="charts-grid">
         <ChartCard
-          title="Attack Timeline"
-          subtitle="Attacks detected over time"
+          title="Top 10 Passwords"
+          subtitle="Most commonly used passwords"
         >
-          <Chart type="line" data={attackTimelineData} height={250} />
+          <Chart type="bar" data={usernameData} height={250} options={CowrieOptions} />
         </ChartCard>
         <ChartCard
-          title="Protocol Distribution"
-          subtitle="Most targeted protocols"
+          title="Daily OpenCanary Count"
+          subtitle="Packets detected per day"
         >
-          <Chart type="pie" data={protocolDistributionData} height={250} />
+          <Chart type="line" data={dailyPacketsData} height={300} options={PacketsOptions} />
+        </ChartCard>
+        <ChartCard
+          title="Daily Wireshark Count"
+          subtitle="Packets detected per day"
+        >
+          <Chart type="bar" data={dailyWiresharkData} height={300} options={PacketsOptions} />
         </ChartCard>
       </div>
 
