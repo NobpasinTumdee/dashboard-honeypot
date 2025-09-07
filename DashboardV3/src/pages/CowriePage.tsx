@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import Chart from '../components/Chart';
 import StatCard from '../components/StatCard';
 import ChartCard from '../components/ChartCard';
-import DataTable from '../components/DataTable';
 
 import type { CowrieLog } from '../types';
 import { useCowrieSocket } from '../service/websocket';
@@ -41,7 +40,7 @@ const CowriePage: React.FC = () => {
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const ITEMS_PER_PAGE = 5;
+  const ITEMS_PER_PAGE = 15;
 
   // Calculate the current items to display based on pagination
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -58,12 +57,14 @@ const CowriePage: React.FC = () => {
     { key: 'timestamp', header: 'Timestamp', render: (value: string) => new Date(value).toLocaleString() },
     { key: 'src_ip', header: 'Source IP' },
     { key: 'src_port', header: 'Source Port' },
-    { key: 'dst_ip', header: 'Destination IP' },
-    { key: 'dst_port', header: 'Destination Port' },
+    // { key: 'dst_ip', header: 'Destination IP' },
+    // { key: 'dst_port', header: 'Destination Port' },
     { key: 'username', header: 'Username' },
     { key: 'password', header: 'Password' },
     { key: 'input', header: 'Command' },
     { key: 'protocol', header: 'Protocol' },
+    { key: 'eventid', header: 'Event' },
+    { key: 'message', header: 'Message' },
     {
       key: "duration",
       header: "Duration (s)",
@@ -356,11 +357,48 @@ const CowriePage: React.FC = () => {
           Download CSV
         </button>
       </div>
-      <DataTable
-        title="Recent Cowrie Sessions"
-        data={currentItems}
-        columns={cowrieColumns}
-      />
+
+      <div className="table-container">
+        <div className="table-header">
+          <h3 className="table-title">Recent Cowrie Sessions</h3>
+        </div>
+        <div style={{ overflowX: 'auto' }}>
+          <table className="data-table">
+            <thead>
+              <tr>
+                {cowrieColumns.map((column) => (
+                  <th key={column.key}>{column.header}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {currentItems.map((row, index) => (
+                <tr key={index} className='cowrie-row' style={{ backgroundColor: String(row.eventid).slice(-7) === 'connect' ? '#a9ff6f5b' : String(row.eventid).slice(-6) === 'closed' ? '#ffb77d5b' : '' }}>
+                  <td>
+                    {new Date(row.timestamp).toLocaleDateString("en-EN", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                    })}
+                  </td>
+                  <td>{row.src_ip}</td>
+                  <td>{row.src_port}</td>
+                  {/* <td>{row.dst_ip}</td>
+                  <td>{row.dst_port}</td> */}
+                  <td>{row.username}</td>
+                  <td>{row.password}</td>
+                  <td>{row.input}</td>
+                  <td>{row.protocol}</td>
+                  <td>{row.eventid}</td>
+                  <td className='cowrie-message'>{row.message}</td>
+                  <td>{row.duration}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+
       <div style={{ margin: "2% 0 10%", textAlign: "center", display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px' }}>
         <button
           onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}

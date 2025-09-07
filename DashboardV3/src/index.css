@@ -362,7 +362,23 @@ body {
 
 .data-table tr:hover {
   background-color: var(--card-hover);
-  transform: scale(1.01);
+  transform: translateY(-2px);
+}
+
+.cowrie-row td {
+  padding: 0 1rem;
+  border: 1px solid var(--border-color);
+  overflow-x: hidden;
+}
+
+.cowrie-message {
+  max-width: 100px;
+  overflow-x: hidden;
+  white-space: nowrap;
+}
+
+.cowrie-message:hover {
+  overflow-x: scroll;
 }
 
 /* Charts */
