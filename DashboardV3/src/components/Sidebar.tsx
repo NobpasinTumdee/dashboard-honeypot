@@ -96,16 +96,6 @@ const Sidebar = () => {
               </Link>
             </li>
             <li className="nav-item">
-              <Link to="/login" className={`nav-link ${isActive('/login') ? 'active' : ''}`}>
-                <span className="nav-icon">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z" /><circle cx="16.5" cy="7.5" r=".5" fill="currentColor" /></svg>
-                </span>
-                {isOpen && (
-                  'Login'
-                )}
-              </Link>
-            </li>
-            <li className="nav-item">
               <Link to="/document" className={`nav-link ${isActive('/document') ? 'active' : ''}`}>
                 <span className="nav-icon">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><path d="M10 2v8l3-3 3 3V2" /><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H19a1 1 0 0 1 1 1v18a1 1 0 0 1-1 1H6.5a1 1 0 0 1 0-5H20" /></svg>
@@ -127,6 +117,16 @@ const Sidebar = () => {
                 )}
                 <ThemeToggle />
               </p>
+            </li>
+            <li className="nav-item">
+              <Link to="/login" className={`nav-link ${isActive('/login') ? 'active' : ''}`}>
+                <span className="nav-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><path d="m10 17 5-5-5-5"/><path d="M15 12H3"/><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/></svg>
+                </span>
+                {isOpen && (
+                  'Login'
+                )}
+              </Link>
             </li>
           </ul>
         </nav>

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import StatCard from '../components/StatCard';
 
@@ -8,6 +9,9 @@ import { UsersSocket } from '../service/websocket';
 import { AuthNewUser } from '../service/api';
 
 const UsersPage: React.FC = () => {
+  // routing
+  const navigate = useNavigate();
+  // data services
   const [user, setUser] = useState<Users[]>([])
   const [isConnected, setIsConnected] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
@@ -65,11 +69,47 @@ const UsersPage: React.FC = () => {
   const activeUsers = user.filter(user => user.Status === 'Authenticated').length;
   const inactiveUsers = user.filter(user => user.Status === 'Unauthenticated').length;
 
+  // ==================
+  // export users
+  // ==================
+  const handleDownload = () => {
+    const headers = ["UserID", "UserName", "Email", "Password", "Status", "createdAt", "updatedAt", "deletedAt"];
+    const headerString = headers.join(',');
+
+    const rows = user.map(item => {
+      return headers.map(header => {
+        let value = item[header as keyof Users];
+        if (value === null || value === undefined) {
+          return '';
+        }
+        if (typeof value === 'string' && (value.includes(',') || value.includes('\n'))) {
+          return `"${value.replace(/"/g, '""')}"`;
+        }
+        return value;
+      }).join(',');
+    });
+
+    const csvString = [headerString, ...rows].join('\n');
+
+    const blob = new Blob([csvString], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `users-${new Date().toISOString()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   if (!isLogin) {
     return (
-      <>
-        <h1>You are not logged in</h1>
-      </>
+      <div style={{ position: 'fixed', width: '90vw', height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+        <h2>
+          You are not logged in. Please log in to access this page.
+        </h2>
+        <button onClick={() => navigate('/login')}>Go to Log in</button>
+      </div>
     )
   }
 
@@ -83,14 +123,14 @@ const UsersPage: React.FC = () => {
       <div className="stats-grid">
         <StatCard
           title="Total Users"
-          value={users.length}
+          value={users.length - 1}
           icon="👥"
           variant="primary"
         />
         <StatCard
           title="Active Users"
           value={activeUsers}
-          change={`${Math.round((activeUsers / users.length) * 100)}%`}
+          change={`${Math.round((activeUsers / (users.length - 1)) * 100)}%`}
           changeType="positive"
           icon="✅"
           variant="success"
@@ -137,6 +177,7 @@ const UsersPage: React.FC = () => {
         <button
           className="form-button"
           style={{ width: 'auto', padding: '0.75rem 1.5rem' }}
+          onClick={() => navigate('/login')}
         >
           Add New User
         </button>
@@ -147,6 +188,7 @@ const UsersPage: React.FC = () => {
             padding: '0.75rem 1.5rem',
             background: 'linear-gradient(135deg, #6b7280 0%, #4b5563 100%)'
           }}
+          onClick={handleDownload}
         >
           Export Users
         </button>
@@ -160,7 +202,7 @@ const UsersPage: React.FC = () => {
           <table className="data-table">
             <thead>
               <tr>
-                {userColumns.map((column , index) => (
+                {userColumns.map((column, index) => (
                   <th key={index}>{column.header}</th>
                 ))}
               </tr>

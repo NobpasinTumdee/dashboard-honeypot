@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 // components
 import Chart from '../components/Chart';
@@ -10,6 +11,9 @@ import type { CanaryLog } from '../types';
 import { useCanarySocket } from '../service/websocket';
 
 const OpenCanaryPage: React.FC = () => {
+  // routing
+  const navigate = useNavigate();
+  // data services
   const [data, setData] = useState<CanaryLog[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
@@ -235,9 +239,12 @@ const OpenCanaryPage: React.FC = () => {
 
   if (!isLogin) {
     return (
-      <>
-        <h1>You are not logged in</h1>
-      </>
+      <div style={{ position: 'fixed', width: '90vw', height: '100vh', display: 'flex',flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+        <h2>
+          You are not logged in. Please log in to access this page.
+        </h2>
+        <button onClick={() => navigate('/login')}>Go to Log in</button>
+      </div>
     )
   }
 
@@ -271,7 +278,7 @@ const OpenCanaryPage: React.FC = () => {
         />
         <StatCard
           title="Websockets status"
-          value={isConnected ? 'Connected 🟢' : 'Disconnected 🔴'}
+          value={isConnected ? 'Online' : 'Offline'}
           icon="💻"
           variant="danger"
         />
