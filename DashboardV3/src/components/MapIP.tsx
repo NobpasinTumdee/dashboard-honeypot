@@ -15,12 +15,25 @@ interface MapIPProps {
     ipAddresses: string[];
 }
 
+// interface IpLocation {
+//     ip: string;
+//     latitude: number;
+//     longitude: number;
+//     city?: string;
+//     country?: string;
+// }
 interface IpLocation {
-    ip: string;
-    latitude: number;
-    longitude: number;
-    city?: string;
-    country?: string;
+    ip: string,
+    country_code?: string,
+    country_name?: string,
+    region_code?: string,
+    region_name?: string,
+    city?: string,
+    zip_code?: number,
+    time_zone?: string,
+    latitude: number,
+    longitude: number,
+    metro_code?: number
 }
 
 const MapIP: React.FC<MapIPProps> = ({ ipAddresses }) => {
@@ -34,14 +47,15 @@ const MapIP: React.FC<MapIPProps> = ({ ipAddresses }) => {
 
             for (const ip of ipAddresses) {
                 try {
-                    const response = await axios.get(`http://ip-api.com/json/${ip}`);
-                    if (response.data.status === 'success') {
+                    await new Promise(resolve => setTimeout(resolve, 3000));
+                    const response = await axios.get(`https://api.ipbase.com/v1/json/${ip}`);
+                    if (response.status === 200) {
                         fetchedData.push({
                             ip: ip,
-                            latitude: response.data.lat,
-                            longitude: response.data.lon,
+                            latitude: response.data.latitude,
+                            longitude: response.data.longitude,
                             city: response.data.city,
-                            country: response.data.country,
+                            country_name: response.data.country_name,
                         });
                     }
                 } catch (error) {
@@ -61,7 +75,7 @@ const MapIP: React.FC<MapIPProps> = ({ ipAddresses }) => {
     }, [ipAddresses]);
 
     if (loading) {
-        return <div>Loading map data...</div>;
+        return <div>Loading map data... <br /> Please wait a few seconds. <br /> ยิ่งมี ip ต่างกันเยอะยิ่งนานเพราะ API มันจำกัดคำขอ ผมจึงตั้งเวลา 3 วินาที ต่อ 1 ip</div>;
     }
 
     return (
@@ -74,7 +88,7 @@ const MapIP: React.FC<MapIPProps> = ({ ipAddresses }) => {
                 <Marker key={location.ip} position={[location.latitude, location.longitude]}>
                     <Popup>
                         <strong>IP:</strong> {location.ip} <br />
-                        <strong>Location:</strong> {location.city}, {location.country}
+                        <strong>Location:</strong> {location.city}, {location.country_name}
                     </Popup>
                 </Marker>
             ))}
