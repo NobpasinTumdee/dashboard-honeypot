@@ -123,10 +123,10 @@ class HoneyPotTelnetSession(TelnetBootstrapProtocol):
             
         except Exception as e:
             log.msg(f"Error creating directory for user: {e}")
-
     def update_etc_passwd(self, username):
         """
-        Adds or updates a user and group entry in the /etc/passwd and /etc/group files.
+        Adds or updates a user and group entry in the /etc/passwd and /etc/group files,
+        and keeps entries sorted by UID/GID.
         """
         user_id = 1001
         etc_dir = "/home/cowrie/cowrie/honeyfs/etc"
@@ -134,52 +134,122 @@ class HoneyPotTelnetSession(TelnetBootstrapProtocol):
         # Update /etc/passwd file
         try:
             passwd_path = os.path.join(etc_dir, "passwd")
-            
-            # Read all lines from the file
             lines = []
             if os.path.exists(passwd_path):
                 with open(passwd_path, "r") as f:
                     lines = f.readlines()
-            
-            # Remove any line that contains the user_id (1001)
+
+            # Remove any old entry with this UID
             lines = [line for line in lines if f":{user_id}:" not in line]
 
-            # Write the filtered lines back to the file
+            # Add the new entry
+            new_line = f"{username}:x:{user_id}:{user_id}:{username}:/home/{username}:/bin/bash\n"
+            lines.append(new_line)
+
+            # Sort by UID (field 3)
+            def extract_uid(line):
+                try:
+                    return int(line.split(":")[2])
+                except Exception:
+                    return 999999  # keep malformed lines at bottom
+
+            lines.sort(key=extract_uid)
+
             with open(passwd_path, "w") as f:
                 f.writelines(lines)
-            
-            # Append the new user line
-            with open(passwd_path, "a") as f:
-                f.write(f"{username}:x:{user_id}:{user_id}:{username}:/home/{username}:/bin/bash\n")
 
-            log.msg(f"Updated {passwd_path} for uid={user_id}")
+            log.msg(f"Updated {passwd_path} for uid={user_id} (sorted)")
         except Exception as e:
             log.msg(f"Error updating passwd: {e}")
 
         # Update /etc/group file
         try:
             group_path = os.path.join(etc_dir, "group")
-
-            # Read all lines from the file
             lines = []
             if os.path.exists(group_path):
                 with open(group_path, "r") as f:
                     lines = f.readlines()
 
-            # Remove any line that contains the group_id (1001)
+            # Remove any old entry with this GID
             lines = [line for line in lines if f":{user_id}:" not in line]
 
-            # Write the filtered lines back to the file
+            # Add the new group entry
+            new_line = f"{username}:x:{user_id}:\n"
+            lines.append(new_line)
+
+            # Sort by GID (field 3)
+            def extract_gid(line):
+                try:
+                    return int(line.split(":")[2])
+                except Exception:
+                    return 999999
+
+            lines.sort(key=extract_gid)
+
             with open(group_path, "w") as f:
                 f.writelines(lines)
 
-            # Append the new group line
-            with open(group_path, "a") as f:
-                f.write(f"{username}:x:{user_id}:\n")
-            
-            log.msg(f"Updated {group_path} for gid={user_id}")
+            log.msg(f"Updated {group_path} for gid={user_id} (sorted)")
         except Exception as e:
             log.msg(f"Error updating group file: {e}")
+
+
+    # def update_etc_passwd(self, username):
+    #     """
+    #     Adds or updates a user and group entry in the /etc/passwd and /etc/group files.
+    #     """
+    #     user_id = 1001
+    #     etc_dir = "/home/cowrie/cowrie/honeyfs/etc"
+
+    #     # Update /etc/passwd file
+    #     try:
+    #         passwd_path = os.path.join(etc_dir, "passwd")
+            
+    #         # Read all lines from the file
+    #         lines = []
+    #         if os.path.exists(passwd_path):
+    #             with open(passwd_path, "r") as f:
+    #                 lines = f.readlines()
+            
+    #         # Remove any line that contains the user_id (1001)
+    #         lines = [line for line in lines if f":{user_id}:" not in line]
+
+    #         # Write the filtered lines back to the file
+    #         with open(passwd_path, "w") as f:
+    #             f.writelines(lines)
+            
+    #         # Append the new user line
+    #         with open(passwd_path, "a") as f:
+    #             f.write(f"{username}:x:{user_id}:{user_id}:{username}:/home/{username}:/bin/bash\n")
+
+    #         log.msg(f"Updated {passwd_path} for uid={user_id}")
+    #     except Exception as e:
+    #         log.msg(f"Error updating passwd: {e}")
+
+    #     # Update /etc/group file
+    #     try:
+    #         group_path = os.path.join(etc_dir, "group")
+
+    #         # Read all lines from the file
+    #         lines = []
+    #         if os.path.exists(group_path):
+    #             with open(group_path, "r") as f:
+    #                 lines = f.readlines()
+
+    #         # Remove any line that contains the group_id (1001)
+    #         lines = [line for line in lines if f":{user_id}:" not in line]
+
+    #         # Write the filtered lines back to the file
+    #         with open(group_path, "w") as f:
+    #             f.writelines(lines)
+
+    #         # Append the new group line
+    #         with open(group_path, "a") as f:
+    #             f.write(f"{username}:x:{user_id}:\n")
+            
+    #         log.msg(f"Updated {group_path} for gid={user_id}")
+    #     except Exception as e:
+    #         log.msg(f"Error updating group file: {e}")
 
     # def update_etc_passwd(self, username):
     #     """
