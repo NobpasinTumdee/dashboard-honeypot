@@ -2,7 +2,7 @@
 
 import os
 
-BASE_PATH = "cowrie/honeyfs/etc"
+BASE_PATH = "/home/cowrie/cowrie/honeyfs/etc"
 
 
 # ตรวจสอบ + สร้าง + อัปเดตไฟล์ /etc/passwd
