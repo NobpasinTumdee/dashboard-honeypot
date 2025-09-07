@@ -258,7 +258,7 @@ const CowriePage: React.FC = () => {
         />
         <StatCard
           title="Active Protocols"
-          value={`SSH ${data.filter(log => log.protocol === 'ssh').length}, Telnet ${data.filter(log => log.protocol === 'telnet').length}`}
+          value={`SSH ${data.filter(log => log.protocol === 'ssh').length} Telnet ${data.filter(log => log.protocol === 'telnet').length}`}
           icon="🔒"
           variant="success"
         />
@@ -271,7 +271,7 @@ const CowriePage: React.FC = () => {
         />
         <StatCard
           title="Websockets status"
-          value={isConnected ? '🟢 Connected' : '🔴 Disconnected'}
+          value={isConnected ? 'Online' : 'Offline'}
           icon="💻"
           variant="danger"
         />

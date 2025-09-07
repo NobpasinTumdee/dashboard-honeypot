@@ -180,7 +180,7 @@ const WiresharkPage: React.FC = () => {
         />
         <StatCard
           title="Websockets Status"
-          value={isConnected ? 'Connected' : 'Disconnected'}
+          value={isConnected ? 'Online' : 'Offline'}
           icon="🔒"
           variant="success"
         />

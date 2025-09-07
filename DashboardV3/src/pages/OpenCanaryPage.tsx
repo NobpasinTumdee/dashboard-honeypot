@@ -278,7 +278,7 @@ const OpenCanaryPage: React.FC = () => {
         />
         <StatCard
           title="Websockets status"
-          value={isConnected ? 'Connected 🟢' : 'Disconnected 🔴'}
+          value={isConnected ? 'Online' : 'Offline'}
           icon="💻"
           variant="danger"
         />
