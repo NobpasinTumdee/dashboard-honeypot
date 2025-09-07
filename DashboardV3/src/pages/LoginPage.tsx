@@ -132,7 +132,7 @@ const LoginPage: React.FC = () => {
 
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+    <div style={{ minHeight: '90vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
       {contextHolder}
       <div className="form-container">
         <div className="form-card">
