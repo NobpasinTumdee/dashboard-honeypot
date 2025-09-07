@@ -8,18 +8,22 @@ import DataTable from '../components/DataTable';
 
 import type { CowrieLog } from '../types';
 import { useCowrieSocket } from '../service/websocket';
+import MapIP from '../components/MapIP';
 
 const CowriePage: React.FC = () => {
   // routing
   const navigate = useNavigate();
   // data services
   const [data, setData] = useState<CowrieLog[]>([]);
+  const [IpMap, setUniqueIPs] = useState<string[]>([]);
+
+  // status and popup
+  const [popupMap, setPopupMap] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
 
   // Custom hook to manage WebSocket connection
   useCowrieSocket(setData, setIsConnected, setIsLogin);
-
 
 
 
@@ -192,6 +196,27 @@ const CowriePage: React.FC = () => {
   };
 
 
+  // ============================
+  // แปลง ip และเอาไปปักใน map
+  // ============================
+  const handleFetchIP = () => {
+    setPopupMap(true);
+    try {
+      if (data.length > 0) {
+        const uniqueIPSet = new Set<string>();
+        data.forEach(log => {
+          if (log.src_ip) {
+            uniqueIPSet.add(log.src_ip);
+          }
+        });
+        setUniqueIPs(Array.from(uniqueIPSet));
+      }
+    } catch (error) {
+      console.error('Error fetching IP addresses:', error);
+    }
+  }
+
+
 
 
   const handleDownload = () => {
@@ -232,7 +257,7 @@ const CowriePage: React.FC = () => {
 
   if (!isLogin) {
     return (
-      <div style={{ position: 'fixed', width: '90vw', height: '100vh', display: 'flex',flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+      <div style={{ position: 'fixed', width: '90vw', height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
         <h2>
           You are not logged in. Please log in to access this page.
         </h2>
@@ -298,6 +323,13 @@ const CowriePage: React.FC = () => {
         </ChartCard>
       </div>
 
+      {popupMap && (
+        <div className='map-container'>
+          <button className='close-map-button' onClick={() => setPopupMap(false)}>Close Map</button>
+          <MapIP ipAddresses={IpMap} />
+        </div>
+      )}
+
       <div style={{ fontWeight: "400", textAlign: "center", display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '0 5% 20px' }}>
         <p style={{ margin: '0px' }}>
           {protocolFilter && `| Filtered by: ${protocolFilter} `}
@@ -309,6 +341,13 @@ const CowriePage: React.FC = () => {
             <option value="cowrie.command.failed">failed</option>
           </select>
         </p>
+        <button
+          className="form-button"
+          style={{ width: 'auto', padding: '0.5rem 1rem' }}
+          onClick={handleFetchIP}
+        >
+          Open Map
+        </button>
         <button
           className="form-button"
           style={{ width: 'auto', padding: '0.75rem 1.5rem' }}
