@@ -64,7 +64,7 @@ def main():
         user_path = os.path.join(HONEYFS_PATH, username)
         if os.path.isdir(user_path):
             adjust_user(user_path)
-            print(f"✅ Adjusted {username}")
+            print(f" ปรับปรุง {username}")
 
 if __name__ == "__main__":
     main()
