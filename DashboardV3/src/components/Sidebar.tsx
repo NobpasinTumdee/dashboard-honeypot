@@ -1,6 +1,7 @@
 import ThemeToggle from './ThemeToggle'
 import { Link, useLocation } from 'react-router-dom'
 import { useState } from 'react';
+import mc from '../assets/mc/MC2-Photoroom.png'
 
 const Sidebar = () => {
   const location = useLocation();
@@ -13,7 +14,7 @@ const Sidebar = () => {
         <div className="sidebar-header">
           {isOpen && (
             <>
-              <img src='https://www.mobilistics.de/_Resources/Persistent/1/1/0/0/11008f37693898dfc7206dafe7efd10ee29b7519/logo-bear.svg' alt="Logo" className="sidebar-logo" width={40} />
+              <img src={mc} alt="Logo" className="sidebar-logo" width={40} />
               <h1 className="sidebar-title">
                 HoneyPot
               </h1>

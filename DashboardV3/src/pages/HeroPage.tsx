@@ -1,4 +1,6 @@
 import React from 'react';
+import mc1 from '../assets/mc/MC4-Photoroom.png'
+import mc2 from '../assets/mc/MC3-Photoroom.png'
 
 const HeroPage: React.FC = () => {
   return (
@@ -12,6 +14,8 @@ const HeroPage: React.FC = () => {
           Monitor, analyze, and respond to security threats with comprehensive 
           visibility into your network's attack surface.
         </p>
+        <img src={mc1} alt="mc1" className="hero-image1" />
+        <img src={mc2} alt="mc2" className="hero-image2" />
 
       </section>
         
