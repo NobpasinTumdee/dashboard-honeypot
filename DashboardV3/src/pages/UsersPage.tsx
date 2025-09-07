@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import StatCard from '../components/StatCard';
 
@@ -8,6 +9,9 @@ import { UsersSocket } from '../service/websocket';
 import { AuthNewUser } from '../service/api';
 
 const UsersPage: React.FC = () => {
+  // routing
+  const navigate = useNavigate();
+  // data services
   const [user, setUser] = useState<Users[]>([])
   const [isConnected, setIsConnected] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
@@ -67,9 +71,12 @@ const UsersPage: React.FC = () => {
 
   if (!isLogin) {
     return (
-      <>
-        <h1>You are not logged in</h1>
-      </>
+      <div style={{ position: 'fixed', width: '90vw', height: '100vh', display: 'flex',flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+        <h2>
+          You are not logged in. Please log in to access this page.
+        </h2>
+        <button onClick={() => navigate('/login')}>Go to Log in</button>
+      </div>
     )
   }
 

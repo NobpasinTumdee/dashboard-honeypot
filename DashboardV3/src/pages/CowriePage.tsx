@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import Chart from '../components/Chart';
 import StatCard from '../components/StatCard';
@@ -9,6 +10,9 @@ import type { CowrieLog } from '../types';
 import { useCowrieSocket } from '../service/websocket';
 
 const CowriePage: React.FC = () => {
+  // routing
+  const navigate = useNavigate();
+  // data services
   const [data, setData] = useState<CowrieLog[]>([]);
   const [isConnected, setIsConnected] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
@@ -228,9 +232,12 @@ const CowriePage: React.FC = () => {
 
   if (!isLogin) {
     return (
-      <>
-        <h1>You are not logged in</h1>
-      </>
+      <div style={{ position: 'fixed', width: '90vw', height: '100vh', display: 'flex',flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+        <h2>
+          You are not logged in. Please log in to access this page.
+        </h2>
+        <button onClick={() => navigate('/login')}>Go to Log in</button>
+      </div>
     )
   }
 

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import Chart from '../components/Chart';
 import StatCard from '../components/StatCard';
@@ -9,6 +10,8 @@ import type { CanaryLog, CowrieLog, HttpsPacket } from '../types';
 import { useCanarySocket, useCowrieSocket, usePacketSocket } from '../service/websocket';
 
 const HomePage: React.FC = () => {
+  // routing
+  const navigate = useNavigate();
   // data services
   const [CowrieData, setCowrieData] = useState<CowrieLog[]>([]);
   const [CanaryData, setCanaryData] = useState<CanaryLog[]>([]);
@@ -147,7 +150,7 @@ const HomePage: React.FC = () => {
       label: 'Packets',
       data: countsDaily,
       borderColor: '#ef4444',
-      backgroundColor: '#400C11',
+      backgroundColor: '#400c114b',
       fill: true,
       tension: 0.4,
     }]
@@ -174,7 +177,7 @@ const HomePage: React.FC = () => {
       label: 'Wireshark',
       data: countsPacketDaily,
       borderColor: '#ef4444',
-      backgroundColor: '#400C11',
+      backgroundColor: '#630a13bb',
       fill: true,
       tension: 0.4,
     }]
@@ -207,8 +210,11 @@ const HomePage: React.FC = () => {
 
   if (!isLogin) {
     return (
-      <div>
-        <h1>Unauthorized Access</h1>
+      <div style={{ position: 'fixed', width: '90vw', height: '100vh', display: 'flex',flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+        <h2>
+          You are not logged in. Please log in to access this page.
+        </h2>
+        <button onClick={() => navigate('/login')}>Go to Log in</button>
       </div>
     )
   }
@@ -217,7 +223,7 @@ const HomePage: React.FC = () => {
     <div>
       <div className="page-header">
         <h1 className="page-title">Dashboard</h1>
-        <p className="page-subtitle">Overview of all honeypot systems</p>
+        <p className="page-subtitle">Overview of all honeypot systems <b style={{ color: isConnected ? 'var(--accent-primary)' : 'red' }}>Server : {isConnected ? 'Online 🌐' : 'Offline 🔴'}</b></p>
       </div>
 
       <div className="stats-grid">
@@ -228,26 +234,28 @@ const HomePage: React.FC = () => {
           variant="danger"
         />
         <StatCard
-          title="Active Sessions"
-          value="23"
-          change="+5"
+          title="SSH & TELNET"
+          value={CowrieData.length}
+          change={CowrieData.filter(item => item.timestamp.split(' ')[0] === new Date().toISOString().split('T')[0]).length.toString()}
           changeType="positive"
-          icon="🔗"
+          icon="🖥️"
           variant="primary"
         />
         <StatCard
-          title="Blocked IPs"
-          value="856"
-          change="+18"
+          title="FTP & HTTP & HTTPS"
+          value={CanaryData.length}
+          change={CanaryData.filter(item => item.local_time_adjusted.split(' ')[0] === new Date().toISOString().split('T')[0]).length.toString()}
           changeType="positive"
-          icon="🛡️"
-          variant="success"
+          icon="🛜"
+          variant="primary"
         />
         <StatCard
-          title="Server Status"
-          value={isConnected ? 'Online 🌐' : 'Offline 🔴'}
-          icon="💚"
-          variant="success"
+          title="Wireshark"
+          value={dataPacket.length}
+          change={dataPacket.filter(item => item.timestamp.split(' ')[0] === new Date().toISOString().split('T')[0]).length.toString()}
+          changeType="positive"
+          icon="📦"
+          variant="primary"
         />
       </div>
 
