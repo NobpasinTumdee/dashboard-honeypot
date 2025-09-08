@@ -10,7 +10,7 @@ const DocumentationSectionComponent: React.FC<DocumentationSectionProps> = ({ se
   return (
     <section id={section.id} style={{ marginBottom: '2rem' }}>
       <h3>{section.title}</h3>
-      <p>{section.content}</p>
+      <p style={{ opacity: 0.8 }} >{section.content}</p>
       {section.codeBlocks && section.codeBlocks.length > 0 && (
         <div style={{ marginTop: '1rem' }}>
           {section.codeBlocks.map((block, index) => (
