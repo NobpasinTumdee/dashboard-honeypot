@@ -3,6 +3,7 @@
 ### ไลบารี่ที่จำเป็น
 ```
 sudo apt install debootstrap fakeroot
+sudo apt-get install qemu-user-static binfmt-support debootstrap
 ```
 ### Setup
 ```
