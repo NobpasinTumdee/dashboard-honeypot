@@ -39,3 +39,18 @@ nano ping.py
   nano /home/cowrie/cowrie/src/cowrie/commands/uname.py
   ```
   * [uname.py](/Plugin/Cowrie/command/uname.py)
+4. เพิ่มกรตอบกลับของคำสั่ง
+- top
+- systemctl status
+- df -h
+  ```
+  pwd -> /home/cowrie/cowrie/src/cowrie/commands
+  nano top.py
+  nano systemctl.py
+  nano df.py
+  nano __init__.py
+  ```
+* [top.py](/Plugin/Cowrie/command/top.py)
+* [systemctl.py](/Plugin/Cowrie/command/systemctl.py)
+* [df.py](/Plugin/Cowrie/command/df.py)
+* [__init__.py](/Plugin/Cowrie/command/__init__.py)
