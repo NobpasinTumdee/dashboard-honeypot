@@ -2,8 +2,12 @@ import './Doc.css';
 import Aos from 'aos';
 import 'aos/dist/aos.css';
 import { useEffect } from 'react';
-import TerminalCode from './components/terminalcode';
+// import TerminalCode from './components/terminalcode';
+import { CowrieDocumentation } from './docs/mockDocumentation';
+import DocumentationSectionComponent from './docs/DocumentationSectionComponent';
+
 const DocumentCowrie = () => {
+  const doc = CowrieDocumentation;
   useEffect(() => { Aos.init({ duration: 1000, once: true, }); }, []);
   return (
     <>
@@ -16,7 +20,17 @@ const DocumentCowrie = () => {
         <a href="#step1" className='scroll-down'>⬇</a>
       </div>
 
-      <div className='move-step'>
+      <div style={{ fontFamily: 'Arial, sans-serif', padding: '2rem' }} id='step1'>
+        <h1>{doc.name}</h1>
+        <p>{doc.description}</p>
+        <div style={{ marginTop: '3rem' }}>
+          {doc.sections.map((section) => (
+            <DocumentationSectionComponent key={section.id} section={section} />
+          ))}
+        </div>
+      </div>
+
+      {/* <div className='move-step'>
         <a href="#step1" data-aos="fade-right" data-aos-duration="1000">1</a>
         <a href="#step2" data-aos="fade-right" data-aos-duration="1200">2</a>
         <a href="#step3" data-aos="fade-right" data-aos-duration="1400">3</a>
@@ -62,7 +76,7 @@ const DocumentCowrie = () => {
       </div>
 
 
-      <div className='terminal-container'id='step4'>
+      <div className='terminal-container' id='step4'>
         <div className='next-step' data-aos="fade-up" data-aos-duration="2000">
           <h1>Step 4: Setup Virtual Environment</h1>
           <p>Next you need to create your virtual environment:</p>
@@ -109,7 +123,7 @@ const DocumentCowrie = () => {
           <p>Or for telnet:</p>
           <TerminalCode headertext='[telnet]' type='sudo' code="iptables -t nat -A PREROUTING -p tcp --dport 23 -j REDIRECT --to-port 2223" />
         </div>
-      </div>
+      </div> */}
     </>
   )
 }

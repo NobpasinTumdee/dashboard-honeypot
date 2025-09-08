@@ -253,6 +253,230 @@ export const GetstartDocumentation: ServiceDocumentation = {
     ]
 };
 
+
+
+
+export const CowrieDocumentation: ServiceDocumentation = {
+    id: 'หัวข้อ',
+    name: 'Installing Cowrie in seven steps',
+    description: 'This guide describes how to install Cowrie in shell mode. For proxy mode read PROXY.rst.',
+    sections: [
+        {
+            id: 'สเต็ป',
+            title: 'Step 1: Install system dependencies',
+            content: 'First we install system-wide support for Python virtual environments and other dependencies. Actual Python packages are installed later. On Debian based systems (last verified on Debian Bookworm',
+            codeBlocks: [
+                {
+                    language: 'bash',
+                    code: 'sudo apt-get install git python3-pip python3-venv libssl-dev libffi-dev build-essential libpython3-dev python3-minimal authbind'
+                }
+            ],
+            subsections: [],
+            images: []
+        },
+        {
+            id: 'สเต็ป',
+            title: 'Step 2: Create a user account',
+            content: 'It’s strongly recommended to run with a dedicated non-root user id:',
+            codeBlocks: [],
+            subsections: [
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'Add user cowrie',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `sudo adduser --disabled-password cowrie`
+                        }
+                    ]
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'Switch to user cowrie',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `sudo su - cowrie`
+                        }
+                    ]
+                }
+            ],
+            images: []
+        },
+        {
+            id: 'สเต็ป',
+            title: 'Step 3: Checkout the code',
+            content: 'Check out the code from GitHub:',
+            codeBlocks: [],
+            subsections: [
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'clone repository',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `git clone http://github.com/cowrie/cowrie`
+                        }
+                    ]
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'change directory',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `cd cowrie`
+                        }
+                    ]
+                }
+            ],
+            images: []
+        },
+        {
+            id: 'สเต็ป',
+            title: 'Step 4: Setup Virtual Environment',
+            content: 'Next you need to create your virtual environment:',
+            codeBlocks: [],
+            subsections: [
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'create virtual environment',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `python3 -m venv cowrie-env`
+                        }
+                    ]
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'activate virtual environment',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `source cowrie-env/bin/activate`
+                        }
+                    ]
+                }
+            ],
+            images: []
+        },
+        {
+            id: 'สเต็ป',
+            title: 'Step 5: Install configuration file',
+            content: 'The configuration for Cowrie is stored in cowrie.cfg.dist and cowrie.cfg (Located in cowrie/etc). Both files are read on startup, where entries from cowrie.cfg take precedence. The .dist file can be overwritten by upgrades, cowrie.cfg will not be touched. To run with a standard configuration, there is no need to change anything. To enable telnet, for example, create cowrie.cfg and input only the following:',
+            codeBlocks: [],
+            subsections: [
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'enable telnet',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `[telnet] enabled = true`
+                        }
+                    ]
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'enable ssh',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `[ssh] enabled = true`
+                        }
+                    ]
+                }
+            ],
+            images: []
+        },
+        {
+            id: 'สเต็ป',
+            title: 'Step 6: Starting Cowrie',
+            content: 'Start Cowrie with the cowrie command. You can add the cowrie/bin directory to your path if desired. An existing virtual environment is preserved if activated, otherwise Cowrie will attempt to load the environment called “cowrie-env”:',
+            codeBlocks: [],
+            subsections: [
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'start cowrie',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `bin/cowrie start`
+                        }
+                    ]
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'check status',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `bin/cowrie status`
+                        }
+                    ]
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'stop cowrie',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `bin/cowrie stop`
+                        }
+                    ]
+                }
+            ],
+            images: []
+        },
+        {
+            id: 'สเต็ป',
+            title: 'Step 7: Listening on port 22 (OPTIONAL)',
+            content: 'There are three methods to make Cowrie accessible on the default SSH port (22): iptables, authbind and setcap.',
+            codeBlocks: [],
+            subsections: [
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'The following firewall rule will forward incoming traffic on port 22 to port 2222 on Linux:',
+                    content: 'ssh',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `sudo iptables -t nat -A PREROUTING -p tcp --dport 22 -j REDIRECT --to-port 2222`
+                        }
+                    ]
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: '',
+                    content: 'telnet',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `sudo iptables -t nat -A PREROUTING -p tcp --dport 23 -j REDIRECT --to-port 2223`
+                        }
+                    ]
+                },
+            ],
+            images: []
+        },
+    ]
+};
+
+
+
+
 export const mockNavigation: NavigationItem[] = [
     { id: 'home', name: 'Home', href: '/' },
     { id: 'docs', name: 'Documentation', href: '/docs' },
