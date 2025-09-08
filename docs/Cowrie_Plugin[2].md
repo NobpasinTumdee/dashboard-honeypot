@@ -5,6 +5,7 @@
 sudo apt install debootstrap fakeroot
 sudo apt-get install qemu-user-static binfmt-support debootstrap
 sudo apt-get install acl
+sudo apt-get install python-is-python3
 ```
 ### Setup
 ```
