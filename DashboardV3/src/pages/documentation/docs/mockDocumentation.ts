@@ -34,6 +34,11 @@ export const mockTemplate: ServiceDocumentation = {
     ]
 };
 
+
+// ========================
+// GET START
+// ========================
+
 export const GetstartDocumentation: ServiceDocumentation = {
     id: 'get-start-1',
     name: 'Honeypot Deployment & Dashboard Guide',
@@ -255,6 +260,10 @@ export const GetstartDocumentation: ServiceDocumentation = {
 
 
 
+// ========================
+//     Cowrie Documentation
+// ========================
+
 
 export const CowrieDocumentation: ServiceDocumentation = {
     id: 'หัวข้อ',
@@ -465,6 +474,191 @@ export const CowrieDocumentation: ServiceDocumentation = {
                         {
                             language: 'bash',
                             code: `sudo iptables -t nat -A PREROUTING -p tcp --dport 23 -j REDIRECT --to-port 2223`
+                        }
+                    ]
+                },
+            ],
+            images: []
+        },
+    ]
+};
+
+
+
+// ====================
+// OpenCanary
+// ====================
+export const OpenCanaryDocumentation: ServiceDocumentation = {
+    id: 'หัวข้อ',
+    name: 'OpenCanary Installation and Setup Guide for Ubuntu 24.04.2',
+    description: 'This guide provides a step-by-step process for installing and configuring OpenCanary, a honeypot that can be used to detect suspicious activity on a network. OpenCanary simulates various services (like HTTP, FTP, etc.) to lure attackers and log their interactions.',
+    sections: [
+        {
+            id: 'สเต็ป',
+            title: '1. Update and Install Dependencies',
+            content: 'First, update your package lists and upgrade existing packages. Then, install the necessary libraries for Python and network-related functionalities.',
+            codeBlocks: [
+                {
+                    language: 'bash',
+                    code: `sudo apt update
+sudo apt upgrade
+sudo apt-get install python3-dev python3-pip python3-virtualenv python3-venv python3-scapy libssl-dev libpcap-dev`
+                }
+            ],
+            subsections: [],
+            images: []
+        },
+        {
+            id: 'สเต็ป',
+            title: '2. Create a Python Virtual Environment',
+            content: 'Using a virtual environment is a best practice to manage project dependencies without affecting your system"s global Python installation.',
+            codeBlocks: [],
+            subsections: [
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'Navigate to your desired directory (e.g., /home/cpe27) and create a virtual environment named env. Then, activate it.',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `cd /home/cpe27
+virtualenv env/
+source env/bin/activate`
+                        }
+                    ]
+                },
+            ],
+            images: []
+        },
+        {
+            id: 'สเต็ป',
+            title: '3. Install OpenCanary',
+            content: 'With the virtual environment activated, use pip to install OpenCanary.',
+            codeBlocks: [
+                {
+                    language: 'bash',
+                    code: `pip install opencanary`
+                }
+            ],
+            subsections: [],
+            images: []
+        },
+        {
+            id: 'สเต็ป',
+            title: '4. Install Optional Modules',
+            content: 'To extend OpenCanary"s capabilities to include SMB (Windows File Share) and SNMP protocols, you need to install additional packages.',
+            codeBlocks: [
+                {
+                    language: 'bash',
+                    code: `sudo apt install samba
+pip install scapy pcapy-ng`
+                }
+            ],
+            subsections: [],
+            images: []
+        },
+        {
+            id: 'สเต็ป',
+            title: '5. Generate the Configuration File',
+            content: 'OpenCanary uses a configuration file located at /etc/opencanaryd/opencanary.conf. Use the following command to generate a default configuration file.',
+            codeBlocks: [
+                {
+                    language: 'bash',
+                    code: `sudo opencanaryd --copyconfig`
+                }
+            ],
+            subsections: [],
+            images: []
+        },
+        {
+            id: 'สเต็ป',
+            title: '6. Edit the Configuration File',
+            content: 'The configuration file allows you to enable or disable different honeypot services. Use a text editor like nano to edit the file and enable the services you want to monitor, such as HTTP, HTTPS, and FTP. Set the value for each service you want to enable to true.',
+            codeBlocks: [
+                {
+                    language: 'bash',
+                    code: `sudo nano /etc/opencanaryd/opencanary.conf`
+                },
+                {
+                    language: 'bash',
+                    code: `"http.enabled": true,
+"https.enabled": true,
+"ftp.enabled": true,`
+                },
+            ],
+            subsections: [],
+            images: []
+        },
+        {
+            id: 'สเต็ป',
+            title: '7. Run OpenCanary',
+            content: 'To start the honeypot, first reactivate the virtual environment (if it"s not already active). Then, run opencanaryd as a background process using a dedicated user (nobody) and group (nogroup) for security.',
+            codeBlocks: [
+                {
+                    language: 'bash',
+                    code: `. env/bin/activate`
+                },
+                {
+                    language: 'bash',
+                    code: `opencanaryd --start --uid=nobody --gid=nogroup`
+                },
+            ],
+            subsections: [],
+            images: []
+        },
+        {
+            id: 'สเต็ป',
+            title: '8. Check the Log File',
+            content: 'OpenCanary logs all detected activity to a file. You can monitor this file to see any interactions with the honeypot. The default log file is opencanary.log located in /var/tmp.',
+            codeBlocks: [
+                {
+                    language: 'bash',
+                    code: `cd /var/tmp`
+                },
+                {
+                    language: 'bash',
+                    code: `nano opencanary.log`
+                },
+            ],
+            subsections: [],
+            images: []
+        },
+        {
+            id: 'สเต็ป',
+            title: '9. Stop the Honeypot',
+            content: 'There are two ways to stop OpenCanary.',
+            codeBlocks: [],
+            subsections: [
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'Method 1: The official stop command',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `opencanaryd --stop`
+                        }
+                    ]
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'Method 2: Manually kill the process',
+                    content: 'First, find the Process ID (PID) of the running opencanaryd process.',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `ps aux | grep opencanaryd`
+                        }
+                    ]
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: '',
+                    content: 'Then, use sudo kill followed by the PID, which is usually found on the first line of the output.',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `sudo kill <PID>`
                         }
                     ]
                 },

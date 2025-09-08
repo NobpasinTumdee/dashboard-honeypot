@@ -20,10 +20,10 @@ const DocumentCowrie = () => {
         <a href="#step1" className='scroll-down'>⬇</a>
       </div>
 
-      <div style={{ fontFamily: 'Arial, sans-serif', padding: '2rem' }} id='step1'>
-        <h1>{doc.name}</h1>
-        <p>{doc.description}</p>
-        <div style={{ marginTop: '3rem' }}>
+      <div style={{ fontFamily: 'Arial, sans-serif', margin: '10px 15% 10%' }} id='step1'>
+        <h1 data-aos="zoom-in">{doc.name}</h1>
+        <p data-aos="fade-up">{doc.description}</p>
+        <div style={{ marginTop: '3rem' }} data-aos="fade-up">
           {doc.sections.map((section) => (
             <DocumentationSectionComponent key={section.id} section={section} />
           ))}

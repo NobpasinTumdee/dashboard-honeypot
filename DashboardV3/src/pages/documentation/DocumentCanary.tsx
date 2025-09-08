@@ -2,9 +2,11 @@ import './Doc.css';
 import Aos from 'aos';
 import 'aos/dist/aos.css';
 import { useEffect } from 'react';
-import TerminalCode from './components/terminalcode';
+import DocumentationSectionComponent from './docs/DocumentationSectionComponent';
+import { OpenCanaryDocumentation } from './docs/mockDocumentation';
 
 const DocumentCanary = () => {
+    const doc = OpenCanaryDocumentation;
     useEffect(() => { Aos.init({ duration: 1000, once: true, }); }, []);
     return (
         <>
@@ -18,7 +20,19 @@ const DocumentCanary = () => {
                 <a href="#step1" className='scroll-down'>⬇</a>
             </div>
 
-            <div className='move-step'>
+            <div style={{ fontFamily: 'Arial, sans-serif', margin: '10px 15% 10%' }} id='step1'>
+                <h1 data-aos="zoom-in">{doc.name}</h1>
+                <p data-aos="fade-up">{doc.description}</p>
+                <div style={{ marginTop: '3rem' }} data-aos="fade-up">
+                    {doc.sections.map((section) => (
+                        <DocumentationSectionComponent key={section.id} section={section} />
+                    ))}
+                </div>
+            </div>
+
+
+
+            {/* <div className='move-step'>
                 <a href="#step1" data-aos="fade-right" data-aos-duration="1000">1</a>
                 <a href="#step2" data-aos="fade-right" data-aos-duration="1200">2</a>
                 <a href="#step3" data-aos="fade-right" data-aos-duration="1400">3</a>
@@ -123,7 +137,7 @@ const DocumentCanary = () => {
                     <TerminalCode headertext='cd' type='cd' code="/var/tmp" />
                     <TerminalCode headertext='open log' type='nano' code="opencanary.log" />
                 </div>
-            </div>
+            </div> */}
 
         </>
     )
