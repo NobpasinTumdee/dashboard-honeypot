@@ -23,6 +23,7 @@ import DocumentCowrie from './pages/documentation/DocumentCowrie';
 import DocumentCanary from './pages/documentation/DocumentCanary';
 import ChatBotPopUp from './components/ai/ChatBot';
 import { useState } from 'react';
+import DocumentWireshark from './pages/documentation/DocumentWireshark';
 
 const router = createBrowserRouter([
   {
@@ -46,6 +47,7 @@ const router = createBrowserRouter([
       { index: true, element: <DocumentPage /> },
       { path: "cowrie-guide", element: <DocumentCowrie /> },
       { path: "canary-guide", element: <DocumentCanary /> },
+      { path: "wireshark-guide", element: <DocumentWireshark /> },
     ]
   }
 ]);
