@@ -16,8 +16,11 @@ rm -rf honeyfs
 mkdir honeyfs
 fakeroot debootstrap --variant=minbase focal honeyfs http://archive.ubuntu.com/ubuntu/
 ```
-
-
+หรือ
+```
+sudo debootstrap --arch=amd64 --variant=minbase focal honeyfs http://archive.ubuntu.com/ubuntu/
+sudo cp /usr/bin/qemu-x86_64-static honeyfs/usr/bin/
+```
 ### ปรับ banner ให้สมจริง
 แก้ข้อความก่อน login (/etc/issue) และข้อความหลัง login (/etc/motd)
 ```
