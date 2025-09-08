@@ -28,7 +28,13 @@ conn.commit()
 # -----------------------------
 # เริ่ม LiveCapture
 # -----------------------------
-capture = pyshark.LiveCapture(interface=interface, display_filter='http')
+capture = pyshark.LiveCapture(
+    interface=interface, 
+    display_filter='http',
+    custom_parameters=[ 
+        "-o", "tls.keys_list:/etc/nginx/ssl/server.key" ## รอ key ของ honeypot มาแทน 
+    ]
+    )
 print("Starting LiveCapture on interface:", interface)
 
 for pkt in capture.sniff_continuously():
