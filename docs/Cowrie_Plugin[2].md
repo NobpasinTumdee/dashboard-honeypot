@@ -48,11 +48,11 @@ echo "root:*:19000:0:99999:7:::" > honeyfs/etc/shadow
 ```
 pwd -> /home/cowrie/
 mkdir script
-nano GenUser.py
+GenUsers.py
 nano etcFile.py
 nano NewTimeStamp.py
 ```
-* [GenUser.py](/Plugin/Cowrie/script/GenUsers.py)
+* [GenUsers.py](/Plugin/Cowrie/script/GenUsers.py)
 * [NewTimeStamp.py](/Plugin/Cowrie/script/NewTimeStamp.py)
 * [etcFile.py](/Plugin/Cowrie/script/etcFile.py)
 ```
