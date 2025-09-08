@@ -3,7 +3,7 @@
 sudo apt update
 ```
 ```bash
-sudo apt install wireshark -y
+sudo apt install tshark -y
 ```
 
 ## Install in venv
@@ -11,10 +11,17 @@ sudo apt install wireshark -y
 pip install pyshark
 ```
 
-## Wireshark basic config
+## Optional
+- รัน script python ที่ใช้ pyshark -> tshark แบบไม่ต้องใช้ sudo
 ```bash
-sudo dpkg-reconfigure wireshark-common -y
+sudo setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip' /usr/bin/tshark
 ```
+- เช็คว่าทำงานถูกต้อง ถ้าถูกจะขึ้นประมาณ: usr/bin/tshark = cap_net_admin,cap_net_raw+eip
 ```bash
-sudo usermod -aG wireshark $USER
+getcap /usr/bin/tshark
+```
+
+- wireshark GUI (เนื่องจากใช้ Ubuntu server เลยไม่ได้ใช้แล้ว)
+```bash
+sudo apt install wireshark -y
 ```
