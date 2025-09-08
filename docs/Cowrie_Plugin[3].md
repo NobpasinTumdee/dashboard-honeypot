@@ -2,10 +2,10 @@
 ### Setup 
 ต้องทำหลังจาก setup honeyfs เรียบร้อยแล้วเท่านั้น
 ```
-sudo setfacl -m u:cowrie:rw /home/cowrie/cowrie/honeyfs
-sudo setfacl -m u:cowrie:rw /home/cowrie/cowrie/honeyfs/etc/passwd
-sudo setfacl -m u:cowrie:rw /home/cowrie/cowrie/honeyfs/etc/group
-sudo setfacl -m u:cowrie:rw /home/cowrie/cowrie/honeyfs/home
+sudo setfacl -m u:cowrie:rwx /home/cowrie/cowrie/honeyfs
+sudo setfacl -m u:cowrie:rwx /home/cowrie/cowrie/honeyfs/etc/passwd
+sudo setfacl -m u:cowrie:rwx /home/cowrie/cowrie/honeyfs/etc/group
+sudo setfacl -m u:cowrie:rwx /home/cowrie/cowrie/honeyfs/home
 ```
 ### ปรับปรุง session.py ของ cowrie
 ```
