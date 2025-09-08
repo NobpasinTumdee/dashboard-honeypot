@@ -88,3 +88,31 @@ export interface DstPortStats {
     timestamp: string;
     count: number;
 }
+
+// documentation
+export interface CodeBlock {
+  language: string;
+  code: string;
+}
+
+export interface DocumentationSection {
+  id: string;
+  title: string;
+  content: string;
+  codeBlocks?: CodeBlock[];
+  images?: string[];
+  subsections?: DocumentationSection[];
+}
+
+export interface ServiceDocumentation {
+  id: string;
+  name: string;
+  description: string;
+  sections: DocumentationSection[];
+}
+
+export interface NavigationItem {
+  id: string;
+  name: string;
+  href: string;
+}

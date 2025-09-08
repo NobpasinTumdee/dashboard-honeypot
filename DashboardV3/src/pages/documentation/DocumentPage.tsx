@@ -3,8 +3,11 @@ import TerminalCode from './components/terminalcode';
 import './Doc.css';
 import Aos from 'aos';
 import 'aos/dist/aos.css';
+// import { GetstartDocumentation } from './docs/mockDocumentation';
+// import DocumentationSectionComponent from './docs/DocumentationSectionComponent';
 
 const DocumentPage = () => {
+    // const doc = GetstartDocumentation;
     useEffect(() => { Aos.init({ duration: 1000, once: true, }); }, []);
     return (
         <>
@@ -19,6 +22,19 @@ const DocumentPage = () => {
                 </a>
                 <a href="#step1" className='scroll-down'>⬇</a>
             </div>
+
+
+
+            {/* <div style={{ fontFamily: 'Arial, sans-serif', padding: '2rem' }}>
+                <h1>{doc.name}</h1>
+                <p>{doc.description}</p>
+                <div style={{ marginTop: '3rem' }}>
+                    {doc.sections.map((section) => (
+                        <DocumentationSectionComponent key={section.id} section={section} />
+                    ))}
+                </div>
+            </div> */}
+
 
             <div className='move-step'>
                 <a href="#step1" data-aos="fade-right" data-aos-duration="1000">I</a>

@@ -125,4 +125,6 @@ D --> E( Server ubuntu )
     npm i recharts
     npm install socket.io-client
     npm install --save-dev @types/socket.io-client
+    npm i react-syntax-highlighter
+    npm i --save-dev @types/react-syntax-highlighter
     ```
