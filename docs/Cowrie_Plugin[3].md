@@ -12,7 +12,7 @@ sudo setfacl -m u:cowrie:rwx /home/cowrie/cowrie/honeyfs/home
 pwd -> /home/cowrie/cowrie/src/cowrie/telnet/
 nano session.py
 ```
-* [session.py](Plugin/Cowrie/telnet/session.py)
+* [session.py](/Plugin/Cowrie/telnet/session.py)
 ### เพิ่มความเนียน
 1. เจ้าของ
 ```
