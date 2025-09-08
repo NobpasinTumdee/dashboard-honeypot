@@ -16,10 +16,7 @@ rm -rf honeyfs
 mkdir honeyfs
 fakeroot debootstrap --variant=minbase focal honeyfs http://archive.ubuntu.com/ubuntu/
 ```
-หรือ
-```
-fakeroot debootstrap --arch=arm64 --variant=minbase focal honeyfs https://ports.ubuntu.com/ubuntu-ports
-```
+
 
 ### ปรับ banner ให้สมจริง
 แก้ข้อความก่อน login (/etc/issue) และข้อความหลัง login (/etc/motd)
