@@ -23,6 +23,12 @@ sudo debootstrap --arch=amd64 --variant=minbase focal honeyfs http://archive.ubu
 sudo cp /usr/bin/qemu-x86_64-static honeyfs/usr/bin/
 ```
 ### ปรับ banner ให้สมจริง
+```
+sudo setfacl -m u:cpe27:rwx /home/cowrie/cowrie/honeyfs/etc/
+sudo setfacl -m u:cpe27:rwx /home/cowrie/cowrie/honeyfs/etc/issue
+sudo setfacl -m u:cpe27:rwx /home/cowrie/cowrie/honeyfs/etc/passwd
+sudo setfacl -m u:cpe27:rwx /home/cowrie/cowrie/honeyfs/etc/shadow
+```
 แก้ข้อความก่อน login (/etc/issue) และข้อความหลัง login (/etc/motd)
 ```
 echo "Ubuntu 20.04.6 LTS" > honeyfs/etc/issue
