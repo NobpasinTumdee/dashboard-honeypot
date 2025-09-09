@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import { message } from 'antd';
 import { LignIn, SignUp } from '../service/api';
 import type { Users } from '../types';
+import { useNavigate } from 'react-router-dom';
 
 const LoginPage: React.FC = () => {
+  // routing
+  const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
   const [isSignUp, setIsSignUp] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
@@ -17,6 +20,8 @@ const LoginPage: React.FC = () => {
     Email: '',
     Password: '',
   });
+
+  const isLogin = localStorage.getItem("isLogin");
 
   const handleSignIn = async (event: React.FormEvent) => {
     event.preventDefault();
@@ -36,6 +41,9 @@ const LoginPage: React.FC = () => {
         localStorage.setItem("token", response.data.token);
         messageApi.success('Login successful!', 3)
         setIsLoading(false);
+        setTimeout(() => {
+          navigate('/home')
+        })
       } else {
         const errorMessage = response?.data?.message || 'Gmail or Password is incorrect';
         messageApi.error(errorMessage, 3)
@@ -286,7 +294,9 @@ const LoginPage: React.FC = () => {
               </button>
             </p>
             <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
-              <p className="form-switch-text" onClick={Logout} style={{ cursor: 'pointer' }}>Log out</p>
+              {isLogin === 'true' && (
+                <p className="form-switch-text" onClick={Logout} style={{ cursor: 'pointer' }}>Log out</p>
+              )}
               <p className="form-switch-text" onClick={() => setPopupUrl(true)} style={{ cursor: 'pointer' }}>set url</p>
             </div>
           </div>

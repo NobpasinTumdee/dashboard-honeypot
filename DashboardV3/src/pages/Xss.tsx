@@ -20,6 +20,7 @@ const Xss = () => {
 
     // popup
     const [ispopup, setPopup] = useState(false);
+    const [isQr, setQr] = useState(false);
 
     // =================================
     // XSS url
@@ -31,17 +32,17 @@ const Xss = () => {
             ollama: params.get('ollama') || null,
         };
 
-        if (ngrok) {
+        if (ngrok && ngrok.startsWith('http')) {
             localStorage.setItem("apiUrl", ngrok);
             setNgrok(ngrok)
-            messageApi.success('ngrok 1', 1)
+            messageApi.success('Yahoo! Your ngrok is saved', 1)
             setNgrokValue(ngrok);
         }
 
-        if (ollama) {
+        if (ollama && ollama.startsWith('http')) {
             localStorage.setItem("apiUrlOllama", ollama);
             setOllama(ollama)
-            messageApi.success('ollama', 1)
+            messageApi.success('lets go to ollama', 1)
             setollamaValue(ollama);
         }
     }, []);
@@ -59,12 +60,14 @@ const Xss = () => {
 
 
 
+
+
     return (
         <>
             {contextHolder}
             <div style={{ margin: '1% 0', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100vw' }}>
                 <div style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
-                    <h1 className="hero-title" style={{ textAlign: 'center' }}>คุณได้ตั้งค่า url สำหรับ server เรียบร้อยแล้ว</h1>
+                    <h1 className="hero-title" style={{ textAlign: 'center' }}>You have successfully set the url for the server 🎉</h1>
                     {(ngrokValue || ollamaValue) && (
                         <p className="form-subtitle" style={{ margin: '0px', textAlign: 'center' }}>
                             {`Ngrok URL: ${ngrokValue} Ollama URL: ${ollamaValue}`}
@@ -72,7 +75,7 @@ const Xss = () => {
                     )}
                     <button
                         className="form-button"
-                        style={{ width: 'auto', padding: '2.75rem 7.5rem' }}
+                        style={{ width: 'auto', padding: '1rem 4.5rem', fontSize: '2.25rem', fontWeight: '900' }}
                         onClick={() => {
                             navigate('/login');
                             window.location.reload();
@@ -82,8 +85,8 @@ const Xss = () => {
                     </button>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flexDirection: 'column' }}>
-                    <h2 className="hero-title" style={{ textAlign: "center", fontSize: "2rem", cursor: "pointer" }} onClick={() => setPopup(!ispopup)}>
-                        สร้าง url ของคุณ
+                    <h2 className="hero-title" style={{ textAlign: "center", fontSize: "1rem", cursor: "pointer" }} onClick={() => setPopup(!ispopup)}>
+                        Create your url
                     </h2>
                     {ispopup && (
                         <>
@@ -120,13 +123,36 @@ const Xss = () => {
                                     aria-label="input-text-ollama"
                                     className="form-input"
                                 />
-                                <div style={{ marginTop: 12, textAlign: 'center' }}>
-                                    <QRCodeCanvas value={computedUrl || " "} size={200} includeMargin />
-                                </div>
+                                <button
+                                    className="form-button"
+                                    style={{ width: '100%', padding: '0.75rem 3.5rem', margin: '10px 0' }}
+                                    onClick={() => setQr(!isQr)}
+                                >
+                                    {isQr ? 'Cancel' : 'Generate'}
+                                </button>
+                                {isQr &&
+                                    <>
+                                        <div style={{ marginTop: 12, textAlign: 'center' }}>
+                                            <QRCodeCanvas value={computedUrl || " "} size={200} includeMargin style={{borderRadius: '8px'}} />
+                                        </div>
+
+                                        <div style={{ textAlign: 'center', margin: '10px 0 20px' }}>
+                                            <p className="form-subtitle">
+                                                {computedUrl}
+                                            </p>
+                                            <button
+                                                style={{ padding: '0.5rem 3.5rem', borderRadius: '8px', fontWeight: '500', backgroundColor: '#333', color: '#fff', border: 'none', cursor: 'pointer' }}
+                                                onClick={() => {
+                                                    navigator.clipboard.writeText(computedUrl)
+                                                    messageApi.success('Copied', 0.5)
+                                                }}
+                                            >
+                                                Copy
+                                            </button>
+                                        </div>
+                                    </>
+                                }
                             </div>
-                            <p className="form-subtitle" style={{ margin: '10px 0 20px' }}>
-                                {computedUrl}
-                            </p>
                         </>
                     )}
                 </div>
