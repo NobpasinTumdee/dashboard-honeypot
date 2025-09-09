@@ -1,79 +1,125 @@
 import React from 'react';
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
-import { Pie } from 'react-chartjs-2';
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend,
+} from 'chart.js';
+import { Bar } from 'react-chartjs-2';
 import type { DstPortStats, ProtocolStats, SrcIpStats } from '../types';
 
-ChartJS.register(ArcElement, Tooltip, Legend);
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend
+);
 
-interface CombinedPieChartProps {
+interface CombinedBarChartProps {
     protocolData?: ProtocolStats[];
     srcIpData?: SrcIpStats[];
     dstPortData?: DstPortStats[];
 }
 
-const generateChartData = (data: any[] | undefined, labelKey: string, chartLabel: string) => {
+const generateBarChartData = (data: any[] | undefined, labelKey: string) => {
     const chartInputData = data ?? [];
 
     if (chartInputData.length === 0) {
         return null;
     }
 
-    const labels = chartInputData.map(item => item[labelKey]);
-    const counts = chartInputData.map(item => item.count);
-    const backgroundColors = [
-        '#43362C',
-        '#7A4440',
-        '#CFBC9B',
-        '#9F9E98',
-    ];
+    const uniqueTimestamps = [...new Set(chartInputData.map(item => item.timestamp))].sort();
+    const uniqueLabels = [...new Set(chartInputData.map(item => item[labelKey]))];
+
+    const datasets = uniqueLabels.map(label => {
+        const dataPoints = uniqueTimestamps.map(timestamp => {
+            const item = chartInputData.find(d => d.timestamp === timestamp && d[labelKey] === label);
+            return item ? item.count : 0;
+        });
+
+        const randomColor = `rgba(${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, ${Math.floor(Math.random() * 255)}, 0.8)`;
+
+        return {
+            label: label as string,
+            data: dataPoints,
+            backgroundColor: randomColor,
+            herizontal: true
+        };
+    });
 
     return {
-        labels,
-        datasets: [
-            {
-                label: chartLabel,
-                data: counts,
-                backgroundColor: backgroundColors.slice(0, labels.length),
-                borderColor: backgroundColors.map(color => color.replace('0.6', '1')),
-                borderWidth: 1,
-            },
-        ],
+        labels: uniqueTimestamps,
+        datasets,
     };
 };
 
-const CombinedPieChart: React.FC<CombinedPieChartProps> = ({ protocolData, srcIpData, dstPortData }) => {
-    const protocolChartData = generateChartData(protocolData, 'protocol', 'Protocol Count');
-    const srcIpChartData = generateChartData(srcIpData, 'src_ip', 'Source IP Count');
-    const dstPortChartData = generateChartData(dstPortData, 'dst_port', 'Destination Port Count');
-    
+const CombinedBarChart: React.FC<CombinedBarChartProps> = ({ protocolData, srcIpData, dstPortData }) => {
+    const protocolChartData = generateBarChartData(protocolData, 'protocol');
+    const srcIpChartData = generateBarChartData(srcIpData, 'src_ip');
+    const dstPortChartData = generateBarChartData(dstPortData, 'dst_port');
+
     const hasData = protocolData || srcIpData || dstPortData;
 
     if (!hasData) {
         return <div className="no-data">No chart data available.</div>;
     }
 
+    const options = {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'top' as const,
+            },
+            title: {
+                display: true,
+                text: 'Chart.js Bar Chart',
+            },
+        },
+        scales: {
+            x: {
+                stacked: true,
+                title: {
+                    display: true,
+                    text: 'Timestamp',
+                }
+            },
+            y: {
+                stacked: true,
+                title: {
+                    display: true,
+                    text: 'Count',
+                }
+            },
+        },
+    };
+
     return (
-        <div style={{ display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap',textAlign: 'center', alignItems:'end' ,marginBottom: '30px'}}>
+        <div style={{ display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap', textAlign: 'center', alignItems: 'end', marginBottom: '30px' }}>
             {protocolChartData && (
-                <div style={{ width: '250px', margin: '20px' }}>
+                <div style={{ width: '400px', margin: '20px' }}>
                     <h3>Protocol Statistics</h3>
-                    <Pie data={protocolChartData} />
+                    <Bar data={protocolChartData} options={{ ...options, plugins: { ...options.plugins, title: { ...options.plugins.title, text: 'Protocol Statistics over Time' } } }} />
                 </div>
             )}
             {srcIpChartData && (
-                <div style={{ width: '300px', margin: '20px' }}>
+                <div style={{ width: '400px', margin: '20px' }}>
                     <h3>Source IP Statistics</h3>
-                    <Pie data={srcIpChartData} />
+                    <Bar data={srcIpChartData} options={{ ...options, plugins: { ...options.plugins, title: { ...options.plugins.title, text: 'Source IP Statistics over Time' } } }} />
                 </div>
             )}
             {dstPortChartData && (
-                <div style={{ width: '250px', margin: '20px' }}>
+                <div style={{ width: '400px', margin: '20px' }}>
                     <h3>Destination Port Statistics</h3>
-                    <Pie data={dstPortChartData} />
+                    <Bar data={dstPortChartData} options={{ ...options, plugins: { ...options.plugins, title: { ...options.plugins.title, text: 'Destination Port Statistics over Time' } } }} />
                 </div>
             )}
         </div>
     );
 };
 
-export default CombinedPieChart;
+export default CombinedBarChart;
