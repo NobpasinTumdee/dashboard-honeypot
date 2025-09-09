@@ -272,6 +272,13 @@ const WiresharkPage: React.FC = () => {
   return searchTerm ? filtered : filtered.slice(0, 10);
   };
 
+  // =========== calculate percentage ===============
+  const totalByType = {
+  protocol: topProtocols.reduce((sum, item) => sum + item.value, 0),
+  ip: topIPs.reduce((sum, item) => sum + item.value, 0),
+  port: topPorts.reduce((sum, item) => sum + item.value, 0),
+};
+
   const uniqueSourceIPs = new Set(dataPacket.map(p => p.src_ip)).size;
 
   // ================== Render ==================
@@ -386,31 +393,72 @@ const WiresharkPage: React.FC = () => {
         isOpen={isCompareOpen}
         onRequestClose={() => setIsCompareOpen(false)}
         style={{
-          overlay: { backgroundColor: 'rgba(0,0,0,0.6)' },
-          content: { inset: "10%", padding: 16, borderRadius: 16, height: "auto", backdropFilter: 'blur(10px)', backgroundColor: 'var(--bg-tertiary)' }
+          overlay: { 
+            backgroundColor: 'rgba(0,0,0,0.7)', 
+          },
+          content: { 
+            inset: "8%", 
+            padding: 20, 
+            borderRadius: 16, 
+            height: "auto", 
+            backgroundColor: 'var(--bg-tertiary)',
+            border: '1px solid rgba(255,255,255,0.1)',
+            boxShadow: '0 20px 40px rgba(0, 0, 0, 0.4)'
+          }
         }}
         contentLabel="Compare Items"
       >
-        {/* Close button top-right */}
+        {/* Close button */}
         <button
           onClick={() => setIsCompareOpen(false)}
           style={{
             position: "absolute",
             top: 12,
             right: 12,
-            background: "transparent",
-            border: "none",
-            fontSize: 20,
+            background: "rgba(255,255,255,0.1)",
+            border: "1px solid rgba(255,255,255,0.2)",
+            fontSize: 18,
             cursor: "pointer",
             color: "var(--text-primary)",
+            width: 32,
+            height: 32,
+            borderRadius: 16,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center"
           }}
         >
           ✕
         </button>
 
+        {/* Header */}
+        <div style={{ marginBottom: 20 }}>
+          <h2 style={{ 
+            margin: 0, 
+            marginBottom: 8, 
+            fontSize: 22, 
+            fontWeight: 600,
+            color: "var(--text-primary)"
+          }}>
+            Compare Network Items
+          </h2>
+        </div>
+
         {/* Search Bar */}
-        <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
-          <Select value={searchType} onChange={(v) => setSearchType(v)} style={{ width: 120 }}>
+        <div style={{ 
+          display: "flex", 
+          gap: 12, 
+          marginBottom: 20,
+          padding: 12,
+          background: "rgba(255,255,255,0.05)",
+          borderRadius: 8,
+          border: "1px solid rgba(255,255,255,0.1)"
+        }}>
+          <Select 
+            value={searchType} 
+            onChange={(v) => setSearchType(v)} 
+            style={{ width: 130 }}
+          >
             <Select.Option value="any">Any</Select.Option>
             <Select.Option value="ip">IP</Select.Option>
             <Select.Option value="port">Port</Select.Option>
@@ -418,66 +466,116 @@ const WiresharkPage: React.FC = () => {
           </Select>
           <input
             type="text"
-            placeholder="Search..."
+            placeholder="Search items..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            style={{  padding: "6px 10px", border: "1px solid #ccc", borderRadius: 4 }}
+            style={{
+              flex: 1,
+              padding: "8px 12px", 
+              border: "1px solid rgba(255,255,255,0.2)", 
+              borderRadius: 6,
+              background: "rgba(255,255,255,0.05)",
+              color: "var(--text-primary)",
+              fontSize: 14
+            }}
           />
         </div>
 
         <DragDropContext onDragEnd={onDragEnd}>
-          <div style={{ display: "flex", gap: 16, height: "70vh" }}>
-            
+          <div style={{ display: "flex", gap: 20, height: "65vh" }}>
             {/* Left Panel */}
-            <div style={{ width: "25%", overflowY: "auto", display: "flex", flexDirection: "column", gap: 16 }}>
+            <div style={{ 
+              width: "30%", 
+              overflowY: "auto", 
+              display: "flex", 
+              flexDirection: "column", 
+              gap: 16
+            }}>
               {["protocol", "ip", "port"].map(type => {
-                // แสดงเฉพาะประเภทที่ตรงกับ searchType หรือ searchType === "any"
                 if (searchType !== "any" && searchType !== type) return null;
 
                 const rawData = type === "protocol" ? topProtocols : type === "ip" ? topIPs : topPorts;
-                const filtered = filterData(type as any, rawData).slice(0, 10); // จำกัด 10 อัน
+                const filtered = filterData(type as any, rawData).slice(0, 10);
 
                 return (
                   <Droppable droppableId={type} key={type}>
-                    {(provided) => (
-                      <div ref={provided.innerRef} {...provided.droppableProps} style={{ padding: 8, borderRadius: 8 }}>
-                        <h3 style={{ borderBottom: "2px solid var(--text-primary)", paddingBottom: "8px", marginBottom: "16px" }}>
+                    {(provided, snapshot) => (
+                      <div 
+                        ref={provided.innerRef} 
+                        {...provided.droppableProps} 
+                        style={{ 
+                          padding: 12, 
+                          borderRadius: 8,
+                          background: snapshot.isDraggingOver 
+                            ? "rgba(var(--accent-primary-rgb), 0.1)" 
+                            : "rgba(255,255,255,0.05)",
+                          border: "1px solid rgba(255,255,255,0.1)"
+                        }}
+                      >
+                        <h3 style={{ 
+                          borderBottom: "2px solid var(--text-primary)", 
+                          paddingBottom: "8px", 
+                          marginBottom: "12px",
+                          margin: 0,
+                          fontSize: 15,
+                          fontWeight: 600,
+                          color: "var(--text-primary)"
+                        }}>
                           {type.toUpperCase()}
                         </h3>
 
-                        {filtered
-                          .filter(item => !compareItems.some(ci => ci.type === type && ci.value === item.name))
-                          .map((item, idx) => (
-                            <Draggable key={`${type}::${item.name}`} draggableId={`${type}::${item.name}`} index={idx}>
-                              {(drag) => (
-                                <div
-                                  ref={drag.innerRef}
-                                  {...drag.draggableProps}
-                                  {...drag.dragHandleProps}
-                                  style={{
-                                    padding: "8px",
-                                    marginBottom: 8,
-                                    border: "2px solid var(--text-primary)",
-                                    borderRadius: 12,
-                                    cursor: "grab",
-                                    display: "inline-block",
-                                    marginLeft: "10px",
-                                    width: "fit-content",
-                                    minWidth: 120,
-                                    maxWidth: 200,
-                                    whiteSpace: "normal",
-                                    wordWrap: "break-word",
-                                    textAlign: "left",
-                                    ...drag.draggableProps.style
-                                  }}
-                                >
-                                  <div>{item.name}</div>
-                                  <div>Total: {item.value}</div>
-                                </div>
-                              )}
-                            </Draggable>
-                          ))
-                        }
+                        <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                          {filtered
+                            .filter(item => !compareItems.some(ci => ci.type === type && ci.value === item.name))
+                            .map((item, idx) => (
+                              <Draggable key={`${type}::${item.name}`} draggableId={`${type}::${item.name}`} index={idx}>
+                                {(drag, dragSnapshot) => (
+                                  <div
+                                    ref={drag.innerRef}
+                                    {...drag.draggableProps}
+                                    {...drag.dragHandleProps}
+                                    style={{
+                                      padding: "8px 12px",
+                                      border: "1px solid var(--text-primary)",
+                                      borderRadius: 8,
+                                      cursor: "grab",
+                                      background: dragSnapshot.isDragging
+                                        ? "rgba(var(--accent-primary-rgb), 0.2)"
+                                        : "rgba(255,255,255,0.08)",
+                                      boxShadow: dragSnapshot.isDragging
+                                        ? "0 4px 8px rgba(0, 0, 0, 0.2)"
+                                        : "none",
+                                      minWidth: "fit-content",
+                                      maxWidth: "100%",
+                                      display: "flex",
+                                      flexDirection: "column",
+                                      gap: 2,
+                                      ...drag.draggableProps.style
+                                    }}
+                                  >
+                                    {/* ชื่อไอเทม */}
+                                    <div style={{ fontWeight: 600, fontSize: 13, color: "var(--text-primary)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                                      {item.name}
+                                    </div>
+
+                                    {/* จำนวนและเปอร์เซ็นต์ */}
+                                    <div style={{ fontSize: 11, color: "var(--text-secondary)", fontWeight: 500, display: "flex", justifyContent: "space-between" }}>
+                                      <span>total: {item.value.toLocaleString()}</span>
+                                      <span>
+                                        {((item.value / totalByType[type as keyof typeof totalByType]) * 100).toFixed(1)}%
+                                      </span>
+                                    </div>
+
+                                    {/* ประเภทหรือคำอธิบายสั้น */}
+                                    <div style={{ fontSize: 10, color: "var(--text-tertiary)", fontStyle: "italic" }}>
+                                      type: {type === "protocol" ? "Protocol" : type === "ip" ? "IP Address" : "Port"}
+                                    </div>
+                                  </div>
+                                                            )}
+                              </Draggable>
+                            ))
+                          }
+                        </div>
                         {provided.placeholder}
                       </div>
                     )}
@@ -487,22 +585,33 @@ const WiresharkPage: React.FC = () => {
             </div>
 
             {/* Right Panel */}
-            <div style={{ width: "75%", display: "flex", flexDirection: "column", gap: 16, overflowY: "auto" }}>
+            <div style={{ 
+              width: "70%", 
+              display: "flex", 
+              flexDirection: "column", 
+              gap: 16, 
+              overflowY: "auto" 
+            }}>
               {/* Clear Comparison Button */}
               <div style={{ display: "flex", justifyContent: "flex-start" }}>
                 <button
                   onClick={() => setCompareItems([])}
                   style={{
                     border: "2px solid var(--text-primary)",
-                    borderRadius: 4,
-                    padding: "4px 12px",
+                    borderRadius: 6,
+                    padding: "6px 16px",
                     cursor: "pointer",
+                    background: "rgba(255,255,255,0.05)",
+                    color: "var(--text-primary)",
+                    fontWeight: 600,
+                    fontSize: 13
                   }}
                 >
-                  Clear
+                  Clear All
                 </button>
               </div>
 
+              {/* Compare Zone */}
               <Droppable droppableId="compareZone">
                 {(provided, snapshot) => (
                   <div
@@ -510,16 +619,36 @@ const WiresharkPage: React.FC = () => {
                     {...provided.droppableProps}
                     style={{
                       minHeight: 100,
-                      background: "transparent",
-                      padding: 8,
+                      background: snapshot.isDraggingOver 
+                        ? "rgba(var(--accent-primary-rgb), 0.1)" 
+                        : "rgba(255,255,255,0.03)",
+                      padding: 12,
                       borderRadius: 8,
-                      border: snapshot.isDraggingOver ? "2px dashed var(--accent-primary)" : "2px dashed var(--text-primary)",
+                      border: snapshot.isDraggingOver 
+                        ? "2px dashed var(--accent-primary)" 
+                        : "2px dashed rgba(255,255,255,0.3)",
                       display: "flex",
                       flexWrap: "wrap",
                       gap: 8,
-                      transition: "border 0.2s, background 0.2s",
+                      position: "relative"
                     }}
                   >
+                    {compareItems.length === 0 && (
+                      <div style={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%, -50%)",
+                        color: "var(--text-secondary)",
+                        fontSize: 14,
+                        fontWeight: 500,
+                        textAlign: "center",
+                        pointerEvents: "none"
+                      }}>
+                        Drag items here to compare
+                      </div>
+                    )}
+                    
                     {compareItems.map((item, idx) => {
                       const count =
                         item.type === "protocol"
@@ -534,29 +663,44 @@ const WiresharkPage: React.FC = () => {
                           draggableId={`${item.type}::${item.value}`}
                           index={idx}
                         >
-                          {(drag) => (
+                          {(drag, dragSnapshot) => (
                             <div
                               ref={drag.innerRef}
                               {...drag.draggableProps}
                               {...drag.dragHandleProps}
                               style={{
-                                padding: "8px",
-                                marginBottom: 8,
-                                border: "2px solid var(--text-primary)",
-                                borderRadius: 12,
+                                padding: "6px 10px",
+                                border: "1px solid var(--text-primary)",
+                                borderRadius: 6,
                                 cursor: "grab",
-                                display: "inline-block",
-                                width: "fit-content",
-                                minWidth: 120,
-                                maxWidth: 200,
-                                whiteSpace: "normal",
-                                wordWrap: "break-word",
-                                textAlign: "left",
+                                background: dragSnapshot.isDragging 
+                                  ? "rgba(var(--accent-primary-rgb), 0.2)"
+                                  : "rgba(255,255,255,0.08)",
+                                boxShadow: dragSnapshot.isDragging 
+                                  ? "0 4px 8px rgba(0, 0, 0, 0.2)" 
+                                  : "none",
+                                minWidth: "fit-content",
+                                maxWidth: "200px",
                                 ...drag.draggableProps.style,
                               }}
                             >
-                              <div>{item.type}: {item.value}</div>
-                              <div>Total: {count}</div>
+                              <div style={{ 
+                                fontWeight: 600, 
+                                fontSize: 13, 
+                                color: "var(--text-primary)",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                whiteSpace: "nowrap"
+                              }}>
+                                {item.type}: {item.value}
+                              </div>
+                              <div style={{ 
+                                fontSize: 11, 
+                                color: "var(--text-secondary)",
+                                fontWeight: 500
+                              }}>
+                                Total: {count.toLocaleString()}
+                              </div>
                             </div>
                           )}
                         </Draggable>
@@ -567,31 +711,60 @@ const WiresharkPage: React.FC = () => {
                 )}
               </Droppable>
 
-              <ResponsiveContainer width="100%" height={300} style={{ border: '1px solid var(--text-primary)', borderRadius: 8 }}>
-                <LineChart data={comparisonData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="time" />
-                  <YAxis allowDecimals={false} />
-                  <Tooltip labelFormatter={formatModalTooltipLabel} />
-                  {compareItems.map((it, idx) => (
-                    <Line
-                      key={`${it.type}:${it.value}`}
-                      type="monotone"
-                      dataKey={`${it.type}:${it.value}`}
-                      stroke={COLORS[idx % COLORS.length]}
-                      name={`${it.type}:${it.value}`}
+              {/* Chart and Range */}
+              <div style={{
+                background: "rgba(255,255,255,0.05)",
+                borderRadius: 8,
+                padding: 12,
+                border: "1px solid rgba(255,255,255,0.1)"
+              }}>
+                <ResponsiveContainer width="100%" height={300}>
+                  <LineChart data={comparisonData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.2)" />
+                    <XAxis dataKey="time" tick={{ fill: 'var(--text-secondary)', fontSize: 12 }} />
+                    <YAxis allowDecimals={false} tick={{ fill: 'var(--text-secondary)', fontSize: 12 }} />
+                    <Tooltip 
+                      labelFormatter={formatModalTooltipLabel}
+                      contentStyle={{
+                        background: 'var(--bg-tertiary)',
+                        border: '1px solid rgba(255,255,255,0.2)',
+                        borderRadius: 6
+                      }}
                     />
-                  ))}
-                </LineChart>
-              </ResponsiveContainer>
+                    {compareItems.map((it, idx) => (
+                      <Line
+                        key={`${it.type}:${it.value}`}
+                        type="monotone"
+                        dataKey={`${it.type}:${it.value}`}
+                        stroke={COLORS[idx % COLORS.length]}
+                        name={`${it.type}:${it.value}`}
+                        strokeWidth={2}
+                        dot={{ r: 3 }}
+                        activeDot={{ r: 5 }}
+                      />
+                    ))}
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
 
-              <Space>
-                <Select value={compareRange} onChange={v => setCompareRange(v as Range)} style={{ width: 160 }}>
-                  <Select.Option value="day">Daily (per hour)</Select.Option>
-                  <Select.Option value="week">Weekly (per day)</Select.Option>
-                  <Select.Option value="month">Monthly (per day)</Select.Option>
-                </Select>
-              </Space>
+              <div style={{
+                background: "rgba(255,255,255,0.05)",
+                borderRadius: 8,
+                padding: 12,
+                border: "1px solid rgba(255,255,255,0.1)"
+              }}>
+                <Space>
+                  <Select 
+                    value={compareRange} 
+                    onChange={v => setCompareRange(v as Range)} 
+                    style={{ width: 170 }}
+                  >
+                    <Select.Option value="day">Daily (per hour)</Select.Option>
+                    <Select.Option value="week">Weekly (per day)</Select.Option>
+                    <Select.Option value="month">Monthly (per day)</Select.Option>
+                  </Select>
+                </Space>
+              </div>
             </div>
           </div>
         </DragDropContext>
