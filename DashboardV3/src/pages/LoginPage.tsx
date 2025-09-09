@@ -37,6 +37,7 @@ const LoginPage: React.FC = () => {
       if (response?.status === 200) {
         localStorage.setItem("isLogin", "true");
         localStorage.setItem("status", response.data.payload.Status);
+        localStorage.setItem("UserName", response.data.payload.UserName);
         localStorage.setItem("token_type", response.data.token_type);
         localStorage.setItem("token", response.data.token);
         messageApi.success('Login successful!', 3)
