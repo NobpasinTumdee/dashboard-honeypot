@@ -220,7 +220,7 @@ const WiresharkPage: React.FC = () => {
 
 
 
-  const toTopList = (rec: Record<string, number>) => Object.entries(rec).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value).slice(0, 10);
+  const toTopList = (rec: Record<string, number>) => Object.entries(rec).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value);
   const topProtocols = useMemo(() =>
     toTopList(
       protocol.reduce((acc: Record<string, number>, p) => {
@@ -253,6 +253,24 @@ const WiresharkPage: React.FC = () => {
     ),
     [port]
   );
+
+    // ============== Search ================
+  const [searchType, setSearchType] = useState<"any" | "ip" | "port" | "protocol">("any");
+  const [searchTerm, setSearchTerm] = useState("");
+  const filterData = (type: "ip" | "port" | "protocol", data: { name: string; value: number }[]) => {
+  let filtered = data;
+
+  if (searchTerm) {
+    filtered = data.filter(item => {
+      if (searchType === "any") return item.name.toLowerCase().includes(searchTerm.toLowerCase());
+      if (searchType === type) return item.name.toLowerCase().includes(searchTerm.toLowerCase());
+      return true;
+    });
+  }
+
+  // ถ้าไม่ได้ค้น → แสดงแค่ 10 อันแรก
+  return searchTerm ? filtered : filtered.slice(0, 10);
+  };
 
   const uniqueSourceIPs = new Set(dataPacket.map(p => p.src_ip)).size;
 
@@ -367,7 +385,10 @@ const WiresharkPage: React.FC = () => {
       <Modal
         isOpen={isCompareOpen}
         onRequestClose={() => setIsCompareOpen(false)}
-        style={{ overlay: { backgroundColor: 'rgba(0,0,0,0.6)' }, content: { inset: "10%", padding: 16, borderRadius: 16, height: "auto", backdropFilter: 'blur(10px)', backgroundColor: 'var(--bg-tertiary)' } }}
+        style={{
+          overlay: { backgroundColor: 'rgba(0,0,0,0.6)' },
+          content: { inset: "10%", padding: 16, borderRadius: 16, height: "auto", backdropFilter: 'blur(10px)', backgroundColor: 'var(--bg-tertiary)' }
+        }}
         contentLabel="Compare Items"
       >
         {/* Close button top-right */}
@@ -387,62 +408,82 @@ const WiresharkPage: React.FC = () => {
           ✕
         </button>
 
+        {/* Search Bar */}
+        <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+          <Select value={searchType} onChange={(v) => setSearchType(v)} style={{ width: 120 }}>
+            <Select.Option value="any">Any</Select.Option>
+            <Select.Option value="ip">IP</Select.Option>
+            <Select.Option value="port">Port</Select.Option>
+            <Select.Option value="protocol">Protocol</Select.Option>
+          </Select>
+          <input
+            type="text"
+            placeholder="Search..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            style={{  padding: "6px 10px", border: "1px solid #ccc", borderRadius: 4 }}
+          />
+        </div>
+
         <DragDropContext onDragEnd={onDragEnd}>
           <div style={{ display: "flex", gap: 16, height: "70vh" }}>
+            
             {/* Left Panel */}
             <div style={{ width: "25%", overflowY: "auto", display: "flex", flexDirection: "column", gap: 16 }}>
-              {["protocol", "ip", "port"].map(type => (
-                <Droppable droppableId={type} key={type}>
-                  {(provided) => (
-                    <div ref={provided.innerRef} {...provided.droppableProps} style={{ padding: 8, borderRadius: 8 }}>
-                      <h3
-                        style={{
-                          borderBottom: "2px solid var(--text-primary)",
-                          paddingBottom: "8px",
-                          marginBottom: "16px",
-                        }}
-                      >
-                        {type.toUpperCase()}
-                      </h3>
-                      {(type === "protocol" ? topProtocols : type === "ip" ? topIPs : topPorts)
-                        .filter(item => !compareItems.some(ci => ci.type === type && ci.value === item.name))
-                        .map((item, idx) => (
-                          <Draggable key={`${type}::${item.name}`} draggableId={`${type}::${item.name}`} index={idx}>
-                            {(drag) => (
-                              <div
-                                ref={drag.innerRef}
-                                {...drag.draggableProps}
-                                {...drag.dragHandleProps}
-                                style={{
-                                  padding: "8px",
-                                  marginBottom: 8,
-                                  border: "2px solid var(--text-primary)",
-                                  borderRadius: 4,
-                                  cursor: "grab",
-                                  display: "inline-block",
-                                  marginLeft: "10px",
-                                  width: "fit-content",
-                                  minWidth: 120,
-                                  maxWidth: 200,
-                                  whiteSpace: "normal",
-                                  wordWrap: "break-word",
-                                  textAlign: "left",
-                                  ...drag.draggableProps.style
-                                }}
-                              >
-                                <div>{item.name}</div>
-                                <div>Total: {item.value}</div>
-                              </div>
+              {["protocol", "ip", "port"].map(type => {
+                // แสดงเฉพาะประเภทที่ตรงกับ searchType หรือ searchType === "any"
+                if (searchType !== "any" && searchType !== type) return null;
 
-                            )}
-                          </Draggable>
-                        ))
-                      }
-                      {provided.placeholder}
-                    </div>
-                  )}
-                </Droppable>
-              ))}
+                const rawData = type === "protocol" ? topProtocols : type === "ip" ? topIPs : topPorts;
+                const filtered = filterData(type as any, rawData).slice(0, 10); // จำกัด 10 อัน
+
+                return (
+                  <Droppable droppableId={type} key={type}>
+                    {(provided) => (
+                      <div ref={provided.innerRef} {...provided.droppableProps} style={{ padding: 8, borderRadius: 8 }}>
+                        <h3 style={{ borderBottom: "2px solid var(--text-primary)", paddingBottom: "8px", marginBottom: "16px" }}>
+                          {type.toUpperCase()}
+                        </h3>
+
+                        {filtered
+                          .filter(item => !compareItems.some(ci => ci.type === type && ci.value === item.name))
+                          .map((item, idx) => (
+                            <Draggable key={`${type}::${item.name}`} draggableId={`${type}::${item.name}`} index={idx}>
+                              {(drag) => (
+                                <div
+                                  ref={drag.innerRef}
+                                  {...drag.draggableProps}
+                                  {...drag.dragHandleProps}
+                                  style={{
+                                    padding: "8px",
+                                    marginBottom: 8,
+                                    border: "2px solid var(--text-primary)",
+                                    borderRadius: 12,
+                                    cursor: "grab",
+                                    display: "inline-block",
+                                    marginLeft: "10px",
+                                    width: "fit-content",
+                                    minWidth: 120,
+                                    maxWidth: 200,
+                                    whiteSpace: "normal",
+                                    wordWrap: "break-word",
+                                    textAlign: "left",
+                                    ...drag.draggableProps.style
+                                  }}
+                                >
+                                  <div>{item.name}</div>
+                                  <div>Total: {item.value}</div>
+                                </div>
+                              )}
+                            </Draggable>
+                          ))
+                        }
+                        {provided.placeholder}
+                      </div>
+                    )}
+                  </Droppable>
+                );
+              })}
             </div>
 
             {/* Right Panel */}
@@ -455,12 +496,13 @@ const WiresharkPage: React.FC = () => {
                     border: "2px solid var(--text-primary)",
                     borderRadius: 4,
                     padding: "4px 12px",
-                    cursor: "pointer"
+                    cursor: "pointer",
                   }}
                 >
                   Clear
                 </button>
               </div>
+
               <Droppable droppableId="compareZone">
                 {(provided, snapshot) => (
                   <div
@@ -471,9 +513,7 @@ const WiresharkPage: React.FC = () => {
                       background: "transparent",
                       padding: 8,
                       borderRadius: 8,
-                      border: snapshot.isDraggingOver
-                        ? "2px dashed var(--accent-primary)"
-                        : "2px dashed var(--text-primary)",
+                      border: snapshot.isDraggingOver ? "2px dashed var(--accent-primary)" : "2px dashed var(--text-primary)",
                       display: "flex",
                       flexWrap: "wrap",
                       gap: 8,
@@ -481,7 +521,6 @@ const WiresharkPage: React.FC = () => {
                     }}
                   >
                     {compareItems.map((item, idx) => {
-                      // หา count จริงของ item
                       const count =
                         item.type === "protocol"
                           ? topProtocols.find(p => p.name === item.value)?.value || 0
@@ -504,7 +543,7 @@ const WiresharkPage: React.FC = () => {
                                 padding: "8px",
                                 marginBottom: 8,
                                 border: "2px solid var(--text-primary)",
-                                borderRadius: 4,
+                                borderRadius: 12,
                                 cursor: "grab",
                                 display: "inline-block",
                                 width: "fit-content",
