@@ -1,28 +1,30 @@
-import { useNavigate } from "react-router-dom";
 import React, { useMemo, useState } from "react";
-import {
-  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer
-} from "recharts";
-import { Select, Button, Space } from "antd";
+import { useNavigate } from "react-router-dom";
+
+
 import Modal from "react-modal";
-import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import { Select, Button, Space } from "antd";
 import type { DropResult } from "@hello-pangea/dnd";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from "recharts";
+
 
 import StatCard from '../components/StatCard';
 import DataTable from '../components/DataTable';
 import CombinedPieChart from "../components/ChartWireShark";
 
-import type { DstPortStats, HttpsPacket, ProtocolStats, SrcIpStats, TimeSeriesPackets } from "../types";
+
 import { usePacketSocket, usePacketStatsSocket } from "../service/websocket";
+import type { DstPortStats, HttpsPacket, ProtocolStats, SrcIpStats, TimeSeriesPackets } from "../types";
+
 
 type Range = "day" | "week" | "month";
 type CompareItem = { type: "protocol" | "ip" | "port"; value: string };
-
-const COLORS = ["#2563eb","#10b981","#f59e0b","#ef4444","#8b5cf6","#14b8a6","#a3e635","#eab308","#f97316","#f43f5e"];
-
-try { Modal.setAppElement("#root"); } catch {}
+const COLORS = ["#2563eb", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#14b8a6", "#a3e635", "#eab308", "#f97316", "#f43f5e"];
+try { Modal.setAppElement("#root"); } catch { }
 
 const WiresharkPage: React.FC = () => {
+  // react router
   const navigate = useNavigate();
 
   // ================== State ==================
@@ -46,17 +48,23 @@ const WiresharkPage: React.FC = () => {
   usePacketStatsSocket(setData, setProtocol, setSrcIp, setDstPort, setIsConnected, setIsLogin);
   usePacketSocket(setDataPacket, setIsConnected, setIsLogin);
 
+
+
   // ================== Filter ==================
   const handleSelectChange = (event: any) => setProtocolFilter(event.target.value);
   const filteredData = dataPacket.filter(item =>
     protocolFilter ? (item.method?.toLowerCase() === protocolFilter.toLowerCase()) : true
   );
 
+
+
   // ================== Pagination ==================
   const ITEMS_PER_PAGE = 10;
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const currentItems = filteredData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
   const totalPages = Math.max(1, Math.ceil(filteredData.length / ITEMS_PER_PAGE));
+
+
 
   // ================== Method Counts ==================
   const methodDistribution = useMemo(() => {
@@ -74,6 +82,9 @@ const WiresharkPage: React.FC = () => {
   const putCount = methodDistribution["PUT"] || 0;
   const deleteCount = methodDistribution["DELETE"] || 0;
 
+
+
+
   // ================== Aggregate Data ==================
   const aggregatedData = useMemo(() => {
     const map = new Map<string, number>();
@@ -82,57 +93,64 @@ const WiresharkPage: React.FC = () => {
       let key = "";
       switch (timeRange) {
         case "day":
-          key = `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()} ${d.getHours()}:00`;
+          key = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()} ${d.getHours()}:00`;
           break;
         case "week":
         case "month":
-          key = `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+          key = `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
           break;
       }
       map.set(key, (map.get(key) || 0) + p.count);
     });
     return Array.from(map, ([time, count]) => ({ time, count }))
-      .sort((a,b) => new Date(a.time).getTime() - new Date(b.time).getTime());
+      .sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime());
   }, [data, timeRange]);
 
   const formatXAxis = (time: string) => {
-  const d = new Date(time);
-  switch(timeRange){
-    case "day": 
-      return `${d.getHours()}:00`;
-    case "week":
-    case "month": 
-      return `${d.getDate()}/${d.getMonth() + 1}`; // แสดงแค่วัน/เดือน
-    default: 
-      return time;
-  }
-};
+    const d = new Date(time);
+    switch (timeRange) {
+      case "day":
+        return `${d.getHours()}:00`;
+      case "week":
+      case "month":
+        return `${d.getDate()}/${d.getMonth() + 1}`; // แสดงแค่วัน/เดือน
+      default:
+        return time;
+    }
+  };
 
-const formatTooltipLabel = (time: string) => {
-  const d = new Date(time);
-  switch(timeRange){
-    case "day":
-      return d.toLocaleString(); // วัน+เวลา
-    case "week":
-    case "month":
-      return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`; // วัน/เดือน/ปี
-    default:
-      return time;
-  }
-};
 
-const formatModalTooltipLabel = (time: string) => {
-  const d = new Date(time);
-  switch(compareRange){
-    case "day":
-      return d.toLocaleString(); // วัน+เวลา
-    case "week":
-    case "month":
-      return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`; // วัน/เดือน/ปี
-    default:
-      return time;
-  }
-};
+
+
+  const formatTooltipLabel = (time: string) => {
+    const d = new Date(time);
+    switch (timeRange) {
+      case "day":
+        return d.toLocaleString(); // วัน+เวลา
+      case "week":
+      case "month":
+        return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`; // วัน/เดือน/ปี
+      default:
+        return time;
+    }
+  };
+
+
+
+
+  const formatModalTooltipLabel = (time: string) => {
+    const d = new Date(time);
+    switch (compareRange) {
+      case "day":
+        return d.toLocaleString(); // วัน+เวลา
+      case "week":
+      case "month":
+        return `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`; // วัน/เดือน/ปี
+      default:
+        return time;
+    }
+  };
+
 
 
   // ================== Helper Functions ==================
@@ -140,19 +158,19 @@ const formatModalTooltipLabel = (time: string) => {
     const map = new Map<string, number>();
     points.forEach(p => {
       const d = new Date(p.timestamp);
-      let key = range === "day" ? 
-        `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()} ${d.getHours()}:00` : 
-        `${d.getFullYear()}-${d.getMonth()+1}-${d.getDate()}`;
+      let key = range === "day" ?
+        `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()} ${d.getHours()}:00` :
+        `${d.getFullYear()}-${d.getMonth() + 1}-${d.getDate()}`;
       map.set(key, (map.get(key) || 0) + p.count);
     });
     return Array.from(map, ([time, count]) => ({ time, count }))
-      .sort((a,b) => new Date(a.time).getTime() - new Date(b.time).getTime());
+      .sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime());
   };
 
   const seriesFor = (filter: CompareItem, range: Range) => {
-    if (filter.type === "protocol") 
+    if (filter.type === "protocol")
       return aggregate(protocol.filter(p => p.protocol === filter.value).map(p => ({ timestamp: p.timestamp, count: p.count })), range);
-    if (filter.type === "ip") 
+    if (filter.type === "ip")
       return aggregate(ip.filter(s => s.src_ip === filter.value).map(p => ({ timestamp: p.timestamp, count: p.count })), range);
     return aggregate(port.filter(p => p.dst_port === filter.value).map(p => ({ timestamp: p.timestamp, count: p.count })), range);
   };
@@ -161,13 +179,13 @@ const formatModalTooltipLabel = (time: string) => {
     const rows = new Map<string, any>();
     items.forEach(it => {
       const keyName = `${it.type}:${it.value}`;
-      seriesFor(it, range).forEach(({time, count}) => {
+      seriesFor(it, range).forEach(({ time, count }) => {
         const row = rows.get(time) || { time };
         row[keyName] = (row[keyName] || 0) + count;
         rows.set(time, row);
       });
     });
-    return Array.from(rows.values()).sort((a,b) => new Date(a.time).getTime() - new Date(b.time).getTime());
+    return Array.from(rows.values()).sort((a, b) => new Date(a.time).getTime() - new Date(b.time).getTime());
   };
 
   const comparisonData = useMemo(() => buildComparisonData(compareItems, compareRange), [compareItems, compareRange, protocol, ip, port]);
@@ -200,59 +218,63 @@ const formatModalTooltipLabel = (time: string) => {
     }
   };
 
-  const toTopList = (rec: Record<string, number>) => Object.entries(rec).map(([name,value])=>({name,value})).sort((a,b)=>b.value-a.value).slice(0,10);
-  const topProtocols = useMemo(() => 
-  toTopList(
-    protocol.reduce((acc: Record<string, number>, p) => {
-      acc[p.protocol] = (acc[p.protocol] || 0) + p.count;
-      return acc;
-    }, {})
-  ), 
-  [protocol]
-);
 
-const topIPs = useMemo(() => 
-  toTopList(
-    ip.reduce((acc: Record<string, number>, s) => {
-      acc[s.src_ip] = (acc[s.src_ip] || 0) + s.count;
-      return acc;
-    }, {})
-  ), 
-  [ip]
-);
 
-const topPorts = useMemo(() => 
-  toTopList(
-    port.reduce((acc: Record<string, number>, d) => {
-      const key = d.dst_port.toString();
-      acc[key] = (acc[key] || 0) + d.count;
-      return acc;
-    }, {})
-  ), 
-  [port]
-);
+  const toTopList = (rec: Record<string, number>) => Object.entries(rec).map(([name, value]) => ({ name, value })).sort((a, b) => b.value - a.value).slice(0, 10);
+  const topProtocols = useMemo(() =>
+    toTopList(
+      protocol.reduce((acc: Record<string, number>, p) => {
+        acc[p.protocol] = (acc[p.protocol] || 0) + p.count;
+        return acc;
+      }, {})
+    ),
+    [protocol]
+  );
+
+
+
+  const topIPs = useMemo(() =>
+    toTopList(
+      ip.reduce((acc: Record<string, number>, s) => {
+        acc[s.src_ip] = (acc[s.src_ip] || 0) + s.count;
+        return acc;
+      }, {})
+    ),
+    [ip]
+  );
+
+  const topPorts = useMemo(() =>
+    toTopList(
+      port.reduce((acc: Record<string, number>, d) => {
+        const key = d.dst_port.toString();
+        acc[key] = (acc[key] || 0) + d.count;
+        return acc;
+      }, {})
+    ),
+    [port]
+  );
 
   const uniqueSourceIPs = new Set(dataPacket.map(p => p.src_ip)).size;
 
   // ================== Render ==================
-  if(!isLogin){
+  if (!isLogin) {
     return (
-      <div style={{display:"flex",flexDirection:"column",justifyContent:"center",alignItems:"center",height:"80vh",textAlign:"center"}}>
+      <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "80vh", textAlign: "center" }}>
         <h2>You are not logged in. Please log in to view the Wireshark overview.</h2>
-        <Button type="primary" onClick={()=>navigate("/login")}>Login</Button>
+        <Button type="primary" onClick={() => navigate("/login")}>Login</Button>
       </div>
     );
   }
 
   const wiresharkColumns = [
-    { key: 'timestamp', header: 'Timestamp', render: (value:string)=>new Date(value).toLocaleString() },
+    { key: 'timestamp', header: 'Timestamp', render: (value: string) => new Date(value).toLocaleString() },
     { key: 'src_ip', header: 'Source IP' },
     { key: 'src_port', header: 'Source Port' },
     { key: 'dst_ip', header: 'Destination IP' },
     { key: 'dst_port', header: 'Destination Port' },
     { key: 'method', header: 'Method' },
     { key: 'request_uri', header: 'URI' },
-    { key: 'userAgent', header: 'User Agent', render: (value:string)=>value.length>50?value.substring(0,50)+'...':value }
+    { key: 'userAgent', header: 'User Agent', render: (value: string) => value.length > 50 ? value.substring(0, 50) + '...' : value }
   ];
 
   return (
@@ -265,37 +287,37 @@ const topPorts = useMemo(() =>
 
       {/* Stats Grid */}
       <div className="stats-grid">
-        <StatCard title="Captured Packets" value={data.reduce((sum,p)=>sum+p.count,0)} changeType="positive" icon="📦" variant="primary" />
+        <StatCard title="Captured Packets" value={data.reduce((sum, p) => sum + p.count, 0)} changeType="positive" icon="📦" variant="primary" />
         <StatCard title="Unique Sources" value={uniqueSourceIPs} changeType="positive" icon="🌐" variant="success" />
-        <StatCard title="Most Common Method" value={Object.keys(methodDistribution).sort((a,b)=>methodDistribution[b]-methodDistribution[a])[0] || 'N/A'} icon="📡" variant="warning" />
-        <StatCard title="Websockets Status" value={isConnected?'Online':'Offline'} icon="🔒" variant="success" />
+        <StatCard title="Most Common Method" value={Object.keys(methodDistribution).sort((a, b) => methodDistribution[b] - methodDistribution[a])[0] || 'N/A'} icon="📡" variant="warning" />
+        <StatCard title="Websockets Status" value={isConnected ? 'Online' : 'Offline'} icon="🔒" variant="success" />
       </div>
 
       {/* Pie Chart */}
       <CombinedPieChart protocolData={protocol} srcIpData={ip} dstPortData={port} />
 
       {/* Line Chart */}
-      <ResponsiveContainer width="90%" height={320} style={{margin:"0 auto"}}>
+      <ResponsiveContainer width="90%" height={320} style={{ margin: "0 auto" }}>
         <LineChart data={aggregatedData}>
-          <CartesianGrid strokeDasharray="3 3"/>
-          <XAxis dataKey="time" tickFormatter={formatXAxis}/>
-          <YAxis allowDecimals={false}/>
-          <Tooltip labelFormatter={formatTooltipLabel}/>
-          <Line type="monotone" dataKey="count" stroke="#BAAE98" name="Total"/>
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis dataKey="time" tickFormatter={formatXAxis} />
+          <YAxis allowDecimals={false} />
+          <Tooltip labelFormatter={formatTooltipLabel} />
+          <Line type="monotone" dataKey="count" stroke="#BAAE98" name="Total" />
         </LineChart>
       </ResponsiveContainer>
 
       {/* TimeRange Selector */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", margin: "10px auto", width: "90%" }}>
-      {/* Open Modal */}
+        {/* Open Modal */}
         <button
           className="form-button"
           style={{ width: 'auto', padding: '0.75rem 1.5rem' }}
-          onClick={()=>setIsCompareOpen(true)}
+          onClick={() => setIsCompareOpen(true)}
         >
           View Timeline!
         </button>
-        
+
         <Select
           value={timeRange}
           onChange={(value) => setTimeRange(value as Range)}
@@ -316,9 +338,9 @@ const topPorts = useMemo(() =>
       </div>
 
       {/* Protocol Filter */}
-      <div style={{fontWeight:"400",textAlign:"center",display:'flex',justifyContent:'space-between',alignItems:'center',margin:'0 5% 20px'}}>
-        <p style={{margin:'0px'}}>
-          <select value={protocolFilter} onChange={handleSelectChange} style={{padding:'0.3rem 1rem',borderRadius:'4px',border:'1px solid #ccc'}}>
+      <div style={{ fontWeight: "400", textAlign: "center", display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '0 5% 20px' }}>
+        <p style={{ margin: '0px' }}>
+          <select value={protocolFilter} onChange={handleSelectChange} style={{ padding: '0.3rem 1rem', borderRadius: '4px', border: '1px solid #ccc' }}>
             <option value="">All</option>
             <option value="GET">GET</option>
             <option value="POST">POST</option>
@@ -332,58 +354,145 @@ const topPorts = useMemo(() =>
       <DataTable title="Captured HTTP/HTTPS Packets" data={currentItems} columns={wiresharkColumns} />
 
       {/* Pagination */}
-      <div style={{margin:"2% 0 10%",textAlign:"center",display:'flex',justifyContent:'center',alignItems:'center',gap:'10px'}}>
-        <button onClick={()=>setCurrentPage(prev=>Math.max(prev-1,1))} disabled={currentPage===1} className="form-button" style={{width:'100px',padding:'0.3rem 1.5rem'}}>◀ Prev</button>
+      <div style={{ margin: "2% 0 10%", textAlign: "center", display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px' }}>
+        <button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1} className="form-button" style={{ width: '100px', padding: '0.3rem 1.5rem' }}>◀ Prev</button>
         <span>Page {currentPage} of {totalPages}</span>
-        <button onClick={()=>setCurrentPage(prev=>Math.min(prev+1,totalPages))} disabled={currentPage===totalPages} className="form-button" style={{width:'100px',padding:'0.3rem 1.5rem'}}>Next ▶</button>
+        <button onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages} className="form-button" style={{ width: '100px', padding: '0.3rem 1.5rem' }}>Next ▶</button>
       </div>
 
-    {/* Modal */}
-    <Modal 
-      isOpen={isCompareOpen} 
-      onRequestClose={() => setIsCompareOpen(false)} 
-      style={{content:{inset:"10%",padding:16,borderRadius:16, height: "auto"}}} 
-      contentLabel="Compare Items"
-    >
-      {/* Close button top-right */}
-      <button 
-        onClick={() => setIsCompareOpen(false)} 
-        style={{
-          position: "absolute",
-          top: 12,
-          right: 12,
-          background: "transparent",
-          border: "none",
-          fontSize: 20,
-          cursor: "pointer",
-          color: "#333"
-        }}
+      {/* Modal */}
+      <Modal
+        isOpen={isCompareOpen}
+        onRequestClose={() => setIsCompareOpen(false)}
+        style={{ overlay: { backgroundColor: 'rgba(0,0,0,0.6)' }, content: { inset: "10%", padding: 16, borderRadius: 16, height: "auto", backdropFilter: 'blur(10px)', backgroundColor: 'var(--bg-tertiary)' } }}
+        contentLabel="Compare Items"
       >
-        ✕
-      </button>
+        {/* Close button top-right */}
+        <button
+          onClick={() => setIsCompareOpen(false)}
+          style={{
+            position: "absolute",
+            top: 12,
+            right: 12,
+            background: "transparent",
+            border: "none",
+            fontSize: 20,
+            cursor: "pointer",
+            color: "var(--text-primary)",
+          }}
+        >
+          ✕
+        </button>
 
-      <DragDropContext onDragEnd={onDragEnd}>
-        <div style={{display:"flex",gap:16,height:"70vh"}}>
-          {/* Left Panel */}
-          <div style={{width:"25%",overflowY:"auto",display:"flex",flexDirection:"column",gap:16}}>
-            {["protocol","ip","port"].map(type=>(
-              <Droppable droppableId={type} key={type}>
-                {(provided)=>(
-                  <div ref={provided.innerRef} {...provided.droppableProps} style={{padding:8,borderRadius:8}}>
-                    <h3
-                      style={{
-                        borderBottom: "2px solid #000", 
-                        paddingBottom: "8px",
-                        marginBottom: "16px"
-                      }}
-                    >
-                      {type.toUpperCase()}
-                    </h3>
-                    {(type==="protocol"?topProtocols:type==="ip"?topIPs:topPorts)
-                      .filter(item=>!compareItems.some(ci=>ci.type===type && ci.value===item.name))
-                      .map((item,idx)=>(
-                        <Draggable key={`${type}::${item.name}`} draggableId={`${type}::${item.name}`} index={idx}>
-                          {(drag)=>(
+        <DragDropContext onDragEnd={onDragEnd}>
+          <div style={{ display: "flex", gap: 16, height: "70vh" }}>
+            {/* Left Panel */}
+            <div style={{ width: "25%", overflowY: "auto", display: "flex", flexDirection: "column", gap: 16 }}>
+              {["protocol", "ip", "port"].map(type => (
+                <Droppable droppableId={type} key={type}>
+                  {(provided) => (
+                    <div ref={provided.innerRef} {...provided.droppableProps} style={{ padding: 8, borderRadius: 8 }}>
+                      <h3
+                        style={{
+                          borderBottom: "2px solid var(--text-primary)",
+                          paddingBottom: "8px",
+                          marginBottom: "16px",
+                        }}
+                      >
+                        {type.toUpperCase()}
+                      </h3>
+                      {(type === "protocol" ? topProtocols : type === "ip" ? topIPs : topPorts)
+                        .filter(item => !compareItems.some(ci => ci.type === type && ci.value === item.name))
+                        .map((item, idx) => (
+                          <Draggable key={`${type}::${item.name}`} draggableId={`${type}::${item.name}`} index={idx}>
+                            {(drag) => (
+                              <div
+                                ref={drag.innerRef}
+                                {...drag.draggableProps}
+                                {...drag.dragHandleProps}
+                                style={{
+                                  padding: "8px",
+                                  marginBottom: 8,
+                                  border: "2px solid var(--text-primary)",
+                                  borderRadius: 4,
+                                  cursor: "grab",
+                                  display: "inline-block",
+                                  marginLeft: "10px",
+                                  width: "fit-content",
+                                  minWidth: 120,
+                                  maxWidth: 200,
+                                  whiteSpace: "normal",
+                                  wordWrap: "break-word",
+                                  textAlign: "left",
+                                  ...drag.draggableProps.style
+                                }}
+                              >
+                                <div>{item.name}</div>
+                                <div>Total: {item.value}</div>
+                              </div>
+
+                            )}
+                          </Draggable>
+                        ))
+                      }
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+              ))}
+            </div>
+
+            {/* Right Panel */}
+            <div style={{ width: "75%", display: "flex", flexDirection: "column", gap: 16, overflowY: "auto" }}>
+              {/* Clear Comparison Button */}
+              <div style={{ display: "flex", justifyContent: "flex-start" }}>
+                <button
+                  onClick={() => setCompareItems([])}
+                  style={{
+                    border: "2px solid var(--text-primary)",
+                    borderRadius: 4,
+                    padding: "4px 12px",
+                    cursor: "pointer"
+                  }}
+                >
+                  Clear
+                </button>
+              </div>
+              <Droppable droppableId="compareZone">
+                {(provided, snapshot) => (
+                  <div
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
+                    style={{
+                      minHeight: 100,
+                      background: "transparent",
+                      padding: 8,
+                      borderRadius: 8,
+                      border: snapshot.isDraggingOver
+                        ? "2px dashed var(--accent-primary)"
+                        : "2px dashed var(--text-primary)",
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: 8,
+                      transition: "border 0.2s, background 0.2s",
+                    }}
+                  >
+                    {compareItems.map((item, idx) => {
+                      // หา count จริงของ item
+                      const count =
+                        item.type === "protocol"
+                          ? topProtocols.find(p => p.name === item.value)?.value || 0
+                          : item.type === "ip"
+                            ? topIPs.find(p => p.name === item.value)?.value || 0
+                            : topPorts.find(p => p.name === item.value)?.value || 0;
+
+                      return (
+                        <Draggable
+                          key={`${item.type}::${item.value}`}
+                          draggableId={`${item.type}::${item.value}`}
+                          index={idx}
+                        >
+                          {(drag) => (
                             <div
                               ref={drag.innerRef}
                               {...drag.draggableProps}
@@ -391,149 +500,60 @@ const topPorts = useMemo(() =>
                               style={{
                                 padding: "8px",
                                 marginBottom: 8,
-                                border: "2px solid #000",
+                                border: "2px solid var(--text-primary)",
                                 borderRadius: 4,
                                 cursor: "grab",
                                 display: "inline-block",
-                                marginLeft: "10px",
-                                width: "fit-content",            
-                                minWidth: 120,                   
-                                maxWidth: 200,                   
-                                whiteSpace: "normal",            
-                                wordWrap: "break-word", 
+                                width: "fit-content",
+                                minWidth: 120,
+                                maxWidth: 200,
+                                whiteSpace: "normal",
+                                wordWrap: "break-word",
                                 textAlign: "left",
-                                ...drag.draggableProps.style
+                                ...drag.draggableProps.style,
                               }}
                             >
-                              <div>{item.name}</div>
-                              <div>Total: {item.value}</div>
+                              <div>{item.type}: {item.value}</div>
+                              <div>Total: {count}</div>
                             </div>
-
                           )}
                         </Draggable>
-                      ))
-                    }
+                      );
+                    })}
                     {provided.placeholder}
                   </div>
                 )}
               </Droppable>
-            ))}
-          </div>
 
-          {/* Right Panel */}
-          <div style={{width:"75%", display:"flex", flexDirection:"column", gap:16, overflowY:"auto"}}>
-            {/* Clear Comparison Button */}
-            <div style={{display:"flex", justifyContent:"flex-start"}}>  
-              <button 
-                onClick={() => setCompareItems([])} 
-                style={{
-                  background:"#000000ff",
-                  color:"#fff",
-                  border:"none",
-                  borderRadius:4,
-                  padding:"4px 12px",
-                  cursor:"pointer"
-                }}
-              >
-                Clear
-              </button>
+              <ResponsiveContainer width="100%" height={300} style={{ border: '1px solid var(--text-primary)', borderRadius: 8 }}>
+                <LineChart data={comparisonData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="time" />
+                  <YAxis allowDecimals={false} />
+                  <Tooltip labelFormatter={formatModalTooltipLabel} />
+                  {compareItems.map((it, idx) => (
+                    <Line
+                      key={`${it.type}:${it.value}`}
+                      type="monotone"
+                      dataKey={`${it.type}:${it.value}`}
+                      stroke={COLORS[idx % COLORS.length]}
+                      name={`${it.type}:${it.value}`}
+                    />
+                  ))}
+                </LineChart>
+              </ResponsiveContainer>
+
+              <Space>
+                <Select value={compareRange} onChange={v => setCompareRange(v as Range)} style={{ width: 160 }}>
+                  <Select.Option value="day">Daily (per hour)</Select.Option>
+                  <Select.Option value="week">Weekly (per day)</Select.Option>
+                  <Select.Option value="month">Monthly (per day)</Select.Option>
+                </Select>
+              </Space>
             </div>
-          <Droppable droppableId="compareZone">
-            {(provided, snapshot) => (
-              <div
-                ref={provided.innerRef}
-                {...provided.droppableProps}
-                style={{
-                  minHeight: 100,
-                  background: "transparent",
-                  padding: 8,
-                  borderRadius: 8,
-                  border: snapshot.isDraggingOver
-                    ? "2px dashed #00f175" 
-                    : "2px dashed #000000", 
-                  display: "flex",
-                  flexWrap: "wrap",
-                  gap: 8,
-                  transition: "border 0.2s, background 0.2s", 
-                }}
-              >
-                {compareItems.map((item, idx) => {
-                  // หา count จริงของ item
-                  const count =
-                    item.type === "protocol"
-                      ? topProtocols.find(p => p.name === item.value)?.value || 0
-                      : item.type === "ip"
-                      ? topIPs.find(p => p.name === item.value)?.value || 0
-                      : topPorts.find(p => p.name === item.value)?.value || 0;
-
-                  return (
-                    <Draggable
-                      key={`${item.type}::${item.value}`}
-                      draggableId={`${item.type}::${item.value}`}
-                      index={idx}
-                    >
-                      {(drag) => (
-                        <div
-                          ref={drag.innerRef}
-                          {...drag.draggableProps}
-                          {...drag.dragHandleProps}
-                          style={{
-                            padding: "8px",
-                            marginBottom: 8,
-                            border: "2px solid #000",
-                            borderRadius: 4,
-                            cursor: "grab",
-                            display: "inline-block",
-                            width: "fit-content",
-                            minWidth: 120,
-                            maxWidth: 200,
-                            whiteSpace: "normal",
-                            wordWrap: "break-word",
-                            textAlign: "left",
-                            ...drag.draggableProps.style,
-                          }}
-                        >
-                          <div>{item.type}: {item.value}</div>
-                          <div>Total: {count}</div>
-                        </div>
-                      )}
-                    </Draggable>
-                  );
-                })}
-                {provided.placeholder}
-              </div>
-            )}
-          </Droppable>
-
-            <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={comparisonData}>
-                <CartesianGrid strokeDasharray="3 3"/>
-                <XAxis dataKey="time"/>
-                <YAxis allowDecimals={false}/>
-                <Tooltip labelFormatter={formatModalTooltipLabel}/>
-                {compareItems.map((it, idx) => (
-                  <Line
-                    key={`${it.type}:${it.value}`}
-                    type="monotone"
-                    dataKey={`${it.type}:${it.value}`}
-                    stroke={COLORS[idx % COLORS.length]}
-                    name={`${it.type}:${it.value}`}
-                  />
-                ))}
-              </LineChart>
-            </ResponsiveContainer>
-
-            <Space>
-              <Select value={compareRange} onChange={v=>setCompareRange(v as Range)} style={{width:160}}>
-                <Select.Option value="day">Daily (per hour)</Select.Option>
-                <Select.Option value="week">Weekly (per day)</Select.Option>
-                <Select.Option value="month">Monthly (per day)</Select.Option>
-              </Select>
-            </Space>
           </div>
-        </div>
-      </DragDropContext>
-    </Modal>
+        </DragDropContext>
+      </Modal>
     </div>
   );
 };
