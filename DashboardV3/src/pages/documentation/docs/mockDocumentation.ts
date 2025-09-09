@@ -713,29 +713,51 @@ sudo apt install wireshark -y`
         },
         {
             id: 'สเต็ป',
-            title: '3. Wireshark Basic Configuration',
-            content: 'After installation, you need to configure Wireshark to allow non-root users to capture network traffic. This is a crucial step for security and convenience.',
+            title: '3. Run PyShark and TShark Without sudo',
+            content: 'By default, network capturing tools like tshark (Wireshark"s command-line tool) require root privileges (sudo). However, you can grant them special capabilities to allow a regular user to run them, which is a safer practice.',
             codeBlocks: [],
             subsections: [
                 {
                     id: 'สเต็ปย่อย',
-                    title: 'a) Reconfigure Wireshark Permissions',
-                    content: 'This command will bring up a configuration screen. Select Yes to allow non-root users to capture packets',
+                    title: 'Step 1: Grant Capabilities to TShark',
+                    content: 'This command uses setcap to give tshark the ability to perform raw network captures (CAP_NET_RAW) and administrative network tasks (CAP_NET_ADMIN) without needing root privileges.',
                     codeBlocks: [
                         {
                             language: 'bash',
-                            code: `sudo dpkg-reconfigure wireshark-common -y`
+                            code: `sudo setcap 'CAP_NET_RAW+eip CAP_NET_ADMIN+eip' /usr/bin/tshark`
                         }
                     ]
                 },
                 {
                     id: 'สเต็ปย่อย',
-                    title: 'b) Add Your User to the Wireshark Group',
-                    content: 'Add your current user to the wireshark group. This grants the necessary permissions to capture traffic without requiring sudo. You"ll need to log out and log back in for the changes to take effect.',
+                    title: 'Step 2: Verify the Configuration',
+                    content: 'After running the command, you can use getcap to verify that the capabilities have been correctly applied to the tshark executable.',
                     codeBlocks: [
                         {
                             language: 'bash',
-                            code: `sudo usermod -aG wireshark $USER`
+                            code: `getcap /usr/bin/tshark`
+                        }
+                    ]
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: '',
+                    content: 'If the command was successful, the output will show the assigned capabilities, looking something like this:',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `/usr/bin/tshark = cap_net_admin,cap_net_raw+eip`
+                        }
+                    ]
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'Wireshark GUI (Optional)',
+                    content: 'If you are using Ubuntu Desktop and want to use the graphical user interface (GUI) of Wireshark, you can install it with this command. This is not needed for a server environment where you would primarily use tshark or pyshark.',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `sudo apt install wireshark -y`
                         }
                     ]
                 },
