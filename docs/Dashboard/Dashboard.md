@@ -128,4 +128,7 @@ D --> E( Server ubuntu )
     npm i react-syntax-highlighter
     npm i --save-dev @types/react-syntax-highlighter
     npm i qrcode.react
+    npm i @hello-pangea/dnd
+    npm i react-modal
+    npm i @types/react-modal
     ```
