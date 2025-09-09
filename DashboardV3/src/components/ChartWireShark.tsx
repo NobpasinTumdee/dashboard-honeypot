@@ -18,14 +18,21 @@ const generateChartData = (data: any[] | undefined, labelKey: string, chartLabel
         return null;
     }
 
-    // รวมข้อมูลที่มี labelKey เหมือนกันเข้าด้วยกัน
-    const aggregatedData = chartInputData.reduce((acc, item) => {
+    // กำหนด type ให้เป็น Record<string, number>
+    const aggregatedData: Record<string, number> = chartInputData.reduce((acc, item) => {
         acc[item[labelKey]] = (acc[item[labelKey]] || 0) + item.count;
         return acc;
-    }, {});
+    }, {} as Record<string, number>);
 
-    const labels = Object.keys(aggregatedData);
-    const counts = Object.values(aggregatedData);
+    // แปลงเป็น array เพื่อง่ายต่อการ sort
+    const aggregatedArray = Object.entries(aggregatedData)
+        .map(([label, count]) => ({ label, count: count as number })) 
+        .sort((a, b) => b.count - a.count) // เรียงจากมากไปน้อย
+        .slice(0, 10); // เอาแค่ 10 อันดับแรก
+
+    const labels = aggregatedArray.map(item => item.label);
+    const counts = aggregatedArray.map(item => item.count);
+
     const backgroundColors = [
         '#43362C',
         '#7A4440',
@@ -35,6 +42,8 @@ const generateChartData = (data: any[] | undefined, labelKey: string, chartLabel
         '#D9C9A1',
         '#8D867C',
         '#A99F93',
+        '#FFB347',
+        '#FF6961',
     ];
 
     return {
@@ -50,6 +59,8 @@ const generateChartData = (data: any[] | undefined, labelKey: string, chartLabel
         ],
     };
 };
+
+
 
 const CombinedPieChart: React.FC<CombinedPieChartProps> = ({ protocolData, srcIpData, dstPortData }) => {
     const protocolChartData = generateChartData(protocolData, 'protocol', 'Protocol Count');
