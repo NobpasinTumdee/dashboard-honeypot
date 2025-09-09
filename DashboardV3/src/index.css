@@ -61,11 +61,15 @@ body {
   /* min-width: 280px; */
   background: var(--bg-secondary);
   border-right: 1px solid var(--border-color);
-  padding: 1.5rem 0;
+  padding: 1.5rem 0 0;
   position: fixed;
   top: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   height: 100vh;
   overflow-y: auto;
+  overflow-x: hidden;
   transition: all 0.3s ease;
   z-index: 1000;
 }
@@ -87,6 +91,33 @@ body {
   display: flex;
   justify-content: space-between;
   align-items: center;
+}
+
+.footer-sidebar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--bg-secondary);
+  box-shadow: rgba(0, 0, 0, 0.02) 0px 1px 3px 0px, rgba(27, 31, 35, 0.15) 0px 0px 0px 1px;
+  padding: 1rem 1.5rem;
+}
+
+.footer-sidebar p {
+  font-weight: 700;
+} 
+
+.userprofile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.2rem;
+  padding: 0rem 0.5rem;
+  background-color: var(--accent-primary);
+  color: var(--bg-secondary);
+  width: 30px;
+  height: 30px;
+  border-radius: 50px;
+  box-shadow: rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px;
 }
 
 .sidebar-title {
