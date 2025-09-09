@@ -685,7 +685,7 @@ export const WiresharkDocumentation: ServiceDocumentation = {
                 {
                     language: 'bash',
                     code: `sudo apt update
-sudo apt install wireshark -y`
+sudo apt install tshark -y`
                 }
             ],
             subsections: [],

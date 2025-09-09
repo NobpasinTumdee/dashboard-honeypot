@@ -294,6 +294,10 @@ const WiresharkPage: React.FC = () => {
       </div>
 
 
+      {/* Pie Chart */}
+      <CombinedPieChart protocolData={protocol} srcIpData={ip} dstPortData={port} />
+
+
       {/* Line Chart */}
       <ResponsiveContainer width="90%" height={320} style={{ margin: "0 auto" }}>
         <LineChart data={aggregatedData}>
@@ -335,8 +339,6 @@ const WiresharkPage: React.FC = () => {
         <StatCard title="DELETE Requests" value={deleteCount} changeType="positive" icon="⬇️" />
       </div>
 
-      {/* Pie Chart */}
-      <CombinedPieChart protocolData={protocol} srcIpData={ip} dstPortData={port} />
 
       {/* Protocol Filter */}
       <div style={{ fontWeight: "400", textAlign: "center", display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '0 5% 20px' }}>
