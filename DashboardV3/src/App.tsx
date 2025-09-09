@@ -1,4 +1,5 @@
 // react router dom
+import { useState } from 'react';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { ThemeProvider } from './context/ThemeContext';
 import ProtectedRoute from './layouts/ProtectedRoute';
@@ -12,6 +13,8 @@ import OpenCanaryPage from './pages/OpenCanaryPage';
 import WiresharkPage from './pages/WiresharkPage';
 import LoginPage from './pages/LoginPage';
 import UsersPage from './pages/UsersPage';
+import ChatBotPopUp from './components/ai/ChatBot';
+import Xss from './pages/Xss';
 
 // styles
 import './index.css';
@@ -21,8 +24,6 @@ import Doclayout from './pages/documentation/Doclayout';
 import DocumentPage from './pages/documentation/DocumentPage';
 import DocumentCowrie from './pages/documentation/DocumentCowrie';
 import DocumentCanary from './pages/documentation/DocumentCanary';
-import ChatBotPopUp from './components/ai/ChatBot';
-import { useState } from 'react';
 import DocumentWireshark from './pages/documentation/DocumentWireshark';
 
 const router = createBrowserRouter([
@@ -38,6 +39,7 @@ const router = createBrowserRouter([
       { path: "wireshark", element: <ProtectedRoute><WiresharkPage /></ProtectedRoute> },
       { path: "login", element: <LoginPage /> },
       { path: "users", element: <ProtectedRoute><UsersPage /></ProtectedRoute> },
+      { path: "xss", element: <Xss /> },
     ]
   },
   {

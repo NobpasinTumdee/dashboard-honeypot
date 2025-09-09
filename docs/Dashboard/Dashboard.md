@@ -127,4 +127,5 @@ D --> E( Server ubuntu )
     npm install --save-dev @types/socket.io-client
     npm i react-syntax-highlighter
     npm i --save-dev @types/react-syntax-highlighter
+    npm i qrcode.react
     ```
