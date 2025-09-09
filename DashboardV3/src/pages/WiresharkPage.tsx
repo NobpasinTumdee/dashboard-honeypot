@@ -562,7 +562,7 @@ const WiresharkPage: React.FC = () => {
                                     <div style={{ fontSize: 11, color: "var(--text-secondary)", fontWeight: 500, display: "flex", justifyContent: "space-between" }}>
                                       <span>total: {item.value.toLocaleString()}</span>
                                       <span>
-                                        {((item.value / totalByType[type as keyof typeof totalByType]) * 100).toFixed(1)}%
+                                        {((item.value / totalByType[type as keyof typeof totalByType]) * 100).toFixed(3)}%
                                       </span>
                                     </div>
 
