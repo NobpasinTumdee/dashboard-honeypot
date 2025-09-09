@@ -39,8 +39,11 @@ const router = createBrowserRouter([
       { path: "wireshark", element: <ProtectedRoute><WiresharkPage /></ProtectedRoute> },
       { path: "login", element: <LoginPage /> },
       { path: "users", element: <ProtectedRoute><UsersPage /></ProtectedRoute> },
-      { path: "xss", element: <Xss /> },
     ]
+  },
+  {
+    path: 'xss',
+    element: <Xss />
   },
   {
     path: "/document",
