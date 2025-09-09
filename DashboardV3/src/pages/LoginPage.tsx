@@ -41,9 +41,8 @@ const LoginPage: React.FC = () => {
         localStorage.setItem("token", response.data.token);
         messageApi.success('Login successful!', 3)
         setIsLoading(false);
-        setTimeout(() => {
-          navigate('/home')
-        })
+        navigate('/')
+        window.location.reload();
       } else {
         const errorMessage = response?.data?.message || 'Gmail or Password is incorrect';
         messageApi.error(errorMessage, 3)
@@ -78,6 +77,7 @@ const LoginPage: React.FC = () => {
       if (res?.status === 201) {
         messageApi.success('SignUp successful!', 3)
         setIsLoading(false);
+        setIsSignUp(false);
       } else {
         const errorMessage = res?.data?.message || 'Gmail or Password is incorrect';
         setError(errorMessage);
