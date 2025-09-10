@@ -15,6 +15,12 @@
   --shadow: rgba(0, 0, 0, 0.3);
   --gradient-primary: linear-gradient(135deg, #BAAE98 0%, #32271C 100%);
   --gradient-card: linear-gradient(35deg, #000000 0%, #443e39 100%);
+
+  --terminal-bg: #1a1a1a;
+  --terminal-text: #f0f0f0;
+  --terminal-header: #333;
+  --terminal-header-text: #bbb;
+  --terminal-border: #444;
 }
 
 :root[data-theme="light"] {
@@ -34,6 +40,12 @@
   --shadow: rgba(0, 0, 0, 0.1);
   --gradient-primary: linear-gradient(135deg, #e6d098 0%, #6d561c 100%);
   --gradient-card: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+
+  --terminal-bg: #EDF1F3;
+  --terminal-text: #090C13;
+  --terminal-header: #FFFFFF;
+  --terminal-header-text: #292929;
+  --terminal-border: #e8e8e8;
 }
 
 /* Reset and Base Styles */
@@ -77,8 +89,9 @@ body {
 .main-content {
   margin-left: 75px;
   flex: 1;
-  padding: 2rem;
+  padding: 1.5rem 1%;
   background-color: var(--bg-primary);
+  width: 98%;
   min-height: 100vh;
   transition: all 0.3s ease;
 }
@@ -535,7 +548,7 @@ body {
   background: var(--card-bg);
   border: 1px solid var(--border-color);
   border-radius: 16px;
-  padding: 1.5rem;
+  padding: 5%;
   margin-bottom: 2rem;
   box-shadow: 0 4px 12px var(--shadow);
   transition: all 0.3s ease;
