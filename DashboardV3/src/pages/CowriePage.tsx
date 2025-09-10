@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import Chart from '../components/Chart';
 import StatCard from '../components/StatCard';
 import ChartCard from '../components/ChartCard';
+import Loader from '../components/loader/Loader';
 
 import type { CowrieLog } from '../types';
 import { useCowrieSocket } from '../service/websocket';
@@ -265,6 +266,12 @@ const CowriePage: React.FC = () => {
         </h2>
         <button onClick={() => navigate('/login')}>Go to Log in</button>
       </div>
+    )
+  }
+
+  if (!isConnected) {
+    return (
+      <Loader />
     )
   }
 
