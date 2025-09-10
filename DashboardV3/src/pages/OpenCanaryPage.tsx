@@ -240,7 +240,7 @@ const OpenCanaryPage: React.FC = () => {
 
   if (!isLogin) {
     return (
-      <div style={{ position: 'fixed', width: '90vw', height: '100vh', display: 'flex',flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
+      <div style={{ position: 'fixed', width: '90vw', height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
         <h2>
           You are not logged in. Please log in to access this page.
         </h2>
@@ -308,7 +308,6 @@ const OpenCanaryPage: React.FC = () => {
 
       <div style={{ fontWeight: "400", textAlign: "center", display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '0 5% 20px' }}>
         <p style={{ margin: '0px' }}>
-          {protocolFilter && `| Filtered by: `}
           <select value={protocolFilter} onChange={handleSelectChange} style={{ padding: '0.3rem 1rem', borderRadius: '4px', border: '1px solid #ccc' }}>
             <option value="">All</option>
             <option value="Canary running!!!">Running</option>
@@ -317,19 +316,19 @@ const OpenCanaryPage: React.FC = () => {
             <option value="Added service from class CanaryFTP in opencanary.modules.ftp to fake">Canary FTP</option>
           </select>
         </p>
-        <button
-          className="form-button"
-          style={{ width: 'auto', padding: '0.75rem 1.5rem' }}
-          onClick={handleDownload}
-        >
-          Download CSV
-        </button>
       </div>
 
 
       <div className="table-container">
         <div className="table-header">
           <h3 className="table-title">Recent OpenCanary Alerts</h3>
+          <button
+            className="form-button"
+            style={{ width: 'auto', padding: '0.75rem 1.5rem' }}
+            onClick={handleDownload}
+          >
+            Download CSV
+          </button>
         </div>
         <div style={{ overflowX: 'auto' }}>
           <table className="data-table">

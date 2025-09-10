@@ -10,6 +10,7 @@ import type { CowrieLog } from '../types';
 import { useCowrieSocket } from '../service/websocket';
 import MapIP from '../components/MapIP';
 import CowrieLogTerminal from '../components/terminal/CowrieLogTerminal';
+import type { ChartData } from 'chart.js';
 
 const CowriePage: React.FC = () => {
   // routing
@@ -20,6 +21,7 @@ const CowriePage: React.FC = () => {
 
   // status and popup
   const [popupMap, setPopupMap] = useState(false);
+  const [popupChart, setPopupChart] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
 
@@ -81,8 +83,9 @@ const CowriePage: React.FC = () => {
 
 
 
-
-  // Chart data =================================================================================================
+  // =====================
+  // Chart data
+  // =====================
   const protocolData = {
     labels: ['SSH', 'Telnet'],
     datasets: [{
@@ -92,15 +95,14 @@ const CowriePage: React.FC = () => {
       borderWidth: 0,
     }]
   };
-  // Chart data =================================================================================================
 
 
 
 
 
-
-
-  // Top 10 passwords ===========================================================================================
+  // =====================
+  // Top 10 passwords
+  // =====================
   const passwordCounts: Record<string, number> = {};
   data.forEach(item => {
     if (item.password) {
@@ -131,7 +133,6 @@ const CowriePage: React.FC = () => {
       borderRadius: 4,
     }]
   };
-  // Top 10 passwords ===========================================================================================
 
 
 
@@ -139,8 +140,9 @@ const CowriePage: React.FC = () => {
 
 
 
-
-  // Top 10 usernames ===========================================================================================
+  // =====================
+  // Top 10 usernames 
+  // =====================
   const usernameCounts: Record<string, number> = {};
   data.forEach(item => {
     if (item.username) {
@@ -170,7 +172,53 @@ const CowriePage: React.FC = () => {
       borderRadius: 4,
     }]
   };
-  // Top 10 usernames ===========================================================================================
+
+
+
+  // =========================
+  // ช่วงเวลาที่มีการเชื่อมต่อ
+  // =========================
+  const hourlyCounts = Array(24).fill(0);
+
+  data.forEach(item => {
+    const date = new Date(item.timestamp);
+    const hour = date.getHours();
+    if (hour >= 0 && hour < 24) {
+      hourlyCounts[hour]++;
+    }
+  });
+
+  const datatest: ChartData<'line'> = {
+    labels: Array.from({ length: 24 }, (_, i) => `${i < 10 ? '0' : ''}${i}:00`),
+    datasets: [
+      {
+        label: 'จำนวนข้อมูล',
+        data: hourlyCounts,
+        fill: true,
+        borderColor: '#BAAE98',
+        backgroundColor: '#baae9880',
+        tension: 0.4,
+        pointBackgroundColor: '#5f523dff',
+        pointBorderColor: '#fff',
+        pointHoverBackgroundColor: '#fff',
+        pointHoverBorderColor: '#5f523dff',
+      },
+    ],
+  };
+
+
+  // =====================
+  // Chart แสดงว่าใช้คำสั่งถูกต้องหรือไม่
+  // =====================
+  const statusData = {
+    labels: ['failed', 'Command input'],
+    datasets: [{
+      data: [data.filter(log => log.eventid === 'cowrie.command.failed').length,
+      data.filter(log => log.eventid === 'cowrie.command.input').length],
+      backgroundColor: ['#400C11', '#c9baa2ff'],
+      borderWidth: 0,
+    }]
+  };
 
 
 
@@ -209,7 +257,6 @@ const CowriePage: React.FC = () => {
       x: {
         title: {
           display: true,
-          text: 'SSH or Telnet'
         }
       }
     }
@@ -380,16 +427,40 @@ const CowriePage: React.FC = () => {
         </button>
         <button
           className="form-button"
-          style={{ width: 'auto', padding: '0.75rem 1.5rem' }}
-          onClick={handleDownload}
+          style={{ width: 'auto', padding: '0.5rem 1rem' }}
+          onClick={() => setPopupChart(!popupChart)}
         >
-          Download CSV
+          {popupChart ? 'Close Chart' : 'dayly activity'}
         </button>
       </div>
+
+      {popupChart && (
+        <div className="charts-grid">
+          <ChartCard
+            title="dayly activity"
+            subtitle="activity per day"
+          >
+            <Chart type="line" data={datatest} height={250} options={options} />
+          </ChartCard>
+          <ChartCard
+            title="Protocol Distribution"
+            subtitle="SSH vs Telnet connections"
+          >
+            <Chart type="pie" data={statusData} height={250} options={PieOptions} />
+          </ChartCard>
+        </div>
+      )}
 
       <div className="table-container">
         <div className="table-header">
           <h3 className="table-title">Recent Cowrie Sessions</h3>
+          <button
+            className="form-button"
+            style={{ width: 'auto', padding: '0.5rem 1rem' }}
+            onClick={handleDownload}
+          >
+            Download CSV
+          </button>
         </div>
         <div style={{ overflowX: 'auto' }}>
           <table className="data-table">
@@ -404,10 +475,13 @@ const CowriePage: React.FC = () => {
               {currentItems.map((row, index) => (
                 <tr key={index} className='cowrie-row' style={{ backgroundColor: String(row.eventid).slice(-7) === 'connect' ? '#a9ff6f5b' : String(row.eventid).slice(-6) === 'closed' ? '#ffb77d5b' : '' }}>
                   <td>
-                    {new Date(row.timestamp).toLocaleDateString("en-EN", {
+                    {new Date(row.timestamp).toLocaleString("en-EN", {
                       day: "2-digit",
                       month: "2-digit",
                       year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      second: "2-digit",
                     })}
                   </td>
                   <td>{row.src_ip}</td>
