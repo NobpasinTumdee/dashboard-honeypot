@@ -8,6 +8,7 @@ import ChartCard from '../components/ChartCard';
 import type { CowrieLog } from '../types';
 import { useCowrieSocket } from '../service/websocket';
 import MapIP from '../components/MapIP';
+import CowrieLogTerminal from '../components/terminal/CowrieLogTerminal';
 
 const CowriePage: React.FC = () => {
   // routing
@@ -322,6 +323,10 @@ const CowriePage: React.FC = () => {
         >
           <Chart type="bar" data={usernameData} height={250} options={options} />
         </ChartCard>
+      </div>
+
+      <div>
+        <CowrieLogTerminal logs={data} />
       </div>
 
       {popupMap && (
