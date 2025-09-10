@@ -70,7 +70,7 @@ D --> E( Server ubuntu )
 2.  ไปที่ไดเรกทอรีของโปรเจกต์:
     
     ```
-    cd .\DashboardV2
+    cd .\DashboardV3
     
     ```
     
