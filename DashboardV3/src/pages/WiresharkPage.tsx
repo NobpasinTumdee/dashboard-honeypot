@@ -18,6 +18,9 @@ import Loader from "../components/loader/Loader";
 import { usePacketSocket, usePacketStatsSocket } from "../service/websocket";
 import type { DstPortStats, HttpsPacket, ProtocolStats, SrcIpStats, TimeSeriesPackets } from "../types";
 
+import { Dropdown, Menu} from "antd";
+import { DownOutlined } from "@ant-design/icons";
+
 
 type Range = "day" | "week" | "month";
 type CompareItem = { type: "protocol" | "ip" | "port"; value: string };
