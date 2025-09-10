@@ -198,6 +198,23 @@ const CowriePage: React.FC = () => {
     }
   };
 
+  const PieOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'bottom' as const,
+      },
+    },
+    scales: {
+      x: {
+        title: {
+          display: true,
+          text: 'SSH or Telnet'
+        }
+      }
+    }
+  };
+
 
   // ============================
   // แปลง ip และเอาไปปักใน map
@@ -316,7 +333,7 @@ const CowriePage: React.FC = () => {
           title="Protocol Distribution"
           subtitle="SSH vs Telnet connections"
         >
-          <Chart type="pie" data={protocolData} height={250} options={options} />
+          <Chart type="pie" data={protocolData} height={250} options={PieOptions} />
         </ChartCard>
         <ChartCard
           title="Top 10 Passwords"
