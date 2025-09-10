@@ -191,7 +191,7 @@ const WiresharkPage: React.FC = () => {
       <Menu.Item key="port" onClick={() => exportToCSV(port, "port_stats")}>
         Export Port Stats
       </Menu.Item>
-      <Menu.Item key="agg" onClick={() => exportToCSV(aggregatedData, "aggregated_data")}>
+      <Menu.Item key="agg" onClick={() => exportToCSV(aggregatedData, "packet_stats")}>
         Export Packet Stats
       </Menu.Item>
     </Menu>
