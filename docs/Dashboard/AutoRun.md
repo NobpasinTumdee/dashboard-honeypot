@@ -1,6 +1,7 @@
  # การตั้งค่าเริ่มต้น
 ก่อนอื่นต้องสร้างไฟล์ service สำหรับแต่ละโปรแกรมก่อน โดยไฟล์เหล่านี้จะเก็บอยู่ใน `etc/systemd/system/` และลงท้ายด้วย `.service`
 
+
 ## 1. ไฟล์ service สำหรับ Node.js
 สร้างไฟล์ชื่อ `backend.service` ด้วยคำสั่ง
 ```bash
@@ -28,6 +29,9 @@ WantedBy=multi-user.target
     
 >   **User** คือ user ที่จะใช้รัน service
 
+
+
+
 ## 2. ไฟล์ service สำหรับ Python
 สร้างไฟล์ชื่อ `python_script.service` ด้วยคำสั่ง
 ```bash
@@ -52,6 +56,9 @@ WantedBy=multi-user.target
     
 >  **After=backend.service** คือการระบุว่า service นี้จะเริ่มรันหลังจาก `backend.service` เริ่มทำงานแล้ว
 
+
+
+
 ### 3. ไฟล์ service สำหรับ Ngrok
 
 Ngrok มีวิธีการตั้งค่าที่แตกต่างกันเล็กน้อย เพราะต้องการใช้ token ด้วย สามารถตั้งค่าให้ Ngrok เชื่อมต่ออัตโนมัติได้โดยใช้ **systemd** เช่นกัน สร้างไฟล์ชื่อ `ngrok.service` ด้วยคำสั่ง 
@@ -73,6 +80,9 @@ User=YourUser
 WantedBy=multi-user.target
 ```
 > **xecStart** คือคำสั่งที่ใช้รัน Ngrok. **ตรวจสอบให้แน่ใจว่า path ของ `ngrok` ถูกต้อง**
+
+
+
 
 
 ## เปิดใช้งาน service
