@@ -7,7 +7,7 @@ from datetime import datetime
 # กำหนดเส้นทางไฟล์ Linux
 COWRIE_JSON_LOG_PATH = '/home/cowrie/cowrie/var/log/cowrie/cowrie.json'
 OPENCANARY_LOG_PATH = '/var/tmp/opencanary.log'
-SQLITE_DB_PATH = '/home/cpe27/dashboard-honeypot/server/API/socket/HeneyPot.db'
+SQLITE_DB_PATH = '/home/cpe27/HeneyPot.db'
 
 # กำหนดเส้นทางไฟล์ windows
 # COWRIE_JSON_LOG_PATH = 'C:/Users/ACER/Documents/GitHub/dashboard-honeypot/server/plugin/convertData/cowrie.json'
