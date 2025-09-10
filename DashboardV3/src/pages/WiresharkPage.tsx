@@ -18,7 +18,7 @@ import Loader from "../components/loader/Loader";
 import { usePacketSocket, usePacketStatsSocket } from "../service/websocket";
 import type { DstPortStats, HttpsPacket, ProtocolStats, SrcIpStats, TimeSeriesPackets } from "../types";
 
-import { Dropdown, Menu} from "antd";
+import { Dropdown, Menu } from "antd";
 import { DownOutlined } from "@ant-design/icons";
 
 
@@ -151,35 +151,35 @@ const WiresharkPage: React.FC = () => {
 
   // ================== Export CSV ==================
   const exportToCSV = (data: any[], filename: string) => {
-  if (!data || data.length === 0) {
-    alert("No data available for export");
-    return;
-  }
+    if (!data || data.length === 0) {
+      alert("No data available for export");
+      return;
+    }
 
-  const withId = data.map((item, idx) => ({ id: idx + 1, ...item }));
+    const withId = data.map((item, idx) => ({ id: idx + 1, ...item }));
 
-  const headers = Object.keys(withId[0]);
-  const csvRows = [
-    headers.join(","), 
-    ...withId.map(row =>
-      headers.map(field => JSON.stringify(row[field] ?? "")).join(",")
-    )
-  ];
+    const headers = Object.keys(withId[0]);
+    const csvRows = [
+      headers.join(","),
+      ...withId.map(row =>
+        headers.map(field => JSON.stringify(row[field] ?? "")).join(",")
+      )
+    ];
 
-  const csvString = csvRows.join("\n");
-  const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
-  const url = window.URL.createObjectURL(blob);
+    const csvString = csvRows.join("\n");
+    const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+    const url = window.URL.createObjectURL(blob);
 
-  const today = new Date().toISOString().slice(0, 10);
-  const finalName = `${filename}_${today}.csv`;
+    const today = new Date().toISOString().slice(0, 10);
+    const finalName = `${filename}_${today}.csv`;
 
-  const link = document.createElement("a");
-  link.href = url;
-  link.setAttribute("download", finalName);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-};
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", finalName);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
 
   const exportMenu = (
     <Menu>
@@ -360,22 +360,22 @@ const WiresharkPage: React.FC = () => {
   return (
     <div>
       {/* Page Header */}
-    <div className="page-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-      <div>
-        <h1 className="page-title">Wireshark Analysis</h1>
-        <p className="page-subtitle" style={{ margin: 0 }}>
-          Network packet analysis and HTTP/HTTPS traffic monitoring
-        </p>
-      </div>
+      <div className="page-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div>
+          <h1 className="page-title">Wireshark Analysis</h1>
+          <p className="page-subtitle" style={{ margin: 0 }}>
+            Network packet analysis and HTTP/HTTPS traffic monitoring
+          </p>
+        </div>
 
-      <div>
-        <Dropdown overlay={exportMenu} trigger={['click']}>
-          <Button>
-            Download CSV <DownOutlined />
-          </Button>
-        </Dropdown>
+        <div>
+          <Dropdown overlay={exportMenu} trigger={['click']}>
+            <Button>
+              Download CSV <DownOutlined />
+            </Button>
+          </Dropdown>
+        </div>
       </div>
-    </div>
 
       {/* Stats Grid */}
       <div className="stats-grid">
