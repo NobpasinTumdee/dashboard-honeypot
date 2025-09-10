@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import StatCard from '../components/StatCard';
+import Loader from '../components/loader/Loader';
 
 import type { Users } from '../types';
 import { mockUsersData } from '../mockData';
@@ -113,6 +114,12 @@ const UsersPage: React.FC = () => {
     )
   }
 
+  if (!isConnected) {
+    return (
+      <Loader />
+    )
+  }
+
   return (
     <div>
       <div className="page-header">
@@ -123,14 +130,14 @@ const UsersPage: React.FC = () => {
       <div className="stats-grid">
         <StatCard
           title="Total Users"
-          value={users.length - 1}
+          value={users.length}
           icon="👥"
           variant="primary"
         />
         <StatCard
           title="Active Users"
           value={activeUsers}
-          change={`${Math.round((activeUsers / (users.length - 1)) * 100)}%`}
+          change={`${Math.round((activeUsers / (users.length)) * 100)}%`}
           changeType="positive"
           icon="✅"
           variant="success"

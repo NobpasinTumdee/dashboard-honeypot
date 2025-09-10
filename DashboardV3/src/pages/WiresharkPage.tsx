@@ -12,6 +12,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import StatCard from '../components/StatCard';
 import DataTable from '../components/DataTable';
 import CombinedPieChart from "../components/ChartWireShark";
+import Loader from "../components/loader/Loader";
 
 
 import { usePacketSocket, usePacketStatsSocket } from "../service/websocket";
@@ -298,30 +299,30 @@ const WiresharkPage: React.FC = () => {
     [port]
   );
 
-    // ============== Search ================
+  // ============== Search ================
   const [searchType, setSearchType] = useState<"any" | "ip" | "port" | "protocol">("any");
   const [searchTerm, setSearchTerm] = useState("");
   const filterData = (type: "ip" | "port" | "protocol", data: { name: string; value: number }[]) => {
-  let filtered = data;
+    let filtered = data;
 
-  if (searchTerm) {
-    filtered = data.filter(item => {
-      if (searchType === "any") return item.name.toLowerCase().includes(searchTerm.toLowerCase());
-      if (searchType === type) return item.name.toLowerCase().includes(searchTerm.toLowerCase());
-      return true;
-    });
-  }
+    if (searchTerm) {
+      filtered = data.filter(item => {
+        if (searchType === "any") return item.name.toLowerCase().includes(searchTerm.toLowerCase());
+        if (searchType === type) return item.name.toLowerCase().includes(searchTerm.toLowerCase());
+        return true;
+      });
+    }
 
-  // ถ้าไม่ได้ค้น → แสดงแค่ 10 อันแรก
-  return searchTerm ? filtered : filtered.slice(0, 10);
+    // ถ้าไม่ได้ค้น → แสดงแค่ 10 อันแรก
+    return searchTerm ? filtered : filtered.slice(0, 10);
   };
 
   // =========== calculate percentage ===============
   const totalByType = {
-  protocol: topProtocols.reduce((sum, item) => sum + item.value, 0),
-  ip: topIPs.reduce((sum, item) => sum + item.value, 0),
-  port: topPorts.reduce((sum, item) => sum + item.value, 0),
-};
+    protocol: topProtocols.reduce((sum, item) => sum + item.value, 0),
+    ip: topIPs.reduce((sum, item) => sum + item.value, 0),
+    port: topPorts.reduce((sum, item) => sum + item.value, 0),
+  };
 
   const uniqueSourceIPs = new Set(dataPacket.map(p => p.src_ip)).size;
 
@@ -345,6 +346,13 @@ const WiresharkPage: React.FC = () => {
     { key: 'request_uri', header: 'URI' },
     { key: 'userAgent', header: 'User Agent', render: (value: string) => value.length > 50 ? value.substring(0, 50) + '...' : value }
   ];
+
+
+  if (!isConnected) {
+    return (
+      <Loader />
+    )
+  }
 
   return (
     <div>
@@ -449,14 +457,14 @@ const WiresharkPage: React.FC = () => {
         isOpen={isCompareOpen}
         onRequestClose={() => setIsCompareOpen(false)}
         style={{
-          overlay: { 
-            backgroundColor: 'rgba(0,0,0,0.7)', 
+          overlay: {
+            backgroundColor: 'rgba(0,0,0,0.7)',
           },
-          content: { 
-            inset: "8%", 
-            padding: 20, 
-            borderRadius: 16, 
-            height: "auto", 
+          content: {
+            inset: "8%",
+            padding: 20,
+            borderRadius: 16,
+            height: "auto",
             backgroundColor: 'var(--bg-tertiary)',
             border: '1px solid rgba(255,255,255,0.1)',
             boxShadow: '0 20px 40px rgba(0, 0, 0, 0.4)'
@@ -489,10 +497,10 @@ const WiresharkPage: React.FC = () => {
 
         {/* Header */}
         <div style={{ marginBottom: 20 }}>
-          <h2 style={{ 
-            margin: 0, 
-            marginBottom: 8, 
-            fontSize: 22, 
+          <h2 style={{
+            margin: 0,
+            marginBottom: 8,
+            fontSize: 22,
             fontWeight: 600,
             color: "var(--text-primary)"
           }}>
@@ -501,18 +509,18 @@ const WiresharkPage: React.FC = () => {
         </div>
 
         {/* Search Bar */}
-        <div style={{ 
-          display: "flex", 
-          gap: 12, 
+        <div style={{
+          display: "flex",
+          gap: 12,
           marginBottom: 20,
           padding: 12,
           background: "rgba(255,255,255,0.05)",
           borderRadius: 8,
           border: "1px solid rgba(255,255,255,0.1)"
         }}>
-          <Select 
-            value={searchType} 
-            onChange={(v) => setSearchType(v)} 
+          <Select
+            value={searchType}
+            onChange={(v) => setSearchType(v)}
             style={{ width: 130 }}
           >
             <Select.Option value="any">Any</Select.Option>
@@ -527,8 +535,8 @@ const WiresharkPage: React.FC = () => {
             onChange={(e) => setSearchTerm(e.target.value)}
             style={{
               flex: 1,
-              padding: "8px 12px", 
-              border: "1px solid rgba(255,255,255,0.2)", 
+              padding: "8px 12px",
+              border: "1px solid rgba(255,255,255,0.2)",
               borderRadius: 6,
               background: "rgba(255,255,255,0.05)",
               color: "var(--text-primary)",
@@ -540,11 +548,11 @@ const WiresharkPage: React.FC = () => {
         <DragDropContext onDragEnd={onDragEnd}>
           <div style={{ display: "flex", gap: 20, height: "65vh" }}>
             {/* Left Panel */}
-            <div style={{ 
-              width: "30%", 
-              overflowY: "auto", 
-              display: "flex", 
-              flexDirection: "column", 
+            <div style={{
+              width: "30%",
+              overflowY: "auto",
+              display: "flex",
+              flexDirection: "column",
               gap: 16
             }}>
               {["protocol", "ip", "port"].map(type => {
@@ -556,21 +564,21 @@ const WiresharkPage: React.FC = () => {
                 return (
                   <Droppable droppableId={type} key={type}>
                     {(provided, snapshot) => (
-                      <div 
-                        ref={provided.innerRef} 
-                        {...provided.droppableProps} 
-                        style={{ 
-                          padding: 12, 
+                      <div
+                        ref={provided.innerRef}
+                        {...provided.droppableProps}
+                        style={{
+                          padding: 12,
                           borderRadius: 8,
-                          background: snapshot.isDraggingOver 
-                            ? "rgba(var(--accent-primary-rgb), 0.1)" 
+                          background: snapshot.isDraggingOver
+                            ? "rgba(var(--accent-primary-rgb), 0.1)"
                             : "rgba(255,255,255,0.05)",
                           border: "1px solid rgba(255,255,255,0.1)"
                         }}
                       >
-                        <h3 style={{ 
-                          borderBottom: "2px solid var(--text-primary)", 
-                          paddingBottom: "8px", 
+                        <h3 style={{
+                          borderBottom: "2px solid var(--text-primary)",
+                          paddingBottom: "8px",
                           marginBottom: "12px",
                           margin: 0,
                           fontSize: 15,
@@ -627,7 +635,7 @@ const WiresharkPage: React.FC = () => {
                                       type: {type === "protocol" ? "Protocol" : type === "ip" ? "IP Address" : "Port"}
                                     </div>
                                   </div>
-                                                            )}
+                                )}
                               </Draggable>
                             ))
                           }
@@ -641,12 +649,12 @@ const WiresharkPage: React.FC = () => {
             </div>
 
             {/* Right Panel */}
-            <div style={{ 
-              width: "70%", 
-              display: "flex", 
-              flexDirection: "column", 
-              gap: 16, 
-              overflowY: "auto" 
+            <div style={{
+              width: "70%",
+              display: "flex",
+              flexDirection: "column",
+              gap: 16,
+              overflowY: "auto"
             }}>
               {/* Clear Comparison Button */}
               <div style={{ display: "flex", justifyContent: "flex-start" }}>
@@ -675,13 +683,13 @@ const WiresharkPage: React.FC = () => {
                     {...provided.droppableProps}
                     style={{
                       minHeight: 100,
-                      background: snapshot.isDraggingOver 
-                        ? "rgba(var(--accent-primary-rgb), 0.1)" 
+                      background: snapshot.isDraggingOver
+                        ? "rgba(var(--accent-primary-rgb), 0.1)"
                         : "rgba(255,255,255,0.03)",
                       padding: 12,
                       borderRadius: 8,
-                      border: snapshot.isDraggingOver 
-                        ? "2px dashed var(--accent-primary)" 
+                      border: snapshot.isDraggingOver
+                        ? "2px dashed var(--accent-primary)"
                         : "2px dashed rgba(255,255,255,0.3)",
                       display: "flex",
                       flexWrap: "wrap",
@@ -704,7 +712,7 @@ const WiresharkPage: React.FC = () => {
                         Drag items here to compare
                       </div>
                     )}
-                    
+
                     {compareItems.map((item, idx) => {
                       const count =
                         item.type === "protocol"
@@ -729,20 +737,20 @@ const WiresharkPage: React.FC = () => {
                                 border: "1px solid var(--text-primary)",
                                 borderRadius: 6,
                                 cursor: "grab",
-                                background: dragSnapshot.isDragging 
+                                background: dragSnapshot.isDragging
                                   ? "rgba(var(--accent-primary-rgb), 0.2)"
                                   : "rgba(255,255,255,0.08)",
-                                boxShadow: dragSnapshot.isDragging 
-                                  ? "0 4px 8px rgba(0, 0, 0, 0.2)" 
+                                boxShadow: dragSnapshot.isDragging
+                                  ? "0 4px 8px rgba(0, 0, 0, 0.2)"
                                   : "none",
                                 minWidth: "fit-content",
                                 maxWidth: "200px",
                                 ...drag.draggableProps.style,
                               }}
                             >
-                              <div style={{ 
-                                fontWeight: 600, 
-                                fontSize: 13, 
+                              <div style={{
+                                fontWeight: 600,
+                                fontSize: 13,
                                 color: "var(--text-primary)",
                                 overflow: "hidden",
                                 textOverflow: "ellipsis",
@@ -750,8 +758,8 @@ const WiresharkPage: React.FC = () => {
                               }}>
                                 {item.type}: {item.value}
                               </div>
-                              <div style={{ 
-                                fontSize: 11, 
+                              <div style={{
+                                fontSize: 11,
                                 color: "var(--text-secondary)",
                                 fontWeight: 500
                               }}>
@@ -779,7 +787,7 @@ const WiresharkPage: React.FC = () => {
                     <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.2)" />
                     <XAxis dataKey="time" tick={{ fill: 'var(--text-secondary)', fontSize: 12 }} />
                     <YAxis allowDecimals={false} tick={{ fill: 'var(--text-secondary)', fontSize: 12 }} />
-                    <Tooltip 
+                    <Tooltip
                       labelFormatter={formatModalTooltipLabel}
                       contentStyle={{
                         background: 'var(--bg-tertiary)',
@@ -810,9 +818,9 @@ const WiresharkPage: React.FC = () => {
                 border: "1px solid rgba(255,255,255,0.1)"
               }}>
                 <Space>
-                  <Select 
-                    value={compareRange} 
-                    onChange={v => setCompareRange(v as Range)} 
+                  <Select
+                    value={compareRange}
+                    onChange={v => setCompareRange(v as Range)}
                     style={{ width: 170 }}
                   >
                     <Select.Option value="day">Daily (per hour)</Select.Option>

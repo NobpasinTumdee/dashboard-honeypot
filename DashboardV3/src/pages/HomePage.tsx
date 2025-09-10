@@ -5,10 +5,11 @@ import Chart from '../components/Chart';
 import StatCard from '../components/StatCard';
 import ChartCard from '../components/ChartCard';
 import DataTable from '../components/DataTable';
+import Loader from '../components/loader/Loader';
+import MapIP from '../components/MapIP';
 
 import type { CanaryLog, CowrieLog, HttpsPacket } from '../types';
 import { useCanarySocket, useCowrieSocket, usePacketSocket } from '../service/websocket';
-import MapIP from '../components/MapIP';
 
 const HomePage: React.FC = () => {
   // routing
@@ -241,6 +242,12 @@ const HomePage: React.FC = () => {
         </h2>
         <button onClick={() => navigate('/login')}>Go to Log in</button>
       </div>
+    )
+  }
+
+  if (!isConnected) {
+    return (
+      <Loader />
     )
   }
 
