@@ -40,12 +40,12 @@ const LoginPage: React.FC = () => {
         localStorage.setItem("UserName", response.data.payload.UserName);
         localStorage.setItem("token_type", response.data.token_type);
         localStorage.setItem("token", response.data.token);
-        messageApi.success(response.data.message, 3)
+        messageApi.success(response.data.message, 2)
         setIsLoading(false);
         setTimeout(() => {
           navigate('/')
           window.location.reload();
-        }, 3000);
+        }, 2000);
       } else {
         const errorMessage = response?.data?.error;
         messageApi.error(errorMessage, 3)

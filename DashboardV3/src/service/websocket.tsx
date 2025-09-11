@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { io, Socket } from "socket.io-client";
+import { jwtDecode } from "jwt-decode";
 
 import type {
     CanaryLog,
@@ -16,6 +17,14 @@ import type {
 const Url = localStorage.getItem("apiUrl");
 const apiUrl = `${Url || 'http://localhost:3000'}`
 
+interface TokenPayload {
+    UserID: number;
+    UserName: string;
+    Status: string;
+    iat: number;
+    exp: number;
+}
+
 const getToken = (): string | null => {
     return localStorage.getItem("token");
 };
@@ -26,7 +35,8 @@ const getToken = (): string | null => {
 export const useCowrieSocket = (
     setData: (data: CowrieLog[]) => void,
     setIsConnected: (status: boolean) => void,
-    setIsLogin: (status: boolean) => void
+    setIsLogin: (status: boolean) => void,
+    setIsError: (status: string) => void
 ) => {
     const socketRef = useRef<Socket | null>(null);
 
@@ -34,10 +44,41 @@ export const useCowrieSocket = (
         const token = getToken();
         if (!token) {
             console.log("No token found. Cannot connect to WebSocket.");
+            setIsLogin(false);
+            setIsError("No token found");
             return;
-        } else {
-            setIsLogin(true);
         }
+
+        let decoded: TokenPayload;
+        try {
+            decoded = jwtDecode<TokenPayload>(token);
+        } catch (err) {
+            console.error("Invalid token:", err);
+            setIsLogin(false);
+            setIsError("Invalid token format");
+            return;
+        }
+
+        // ตรวจสอบ Status
+        if (decoded.Status !== "Authenticated") {
+            console.log("User is not authenticated. Cannot connect to WebSocket.");
+            setIsLogin(false);
+            setIsError("User not authenticated");
+            return;
+        }
+
+        // ตรวจสอบวันหมดอายุ
+        const now = Math.floor(Date.now() / 1000); // วินาที
+        if (decoded.exp && decoded.exp < now) {
+            console.log("Token expired. Cannot connect to WebSocket.");
+            setIsLogin(false);
+            setIsError("Token expired");
+            return;
+        }
+
+        // ถ้า token ถูกต้องทั้งหมด
+        setIsLogin(true);
+        setIsError("Access rights verified successfully!");
 
         const socket = io(apiUrl, { auth: { token }, transports: ['websocket'], withCredentials: true });
         socketRef.current = socket;
@@ -78,7 +119,8 @@ export const useCowrieSocket = (
 export const useCanarySocket = (
     setData: (data: CanaryLog[]) => void,
     setIsConnected: (status: boolean) => void,
-    setIsLogin: (status: boolean) => void
+    setIsLogin: (status: boolean) => void,
+    setIsError: (status: string) => void
 ) => {
     const socketRef = useRef<Socket | null>(null);
 
@@ -86,10 +128,41 @@ export const useCanarySocket = (
         const token = getToken();
         if (!token) {
             console.log("No token found. Cannot connect to WebSocket.");
+            setIsLogin(false);
+            setIsError("No token found");
             return;
-        } else {
-            setIsLogin(true);
         }
+
+        let decoded: TokenPayload;
+        try {
+            decoded = jwtDecode<TokenPayload>(token);
+        } catch (err) {
+            console.error("Invalid token:", err);
+            setIsLogin(false);
+            setIsError("Invalid token format");
+            return;
+        }
+
+        // ตรวจสอบ Status
+        if (decoded.Status !== "Authenticated") {
+            console.log("User is not authenticated. Cannot connect to WebSocket.");
+            setIsLogin(false);
+            setIsError("User not authenticated");
+            return;
+        }
+
+        // ตรวจสอบวันหมดอายุ
+        const now = Math.floor(Date.now() / 1000); // วินาที
+        if (decoded.exp && decoded.exp < now) {
+            console.log("Token expired. Cannot connect to WebSocket.");
+            setIsLogin(false);
+            setIsError("Token expired");
+            return;
+        }
+
+        // ถ้า token ถูกต้องทั้งหมด
+        setIsLogin(true);
+        setIsError("Access rights verified successfully!");
 
         const socket = io(apiUrl, { auth: { token }, transports: ['websocket'], withCredentials: true });
         socketRef.current = socket;

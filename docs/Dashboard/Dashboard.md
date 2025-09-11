@@ -131,4 +131,5 @@ D --> E( Server ubuntu )
     npm i @hello-pangea/dnd
     npm i react-modal
     npm i @types/react-modal
+    npm install jwt-decode
     ```
