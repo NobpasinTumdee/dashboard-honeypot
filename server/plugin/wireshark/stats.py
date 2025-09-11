@@ -3,7 +3,7 @@ import threading
 from datetime import datetime
 import pyshark
 
-DB_FILE ="/home/os/dashboard-honeypot/server/API/socket/HeneyPot.db"
+DB_FILE ='/home/cpe27/HeneyPot.db'
 SERVER_IP = "172.29.169.27"
 
 lock = threading.Lock()

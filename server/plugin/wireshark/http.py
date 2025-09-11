@@ -3,7 +3,7 @@ import sqlite3
 from datetime import datetime
 
 interface = 'ztcfw2abid'
-db_file = '/home/os/dashboard-honeypot/server/API/socket/HeneyPot.db'
+db_file = '/home/cpe27/HeneyPot.db'
 
 # -----------------------------
 # สร้าง/เชื่อมต่อฐานข้อมูล SQLite
@@ -32,7 +32,7 @@ capture = pyshark.LiveCapture(
     interface=interface, 
     display_filter='http',
     custom_parameters=[ 
-        "-o", "tls.keys_list:/etc/nginx/ssl/server.key" ## รอ key ของ honeypot มาแทน 
+        "-o", "tls.keys_list:/etc/ssl/opencanary/opencanary.key" ## รอ key ของ honeypot มาแทน 
     ]
     )
 print("Starting LiveCapture on interface:", interface)
