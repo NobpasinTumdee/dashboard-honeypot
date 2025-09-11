@@ -13,7 +13,9 @@
 * [Dashborad Frontend](/docs/Dashboard/Dashboard.md)
 * [Dashborad Backend](/docs/Dashboard/Backend.md)
 * [Auto Run Server](/docs/Dashboard/AutoRun.md)
-
+### AI
+* [AI Setup](/docs/AI/AI_Setup.md)
+* [AI Run](/docs/AI/AI_Run.md)
 
 # Graph ระบบโดยรวม
 ```mermaid
