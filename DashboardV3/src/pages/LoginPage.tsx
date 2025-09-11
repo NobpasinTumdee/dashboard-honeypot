@@ -40,12 +40,14 @@ const LoginPage: React.FC = () => {
         localStorage.setItem("UserName", response.data.payload.UserName);
         localStorage.setItem("token_type", response.data.token_type);
         localStorage.setItem("token", response.data.token);
-        messageApi.success('Login successful!', 3)
+        messageApi.success(response.data.message, 3)
         setIsLoading(false);
-        navigate('/')
-        window.location.reload();
+        setTimeout(() => {
+          navigate('/')
+          window.location.reload();
+        }, 3000);
       } else {
-        const errorMessage = response?.data?.message || 'Gmail or Password is incorrect';
+        const errorMessage = response?.data?.error;
         messageApi.error(errorMessage, 3)
         setError(errorMessage);
         setIsLoading(false);
@@ -76,11 +78,12 @@ const LoginPage: React.FC = () => {
       setIsLoading(true);
       const res = await SignUp(formData);
       if (res?.status === 201) {
-        messageApi.success('SignUp successful!', 3)
+        messageApi.success(res?.data?.message, 3)
         setIsLoading(false);
         setIsSignUp(false);
       } else {
-        const errorMessage = res?.data?.message || 'Gmail or Password is incorrect';
+        const errorMessage = res?.data?.error;
+        messageApi.error(errorMessage, 3)
         setError(errorMessage);
         setIsLoading(false);
       }
