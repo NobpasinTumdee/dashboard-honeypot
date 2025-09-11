@@ -24,9 +24,10 @@ const CowriePage: React.FC = () => {
   const [popupChart, setPopupChart] = useState(false);
   const [isConnected, setIsConnected] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
+  const [isError, setIsError] = useState<string>('');
 
   // Custom hook to manage WebSocket connection
-  useCowrieSocket(setData, setIsConnected, setIsLogin);
+  useCowrieSocket(setData, setIsConnected, setIsLogin, setIsError);
 
 
 
@@ -328,6 +329,7 @@ const CowriePage: React.FC = () => {
         <h2>
           You are not logged in. Please log in to access this page.
         </h2>
+        <p>{isError}</p>
         <button onClick={() => navigate('/login')}>Go to Log in</button>
       </div>
     )
@@ -343,7 +345,7 @@ const CowriePage: React.FC = () => {
     <div>
       <div className="page-header">
         <h1 className="page-title">Cowrie Honeypot</h1>
-        <p className="page-subtitle">SSH/Telnet honeypot monitoring and analysis</p>
+        <p className="page-subtitle">SSH/Telnet honeypot monitoring and analysis <b style={{ color: 'var(--accent-primary)' }}>{isError}</b></p>
       </div>
 
       <div className="stats-grid">

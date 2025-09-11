@@ -7,6 +7,7 @@ import ChartCard from '../components/ChartCard';
 import DataTable from '../components/DataTable';
 import Loader from '../components/loader/Loader';
 import MapIP from '../components/MapIP';
+import { Marquee } from '../components/Marquee';
 
 import type { CanaryLog, CowrieLog, HttpsPacket } from '../types';
 import { useCanarySocket, useCowrieSocket, usePacketSocket } from '../service/websocket';
@@ -22,10 +23,11 @@ const HomePage: React.FC = () => {
   // status
   const [isConnected, setIsConnected] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
+  const [isError, setIsError] = useState<string>('');
   const [popupMap, setPopupMap] = useState(false);
 
-  useCowrieSocket(setCowrieData, setIsConnected, setIsLogin);
-  useCanarySocket(setCanaryData, setIsConnected, setIsLogin);
+  useCowrieSocket(setCowrieData, setIsConnected, setIsLogin, setIsError);
+  useCanarySocket(setCanaryData, setIsConnected, setIsLogin, setIsError);
   usePacketSocket(setDataPacket, setIsConnected, setIsLogin);
 
 
@@ -253,9 +255,10 @@ const HomePage: React.FC = () => {
 
   return (
     <div>
+      <Marquee />
       <div className="page-header">
         <h1 className="page-title">Dashboard</h1>
-        <p className="page-subtitle">Overview of all honeypot systems <b style={{ color: isConnected ? 'var(--accent-primary)' : 'red' }}>Server : {isConnected ? 'Online 🌐' : 'Offline 🔴'}</b></p>
+        <p className="page-subtitle">Overview of all honeypot systems <b style={{ color: isConnected ? 'var(--accent-primary)' : 'red' }}>Server : {isConnected ? 'Online 🌐' : 'Offline 🔴'}</b> <b style={{ color: 'var(--accent-primary)' }}>{isError}</b></p>
       </div>
 
       <div className="stats-grid">

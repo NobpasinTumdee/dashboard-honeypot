@@ -52,6 +52,10 @@ io.use((socket, next) => {
       console.log('🚫 WebSocket Token verification failed:', err.message);
       return next(new Error('Authentication error: Invalid token'));
     }
+    if (user.Status !== 'Authenticated') {
+      console.log('🚫 User is not admin for WebSocket connection.');
+      return next(new Error('Authentication error: User is not admin'));
+    }
     socket.user = user;
     console.log(`✅ User ${user.UserID} authenticated for WebSocket.`);
     next();

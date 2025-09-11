@@ -47,7 +47,7 @@ const MapIP: React.FC<MapIPProps> = ({ ipAddresses }) => {
 
             for (const ip of ipAddresses) {
                 try {
-                    await new Promise(resolve => setTimeout(resolve, 3000));
+                    await new Promise(resolve => setTimeout(resolve, 500));
                     const response = await axios.get(`https://api.ipbase.com/v1/json/${ip}`);
                     if (response.status === 200) {
                         fetchedData.push({
@@ -75,7 +75,7 @@ const MapIP: React.FC<MapIPProps> = ({ ipAddresses }) => {
     }, [ipAddresses]);
 
     if (loading) {
-        return <div>Loading map data... <br /> Please wait a few seconds. <br /> ยิ่งมี ip ต่างกันเยอะยิ่งนานเพราะ API มันจำกัดคำขอ ผมจึงตั้งเวลา 3 วินาที ต่อ 1 ip</div>;
+        return <div>Loading map data... <br /> Please wait a few seconds. <br /> ยิ่งมี ip ต่างกันเยอะยิ่งนานเพราะ API มันจำกัดคำขอ ผมจึงตั้งเวลา 0.5 วินาที ต่อ 1 ip</div>;
     }
 
     return (

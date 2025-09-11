@@ -18,7 +18,7 @@ router.post("/register", async (req, res) => {
         });
 
         if (existingUser) {
-            return res.status(409).json({ message: "Email is already registered." });
+            return res.status(409).json({ error: "Email is already registered." });
         }
 
         const hashedPassword = await bcrypt.hash(req.body.Password, 10); // Hash password
@@ -37,10 +37,12 @@ router.post("/register", async (req, res) => {
                 createdAt: true,
             },
         });
-        res.status(201).json(newUser);
+        res.status(201).json({
+            message: "Registration completed. Your status is " + newUser.Status + ". Please inform the administrator.",
+        });
     } catch (err) {
         console.error(err);
-        res.status(500).json("Error registering user.");
+        res.status(500).json({ error: "Error registering user." });
     }
 });
 
@@ -56,7 +58,7 @@ router.post("/login", async (req, res) => {
         });
 
         if (!user) {
-            return res.status(401).json("Wrong credentials!");
+            return res.status(401).json({ error: "This account does not exist for registration." });
         }
 
         const isPasswordCorrect = await bcrypt.compare(
@@ -65,7 +67,7 @@ router.post("/login", async (req, res) => {
         );
 
         if (!isPasswordCorrect) {
-            return res.status(401).json("Wrong credentials!");
+            return res.status(401).json({ error: "Password or Email is incorrect!" });
         }
 
         // สร้าง JWT Token
@@ -81,14 +83,14 @@ router.post("/login", async (req, res) => {
         );
 
         res.json({
-            message: "Login Success!!!",
+            message: "Welcome " + user.UserName + " Your token has a lifespan of only 1 day.",
             payload: payload,
             token: accessToken,
             token_type: "Bearer",
         });
     } catch (err) {
         console.error(err);
-        res.status(500).json("Error logging in.");
+        res.status(500).json({ error: "Login failed - Internal Server Error" });
     }
 });
 
