@@ -1,11 +1,12 @@
 import React from 'react';
+import { Marquee } from '../components/Marquee';
 // import mc1 from '../assets/mc/MC4-Photoroom.png'
 // import mc2 from '../assets/mc/MC3-Photoroom.png'
 
 const HeroPage: React.FC = () => {
   return (
     <div>
-
+      <Marquee />
       <section className="hero-section">
         <h1 className="hero-title" style={{ fontSize: '2rem' }}>Advanced Honeypot Monitoring</h1>
         <h1 className="hero-title" style={{ fontSize: '5rem' }}>Smart Tiny HoneyPot</h1>

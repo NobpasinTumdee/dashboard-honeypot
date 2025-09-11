@@ -116,3 +116,10 @@ export interface NavigationItem {
   name: string;
   href: string;
 }
+
+
+export interface criticalCommand {
+  value: string;
+  Description: string;
+  EnglishDescription: string;
+}

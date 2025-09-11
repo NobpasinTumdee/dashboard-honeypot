@@ -7,6 +7,7 @@ import ChartCard from '../components/ChartCard';
 import DataTable from '../components/DataTable';
 import Loader from '../components/loader/Loader';
 import MapIP from '../components/MapIP';
+import { Marquee } from '../components/Marquee';
 
 import type { CanaryLog, CowrieLog, HttpsPacket } from '../types';
 import { useCanarySocket, useCowrieSocket, usePacketSocket } from '../service/websocket';
@@ -253,6 +254,7 @@ const HomePage: React.FC = () => {
 
   return (
     <div>
+      <Marquee />
       <div className="page-header">
         <h1 className="page-title">Dashboard</h1>
         <p className="page-subtitle">Overview of all honeypot systems <b style={{ color: isConnected ? 'var(--accent-primary)' : 'red' }}>Server : {isConnected ? 'Online 🌐' : 'Offline 🔴'}</b></p>

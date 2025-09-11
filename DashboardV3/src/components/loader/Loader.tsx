@@ -1,9 +1,11 @@
+import { Marquee } from '../Marquee';
 import './Loader.css';
 
 const Loader = () => {
     return (
         <>
             <div className='loader-container'>
+                <Marquee />
                 <div className="loader-wrapper">
                     <span className="loader-letter">L</span>
                     <span className="loader-letter">o</span>
