@@ -2,7 +2,7 @@ import pyshark
 import sqlite3
 from datetime import datetime
 
-interface = 'ztmosdoimw'
+interface = 'ztcfw2abid'
 db_file = '/home/os/dashboard-honeypot/server/API/socket/HeneyPot.db'
 
 # -----------------------------

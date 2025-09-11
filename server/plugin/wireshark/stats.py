@@ -4,7 +4,7 @@ from datetime import datetime
 import pyshark
 
 DB_FILE ="/home/os/dashboard-honeypot/server/API/socket/HeneyPot.db"
-SERVER_IP = "192.168.1.100"
+SERVER_IP = "172.29.169.27"
 
 lock = threading.Lock()
 
@@ -108,7 +108,7 @@ def update_db(pkt):
 # =========================
 # Thread capture packet
 # =========================
-def capture_thread(interface="enp0s3"):
+def capture_thread(interface="ztcfw2abid"):
     print(f"Starting packet capture on {interface}...")
     capture = pyshark.LiveCapture(
         interface=interface,
