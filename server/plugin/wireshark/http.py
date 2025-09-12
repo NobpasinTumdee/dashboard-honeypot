@@ -32,7 +32,7 @@ capture = pyshark.LiveCapture(
     interface=interface, 
     display_filter='http',
     custom_parameters=[ 
-        "-o", "tls.keys_list:/etc/ssl/opencanary/opencanary.key" ## รอ key ของ honeypot มาแทน 
+        "-o", "tls.keys_list:172.29.169.2710.147.18.208,443,http,/etc/ssl/opencanary/opencanary.key"
     ]
     )
 print("Starting LiveCapture on interface:", interface)
