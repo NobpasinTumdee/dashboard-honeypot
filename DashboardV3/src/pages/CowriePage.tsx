@@ -182,7 +182,7 @@ const CowriePage: React.FC = () => {
   const hourlyCounts = Array(24).fill(0);
 
   data.forEach(item => {
-    const date = new Date(item.timestamp);
+    const date = new Date(String(item.timestamp).replace("Z", ""));
     const hour = date.getHours();
     if (hour >= 0 && hour < 24) {
       hourlyCounts[hour]++;
@@ -477,13 +477,14 @@ const CowriePage: React.FC = () => {
               {currentItems.map((row, index) => (
                 <tr key={index} className='cowrie-row' style={{ backgroundColor: String(row.eventid).slice(-7) === 'connect' ? '#a9ff6f5b' : String(row.eventid).slice(-6) === 'closed' ? '#ffb77d5b' : '' }}>
                   <td>
-                    {new Date(row.timestamp).toLocaleString("en-EN", {
+                    {new Date(String(row.timestamp).replace("Z", "")).toLocaleString("en-EN", {
                       day: "2-digit",
                       month: "2-digit",
                       year: "numeric",
                       hour: "2-digit",
                       minute: "2-digit",
                       second: "2-digit",
+                      hour12: false,
                     })}
                   </td>
                   <td>{row.src_ip}</td>
