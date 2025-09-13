@@ -344,7 +344,17 @@ const OpenCanaryPage: React.FC = () => {
             <tbody>
               {currentItems.map((item, index) => (
                 <tr key={item.id || index}>
-                  <td>{(item.local_time_adjusted).slice(0, 19)}</td>
+                  <td>
+                    {new Date(String(item.local_time_adjusted).replace("Z", "")).toLocaleString("en-EN", {
+                      day: "2-digit",
+                      month: "2-digit",
+                      year: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
+                      second: "2-digit",
+                      hour12: false,
+                    })}
+                  </td>
                   <td onClick={() => {
                     try {
                       JSON.parse(item.logdata_msg_logdata);

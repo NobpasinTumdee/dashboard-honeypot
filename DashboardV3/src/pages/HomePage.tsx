@@ -36,19 +36,19 @@ const HomePage: React.FC = () => {
   const recentActivities = [
     ...CowrieData.slice(0, 2).map(item => ({
       source: 'Cowrie',
-      timestamp: item.timestamp,
+      timestamp: item.timestamp.replace("Z", ""),
       activity: `SSH connection from ${item.src_ip}`,
       severity: 'high'
     })),
     ...CanaryData.slice(0, 2).map(item => ({
       source: 'OpenCanary',
-      timestamp: item.local_time,
+      timestamp: item.local_time.replace("Z", ""),
       activity: `${item.logdata_msg_logdata}`,
       severity: 'medium'
     })),
     ...dataPacket.slice(0, 2).map(item => ({
       source: 'Wireshark',
-      timestamp: item.timestamp,
+      timestamp: item.timestamp.replace("Z", ""),
       activity: `${item.method} request to ${item.request_uri}`,
       severity: 'low'
     }))
