@@ -16,6 +16,9 @@
 ### AI
 * [AI Setup](/docs/AI/AI_Setup.md)
 * [AI Run](/docs/AI/AI_Run.md)
+### Wireshark
+* [Wireshark Setup](/docs/Wireshark/Wireshark.md)
+* [Exploit Demo](/docs/Wireshark/Attack_demo.md)
 
 # Graph ระบบโดยรวม
 ```mermaid
