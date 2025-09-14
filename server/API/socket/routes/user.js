@@ -33,4 +33,23 @@ router.put("/:id/status", async (req, res) => {
     }
 });
 
+// PUT update user status to 'user'
+router.put("/:id/deauthorize", async (req, res) => {
+    const { id } = req.params;
+    try {
+        const updatedUser = await prisma.users.update({
+            where: {
+                UserID: parseInt(id),
+            },
+            data: {
+                Status: "Unauthenticated",
+            },
+        });
+        res.json(updatedUser);
+    } catch (error) {
+        console.error("❌ Error updating user status:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    }
+});
+
 export default router;

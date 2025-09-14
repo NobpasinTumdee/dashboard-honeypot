@@ -585,6 +585,30 @@ body {
   margin-bottom: 2rem;
 }
 
+.auth-button {
+  width: 100%;
+  padding: 0.3rem 0.4rem;
+  background-color: var(--accent-primary);
+  color: var(--bg-primary);
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.revoke {
+  background-color: transparent;
+  border: 2px solid var(--accent-primary);
+  color: var(--text-primary);
+}
+
+.auth-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px var(--shadow);
+}
+
 /* Forms */
 .form-container {
   max-width: 400px;
