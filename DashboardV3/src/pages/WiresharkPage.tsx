@@ -659,8 +659,9 @@ const WiresharkPage: React.FC = () => {
               gap: 16,
               overflowY: "auto"
             }}>
-              {/* Clear Comparison Button */}
-              <div style={{ display: "flex", justifyContent: "flex-start" }}>
+              {/* Buttons: Clear + Shortcuts */}
+              <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                {/* Clear Comparison Button */}
                 <button
                   onClick={() => setCompareItems([])}
                   style={{
@@ -675,6 +676,54 @@ const WiresharkPage: React.FC = () => {
                   }}
                 >
                   Clear All
+                </button>
+
+                {/* Most Attempt: clear first */}
+                <button
+                  onClick={() => {
+                    const attemptItems: CompareItem[] = [];
+                    if (topProtocols.length > 0) attemptItems.push({ type: "protocol", value: topProtocols[0].name });
+                    if (topIPs.length > 0) attemptItems.push({ type: "ip", value: topIPs[0].name });
+                    if (topPorts.length > 0) attemptItems.push({ type: "port", value: topPorts[0].name });
+
+                    setCompareItems(attemptItems); // เคลียร์แล้วใส่ใหม่
+                  }}
+                  style={{ border: "2px solid var(--text-primary)", borderRadius: 6, padding: "6px 16px", cursor: "pointer", background: "rgba(255,255,255,0.05)", color: "var(--text-primary)", fontWeight: 600, fontSize: 13 }}
+                >
+                  Most Attempt
+                </button>
+
+                {/* Top 3 IP */}
+                <button
+                  onClick={() => {
+                    const items: CompareItem[] = topIPs.slice(0, 3).map(ip => ({ type: "ip", value: ip.name }));
+                    setCompareItems(items); // เคลียร์ก่อนเพิ่ม
+                  }}
+                  style={{ border: "2px solid var(--text-primary)", borderRadius: 6, padding: "6px 16px", cursor: "pointer", background: "rgba(255,255,255,0.05)", color: "var(--text-primary)", fontWeight: 600, fontSize: 13 }}
+                >
+                  Top 3 IP
+                </button>
+
+                {/* Top 3 Protocol */}
+                <button
+                  onClick={() => {
+                    const items: CompareItem[] = topProtocols.slice(0, 3).map(proto => ({ type: "protocol", value: proto.name }));
+                    setCompareItems(items);
+                  }}
+                  style={{ border: "2px solid var(--text-primary)", borderRadius: 6, padding: "6px 16px", cursor: "pointer", background: "rgba(255,255,255,0.05)", color: "var(--text-primary)", fontWeight: 600, fontSize: 13 }}
+                >
+                  Top 3 Protocol
+                </button>
+
+                {/* Top 3 Port */}
+                <button
+                  onClick={() => {
+                    const items: CompareItem[] = topPorts.slice(0, 3).map(port => ({ type: "port", value: port.name }));
+                    setCompareItems(items);
+                  }}
+                  style={{ border: "2px solid var(--text-primary)", borderRadius: 6, padding: "6px 16px", cursor: "pointer", background: "rgba(255,255,255,0.05)", color: "var(--text-primary)", fontWeight: 600, fontSize: 13 }}
+                >
+                  Top 3 Port
                 </button>
               </div>
 
