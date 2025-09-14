@@ -78,7 +78,7 @@ const Xss = () => {
                         style={{ width: 'auto', padding: '1rem 4.5rem', fontSize: '2.25rem', fontWeight: '900' }}
                         onClick={() => {
                             navigate('/login');
-                            // window.location.reload();
+                            window.location.reload();
                         }}
                     >
                         Login

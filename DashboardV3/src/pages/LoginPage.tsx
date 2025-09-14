@@ -44,7 +44,7 @@ const LoginPage: React.FC = () => {
         setIsLoading(false);
         setTimeout(() => {
           navigate('/')
-          // window.location.reload();
+          window.location.reload();
         }, 1400);
       } else {
         const errorMessage = response?.data?.error;
