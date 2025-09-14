@@ -7,8 +7,8 @@ from datetime import datetime
 # -----------------------------
 # Config
 # -----------------------------
-interface = 'ztmosdoimw'
-db_file = '/home/os/dashboard-honeypot/server/API/socket/HeneyPot.db'
+interface ='ztcfw2abid'
+DB_FILE ='/home/cpe27/HeneyPot.db'
 
 # -----------------------------
 # Create/connect SQLite DB
