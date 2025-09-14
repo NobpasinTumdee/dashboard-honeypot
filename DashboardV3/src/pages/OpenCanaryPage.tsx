@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import type { ChartData } from 'chart.js';
 
 // components
 import Chart from '../components/Chart';
@@ -137,6 +138,40 @@ const OpenCanaryPage: React.FC = () => {
       fill: true,
       tension: 0.4,
     }]
+  };
+
+
+
+
+  // =========================
+  // ช่วงเวลาที่มีการเชื่อมต่อ
+  // =========================
+  const hourlyCounts = Array(24).fill(0);
+
+  data.forEach(item => {
+    const date = new Date(String(item.local_time_adjusted).replace("Z", ""));
+    const hour = date.getHours();
+    if (hour >= 0 && hour < 24) {
+      hourlyCounts[hour]++;
+    }
+  });
+
+  const datatest: ChartData<'line'> = {
+    labels: Array.from({ length: 24 }, (_, i) => `${i < 10 ? '0' : ''}${i}:00`),
+    datasets: [
+      {
+        label: 'จำนวนข้อมูล',
+        data: hourlyCounts,
+        fill: true,
+        borderColor: '#ef4444',
+        backgroundColor: '#400C11',
+        tension: 0.4,
+        pointBackgroundColor: '#400C11',
+        pointBorderColor: '#741720ff',
+        pointHoverBackgroundColor: '#fff',
+        pointHoverBorderColor: '#5f523dff',
+      },
+    ],
   };
 
   const options = {
@@ -308,6 +343,15 @@ const OpenCanaryPage: React.FC = () => {
         </ChartCard>
       </div>
 
+      <div className="charts-grid">
+        <ChartCard
+          title="dayly activity"
+          subtitle="activity per day"
+        >
+          <Chart type="line" data={datatest} height={250} options={options} />
+        </ChartCard>
+      </div>
+
       <div style={{ fontWeight: "400", textAlign: "center", display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '0 5% 20px' }}>
         <p style={{ margin: '0px' }}>
           <select value={protocolFilter} onChange={handleSelectChange} style={{ padding: '0.3rem 1rem', borderRadius: '4px', border: '1px solid #ccc' }}>
@@ -345,7 +389,7 @@ const OpenCanaryPage: React.FC = () => {
               {currentItems.map((item, index) => (
                 <tr key={item.id || index}>
                   <td>
-                    {new Date(String(item.local_time_adjusted).replace("Z", "")).toLocaleString("en-EN", {
+                    {new Date(String(item.local_time_adjusted).replace("Z", "")).toLocaleString("th-TH", {
                       day: "2-digit",
                       month: "2-digit",
                       year: "numeric",

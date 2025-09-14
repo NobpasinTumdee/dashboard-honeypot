@@ -477,7 +477,7 @@ const CowriePage: React.FC = () => {
               {currentItems.map((row, index) => (
                 <tr key={index} className='cowrie-row' style={{ backgroundColor: String(row.eventid).slice(-7) === 'connect' ? '#a9ff6f5b' : String(row.eventid).slice(-6) === 'closed' ? '#ffb77d5b' : '' }}>
                   <td>
-                    {new Date(String(row.timestamp).replace("Z", "")).toLocaleString("en-EN", {
+                    {new Date(String(row.timestamp).replace("Z", "")).toLocaleString("th-TH", {
                       day: "2-digit",
                       month: "2-digit",
                       year: "numeric",

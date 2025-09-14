@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import './CowrieLogTerminal.css';
 import type { CowrieLog } from '../../types';
 
@@ -9,6 +9,18 @@ interface CowrieLogTerminalProps {
 const CowrieLogTerminal: React.FC<CowrieLogTerminalProps> = ({ logs }) => {
   // Sort the logs by ID in ascending order
   const sortedLogs = [...logs].sort((a, b) => a.id - b.id);
+
+
+  const [protocolFilter, setProtocolFilter] = useState("");
+
+
+  const filteredData = sortedLogs.filter((item) =>
+    protocolFilter
+      ? (item.timestamp && item.timestamp.slice(0, 10) === protocolFilter.slice(0, 10))
+      : true
+  );
+
+
   const renderLogEntry = (log: CowrieLog) => {
     switch (log.eventid) {
       case 'cowrie.session.connect':
@@ -124,13 +136,21 @@ const CowrieLogTerminal: React.FC<CowrieLogTerminalProps> = ({ logs }) => {
         <div className="terminal-dot yellow"></div>
         <div className="terminal-dot green"></div>
         <span className="terminal-title-attacker">bash - Cowrie Logs Playback</span>
+        <input type="date" onChange={(e) => setProtocolFilter(e.target.value)} style={{ padding: '2px 5px', borderRadius: '5px' }} />
       </div>
       <div className="terminal-body">
-        {sortedLogs.map((log, index) => (
-          <React.Fragment key={index}>
-            {renderLogEntry(log)}
-          </React.Fragment>
-        ))}
+        {filteredData.length === 0 ? (
+          <div className="terminal-line" key="no-logs-found" style={{ textAlign: 'center' }}>
+            <svg xmlns="http://www.w3.org/2000/svg" height="100px" viewBox="0 -960 960 960" width="100px" fill="var(--terminal-header)"><path d="M160-240v-480 188-28 320Zm268 80H160q-33 0-56.5-23.5T80-240v-480q0-33 23.5-56.5T160-800h240l80 80h320q33 0 56.5 23.5T880-640v165q-17-18-37-32t-43-25v-108H447l-80-80H160v480h243q3 21 9.5 41t15.5 39Zm252-320q83 0 141.5 58.5T880-280q0 83-58.5 141.5T680-80q-83 0-141.5-58.5T480-280q0-83 58.5-141.5T680-480Zm-20 320h40v-160h-40v160Zm20-200q8 0 14-6t6-14q0-8-6-14t-14-6q-8 0-14 6t-6 14q0 8 6 14t14 6Z" /></svg>
+            <p>No logs today.</p>
+          </div>
+        ) : (
+          filteredData.map((log, index) => (
+            <React.Fragment key={index}>
+              {renderLogEntry(log)}
+            </React.Fragment>
+          ))
+        )}
       </div>
     </div>
   );

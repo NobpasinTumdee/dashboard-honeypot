@@ -550,7 +550,7 @@ body {
   background: var(--card-bg);
   border: 1px solid var(--border-color);
   border-radius: 16px;
-  padding: 5%;
+  padding: 4%;
   margin-bottom: 2rem;
   box-shadow: 0 4px 12px var(--shadow);
   transition: all 0.3s ease;
