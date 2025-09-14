@@ -118,6 +118,18 @@ async function AuthNewUser(id: string) {
 
 }
 
+async function DeAuthNewUser(id: string) {
+    
+    return await axios
+
+        .put(`${apiUrl}/user/${id}/deauthorize`, {}, requestOptions )
+
+        .then((res) => res)
+
+        .catch((e) => e.response);
+
+}
+
 export {
     LignIn,
     SignUp,
@@ -127,4 +139,5 @@ export {
     getOpenCanaryAuth,
     getAllUsers,
     AuthNewUser,
+    DeAuthNewUser,
 }

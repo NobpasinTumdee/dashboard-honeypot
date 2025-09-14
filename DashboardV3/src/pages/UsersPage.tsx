@@ -7,7 +7,7 @@ import Loader from '../components/loader/Loader';
 import type { Users } from '../types';
 import { mockUsersData } from '../mockData';
 import { UsersSocket } from '../service/websocket';
-import { AuthNewUser } from '../service/api';
+import { AuthNewUser, DeAuthNewUser } from '../service/api';
 
 const UsersPage: React.FC = () => {
   // routing
@@ -24,6 +24,19 @@ const UsersPage: React.FC = () => {
     try {
       console.log(id)
       const res = await AuthNewUser(id)
+      if (res.status === 200) {
+        alert('Change Status User Success')
+        window.location.reload();
+      }
+    } catch (error) {
+      console.error(error)
+    }
+  }
+
+  const handleDeAuthUser = async (id: string) => {
+    try {
+      console.log(id)
+      const res = await DeAuthNewUser(id)
       if (res.status === 200) {
         alert('Change Status User Success')
         window.location.reload();
@@ -135,7 +148,7 @@ const UsersPage: React.FC = () => {
           variant="primary"
         />
         <StatCard
-          title="Active Users"
+          title="Admin Users"
           value={activeUsers}
           change={`${Math.round((activeUsers / (users.length)) * 100)}%`}
           changeType="positive"
@@ -143,7 +156,7 @@ const UsersPage: React.FC = () => {
           variant="success"
         />
         <StatCard
-          title="Inactive Users"
+          title="Guest Users"
           value={inactiveUsers}
           change={`${Math.round((inactiveUsers / users.length) * 100)}%`}
           changeType="negative"
@@ -161,21 +174,51 @@ const UsersPage: React.FC = () => {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
         <div className="chart-container">
           <div className="chart-header">
-            <h3 className="chart-title">User Activity</h3>
-            <p className="chart-subtitle">Login patterns and user engagement</p>
+            <h3 className="chart-title">User Authenticated</h3>
+            <p className="chart-subtitle">Here is a list of all authorized moderators.</p>
           </div>
           <div className="chart-placeholder">
-            User activity chart visualization
+            Member list
+            <div style={{ overflowX: 'auto', maxHeight: '200px', overflowY: 'scroll' }}>
+              <table className="data-table">
+                <tbody>
+                  {user.map((row) => (
+                    row.Status === 'Authenticated' ? (
+                      <tr key={row.UserID}>
+                        <td>{row.UserName}</td>
+                        <td>{row.Email}</td>
+                        <td style={{ color: '#DDD3C3' }}>{row.Status}</td>
+                      </tr>
+                    ) : null
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
 
         <div className="chart-container">
           <div className="chart-header">
-            <h3 className="chart-title">Role Distribution</h3>
-            <p className="chart-subtitle">User roles and permissions breakdown</p>
+            <h3 className="chart-title">Role Guest</h3>
+            <p className="chart-subtitle">Guest list required for approval</p>
           </div>
           <div className="chart-placeholder">
-            Role distribution chart
+            Member list
+            <div style={{ overflowX: 'auto', maxHeight: '200px', overflowY: 'scroll' }}>
+              <table className="data-table">
+                <tbody>
+                  {user.map((row) => (
+                    row.Status !== 'Authenticated' ? (
+                      <tr key={row.UserID}>
+                        <td>{row.UserName}</td>
+                        <td>{row.Email}</td>
+                        <td style={{ color: '#9c0909ff' }}>{row.Status}</td>
+                      </tr>
+                    ) : null
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
@@ -224,13 +267,22 @@ const UsersPage: React.FC = () => {
                   <td>{String(row.createdAt)}</td>
                   <td>{String(row.updatedAt)}</td>
                   <td>
-                    {row.Status !== 'Authenticated' &&
-                      <button
-                        className="auth-button"
-                        onClick={() => handleAuthUser(String(row.UserID))}
-                      >
-                        approve
-                      </button>
+                    {
+                      row.Status !== 'Authenticated' ? (
+                        <button
+                          className="auth-button"
+                          onClick={() => handleAuthUser(String(row.UserID))}
+                        >
+                          Approve
+                        </button>
+                      ) : (
+                        <button
+                          className="auth-button revoke"
+                          onClick={() => handleDeAuthUser(String(row.UserID))}
+                        >
+                          Revoke
+                        </button>
+                      )
                     }
                   </td>
                 </tr>
