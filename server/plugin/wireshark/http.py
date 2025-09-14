@@ -13,7 +13,7 @@ DB_FILE ='/home/cpe27/HeneyPot.db'
 # -----------------------------
 # Create/connect SQLite DB
 # -----------------------------
-conn = sqlite3.connect(db_file)
+conn = sqlite3.connect(DB_FILE)
 c = conn.cursor()
 c.execute('''
 CREATE TABLE IF NOT EXISTS HttpsPackets (
