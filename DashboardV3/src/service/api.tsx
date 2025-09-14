@@ -4,8 +4,12 @@ import type { Users } from "../types";
 // ZeroTier Main honeypot
 // const apiUrl = 'http://172.29.169.27:3000'
 
-const Url = localStorage.getItem("apiUrl");
-const apiUrl = `${Url || 'http://localhost:3000'}`
+const getUrl = (): string => {
+    const url = localStorage.getItem("apiUrl");
+    return url ? url : 'http://localhost:3000';
+};
+const apiUrl = getUrl();
+
 
 // Auth
 const Authorization = localStorage.getItem("token");

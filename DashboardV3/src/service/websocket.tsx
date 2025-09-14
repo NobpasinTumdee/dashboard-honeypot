@@ -13,9 +13,12 @@ import type {
     Users
 } from "../types";
 
+const getUrl = (): string => {
+    const url = localStorage.getItem("apiUrl");
+    return url ? url : 'http://localhost:3000';
+};
+const apiUrl = getUrl();
 
-const Url = localStorage.getItem("apiUrl");
-const apiUrl = `${Url || 'http://localhost:3000'}`
 
 interface TokenPayload {
     UserID: number;
