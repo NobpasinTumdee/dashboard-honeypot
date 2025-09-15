@@ -25,7 +25,7 @@ sudo nano /etc/opencanaryd/opencanary.conf
 ### Run Honeypot
 เข้าไปที่ path ที่ติดตั้ง opencanry
 ```bash
-. env/bin/activate
+. /home/cpe27/env/bin/activate
 ```
 
 เริ่มทำงาน
