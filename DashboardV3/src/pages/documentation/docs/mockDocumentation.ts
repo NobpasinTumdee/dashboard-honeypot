@@ -480,6 +480,174 @@ export const CowrieDocumentation: ServiceDocumentation = {
             ],
             images: []
         },
+        {
+            id: 'สเต็ป',
+            title: 'การตั้งค่าเริ่มต้นอัตโนมัติ',
+            content: 'ก่อนอื่นต้องสร้างไฟล์ service สำหรับแต่ละโปรแกรมก่อน โดยไฟล์เหล่านี้จะเก็บอยู่ใน etc/systemd/system/ และลงท้ายด้วย .service',
+            codeBlocks: [],
+            subsections: [
+                {
+                    id: 'สเต็ปย่อย',
+                    title: '1. ไฟล์ service สำหรับ Cowrie',
+                    content: 'สร้างไฟล์ชื่อ cowrie.service ด้วยคำสั่ง ',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `sudo nano /etc/systemd/system/cowrie.service`
+                        }
+                    ]
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: '',
+                    content: 'แล้วใส่เนื้อหาต่อไปนี้:',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `[Unit]
+Description=Cowrie SSH Telnet Honeypot
+After=network.target
+
+[Service]
+User=[ user name]
+WorkingDirectory=/home/cowrie/cowrie
+ExecStart=/home/cowrie/cowrie/bin/cowrie start -n
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+`
+                        }
+                    ]
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: '',
+                    content: '-n (หรือ --nodaemon) = ให้ cowrie รัน foreground ไม่ fork:',
+                    codeBlocks: []
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: '',
+                    content: 'systemd จะ track process ได้ถูกต้อง',
+                    codeBlocks: []
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: '',
+                    content: 'WorkingDirectory คือที่อยู่ของโปรเจกต์',
+                    codeBlocks: []
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: '',
+                    content: 'User คือ user ที่จะใช้รัน service',
+                    codeBlocks: []
+                },
+            ],
+            images: []
+        },
+        {
+            id: 'สเต็ป',
+            title: 'เปิดใช้งาน service',
+            content: 'หลังจากสร้างไฟล์ service ทั้งหมดแล้ว ให้ใช้คำสั่งเหล่านี้เพื่อเปิดใช้งานและให้ service เริ่มต้นทำงานพร้อมกับการบูทเครื่อง:',
+            codeBlocks: [],
+            subsections: [
+                {
+                    id: 'สเต็ปย่อย',
+                    title: '1. อัปเดต systemd daemon:',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `sudo systemctl daemon-reload`
+                        }
+                    ]
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: '2. เปิดใช้งาน (enable) แต่ละ service:',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `sudo systemctl enable cowrie.service`
+                        },
+                    ]
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: '3. เริ่มทำงาน (start) แต่ละ service ทันที:',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `sudo systemctl start cowrie.service`
+                        },
+                    ]
+                },
+            ],
+            images: []
+        },
+        {
+            id: 'สเต็ป',
+            title: 'คำสั่งสำหรับจัดการ service',
+            content: '',
+            codeBlocks: [],
+            subsections: [
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'ดูสถานะของ service:',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `sudo systemctl status <ชื่อ service>`
+                        },
+                    ]
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'หยุด service:',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `sudo systemctl stop <ชื่อ service>`
+                        },
+                    ]
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'เริ่มใหม่:',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `sudo systemctl restart <ชื่อ service>`
+                        },
+                    ]
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'ปิดไม่ให้เริ่มอัตโนมัติ:',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `sudo systemctl disable <ชื่อ service>`
+                        },
+                    ]
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'ส่งท้ายถึงน้องๆ รุ่นต่อๆไปที่จะมาอ่านวิธีการใช้งาน service นี้',
+                    content: 'ขอบคุณที่มาสานต่อโปรเจคนี้ของพี่นะ :) แต่ว่าอย่าคิดว่าแค่กอปวางแล้วมันจะใช้งานได้ มันจะต้องมีความเข้าใจในสิ่งที่ตัวเองทำอยู่ด้วยนะ สู้ๆ',
+                    codeBlocks: []
+                },
+            ],
+            images: []
+        },
     ]
 };
 
@@ -832,7 +1000,7 @@ export const WiresharkAttckDocumentation: ServiceDocumentation = {
                         }
                     ]
                 },
-                
+
             ],
             images: []
         },
@@ -935,6 +1103,241 @@ export const WiresharkAttckDocumentation: ServiceDocumentation = {
                     id: 'สเต็ปย่อย',
                     title: 'This command starts an HTTP server on the specified port, which will log all incoming requests, allowing you to see the attack signatures in real-time.',
                     content: '',
+                    codeBlocks: []
+                },
+            ],
+            images: []
+        },
+    ]
+};
+
+
+
+
+export const HardwareDocumentation: ServiceDocumentation = {
+    id: 'หัวข้อ',
+    name: 'การตั้งค่าเริ่มต้น',
+    description: 'ก่อนอื่นต้องสร้างไฟล์ service สำหรับแต่ละโปรแกรมก่อน โดยไฟล์เหล่านี้จะเก็บอยู่ใน etc/systemd/system/ และลงท้ายด้วย .service',
+    sections: [
+        {
+            id: 'สเต็ป',
+            title: '1. ไฟล์ service สำหรับ Node.js',
+            content: 'สร้างไฟล์ชื่อ backend.service ด้วยคำสั่ง',
+            codeBlocks: [
+                {
+                    language: 'bash',
+                    code: 'sudo nano /etc/systemd/system/backend.service'
+                }
+            ],
+            subsections: [
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'แล้วใส่เนื้อหาต่อไปนี้:',
+                    content: 'ExecStart คือคำสั่งที่ใช้รันโปรแกรม. ตรวจสอบให้แน่ใจว่า path ของ node ถูกต้อง โดยใช้คำสั่ง which node WorkingDirectory คือที่อยู่ของโปรเจกต์ User คือ user ที่จะใช้รัน service',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `[Unit]
+Description=My Node.js Backend Server
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/node /home/[user name]/dashboard-honeypot/server/API/socket/server.js
+WorkingDirectory=/home/[user name]/dashboard-honeypot/server/API/socket/
+Restart=always
+User=YourUser
+
+[Install]
+WantedBy=multi-user.target`
+                        }
+                    ]
+                }
+            ],
+            images: []
+        },
+        {
+            id: 'สเต็ป',
+            title: '2. ไฟล์ service สำหรับ Python',
+            content: 'สร้างไฟล์ชื่อ python_script.service ด้วยคำสั่ง',
+            codeBlocks: [
+                {
+                    language: 'bash',
+                    code: 'sudo nano /etc/systemd/system/python_script.service'
+                }
+            ],
+            subsections: [
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'แล้วใส่เนื้อหาต่อไปนี้:',
+                    content: 'ExecStart คือคำสั่งที่ใช้รัน Python. ตรวจสอบให้แน่ใจว่า path ของ python3 ถูกต้อง โดยใช้คำสั่ง which python3 After=backend.service คือการระบุว่า service นี้จะเริ่มรันหลังจาก backend.service เริ่มทำงานแล้ว',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `[Unit]
+Description=Python Script to Convert Data
+After=backend.service
+
+[Service]
+ExecStart=/usr/bin/python3 /home/[user name]/dashboard-honeypot/server/plugin/convertData/Honeypot_Log_Processor.py
+WorkingDirectory=/home/[user name]/dashboard-honeypot/server/plugin/convertData/
+Restart=always
+User=YourUser
+
+[Install]
+WantedBy=multi-user.target`
+                        }
+                    ]
+                }
+            ],
+            images: []
+        },
+        {
+            id: 'สเต็ป',
+            title: '3. ไฟล์ service สำหรับ Ngrok',
+            content: 'Ngrok มีวิธีการตั้งค่าที่แตกต่างกันเล็กน้อย เพราะต้องการใช้ token ด้วย สามารถตั้งค่าให้ Ngrok เชื่อมต่ออัตโนมัติได้โดยใช้ systemd เช่นกัน สร้างไฟล์ชื่อ ngrok.service ด้วยคำสั่ง',
+            codeBlocks: [
+                {
+                    language: 'bash',
+                    code: 'sudo nano /etc/systemd/system/ngrok.service'
+                }
+            ],
+            subsections: [
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'แล้วใส่เนื้อหาต่อไปนี้:',
+                    content: 'xecStart คือคำสั่งที่ใช้รัน Ngrok. ตรวจสอบให้แน่ใจว่า path ของ ngrok ถูกต้อง',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `[Unit]
+Description=Ngrok Tunnel
+After=network.target
+
+[Service]
+ExecStart=/snap/bin/ngrok http 3000 --config /home/[user name]/snap/ngrok/[your number]/.config/ngrok/ngrok.yml
+Restart=always
+User=YourUser
+
+[Install]
+WantedBy=multi-user.target`
+                        }
+                    ]
+                }
+            ],
+            images: []
+        },
+        {
+            id: 'สเต็ป',
+            title: 'เปิดใช้งาน service',
+            content: 'หลังจากสร้างไฟล์ service ทั้งหมดแล้ว ให้ใช้คำสั่งเหล่านี้เพื่อเปิดใช้งานและให้ service เริ่มต้นทำงานพร้อมกับการบูทเครื่อง:',
+            codeBlocks: [],
+            subsections: [
+                {
+                    id: 'สเต็ปย่อย',
+                    title: '1. อัปเดต systemd daemon:',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `sudo systemctl daemon-reload`
+                        }
+                    ]
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: '2. เปิดใช้งาน (enable) แต่ละ service:',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `sudo systemctl enable backend.service`
+                        },
+                        {
+                            language: 'bash',
+                            code: `sudo systemctl enable python_script.service`
+                        },
+                        {
+                            language: 'bash',
+                            code: `sudo systemctl enable ngrok.service`
+                        },
+                    ]
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: '3. เริ่มทำงาน (start) แต่ละ service ทันที:',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `sudo systemctl start backend.service`
+                        },
+                        {
+                            language: 'bash',
+                            code: `sudo systemctl start python_script.service`
+                        },
+                        {
+                            language: 'bash',
+                            code: `sudo systemctl start ngrok.service`
+                        },
+                    ]
+                },
+            ],
+            images: []
+        },
+        {
+            id: 'สเต็ป',
+            title: 'คำสั่งสำหรับจัดการ service',
+            content: '',
+            codeBlocks: [],
+            subsections: [
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'ดูสถานะของ service:',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `sudo systemctl status <ชื่อ service>`
+                        },
+                    ]
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'หยุด service:',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `sudo systemctl stop <ชื่อ service>`
+                        },
+                    ]
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'เริ่มใหม่:',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `sudo systemctl restart <ชื่อ service>`
+                        },
+                    ]
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'ปิดไม่ให้เริ่มอัตโนมัติ:',
+                    content: '',
+                    codeBlocks: [
+                        {
+                            language: 'bash',
+                            code: `sudo systemctl disable <ชื่อ service>`
+                        },
+                    ]
+                },
+                {
+                    id: 'สเต็ปย่อย',
+                    title: 'ส่งท้ายถึงน้องๆ รุ่นต่อๆไปที่จะมาอ่านวิธีการใช้งาน service นี้',
+                    content: 'ขอบคุณที่มาสานต่อโปรเจคนี้ของพี่นะ :) แต่ว่าอย่าคิดว่าแค่กอปวางแล้วมันจะใช้งานได้ มันจะต้องมีความเข้าใจในสิ่งที่ตัวเองทำอยู่ด้วยนะ สู้ๆ',
                     codeBlocks: []
                 },
             ],

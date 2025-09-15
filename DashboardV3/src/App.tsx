@@ -22,6 +22,7 @@ import './index.css';
 // documentation
 import Doclayout from './pages/documentation/Doclayout';
 import DocumentPage from './pages/documentation/DocumentPage';
+import DocumentSetup from './pages/documentation/DocumentSetup';
 import DocumentCowrie from './pages/documentation/DocumentCowrie';
 import DocumentCanary from './pages/documentation/DocumentCanary';
 import DocumentWireshark from './pages/documentation/DocumentWireshark';
@@ -50,6 +51,7 @@ const router = createBrowserRouter([
     element: <Doclayout />,
     children: [
       { index: true, element: <DocumentPage /> },
+      { path: "setup-guide", element: <DocumentSetup /> },
       { path: "cowrie-guide", element: <DocumentCowrie /> },
       { path: "canary-guide", element: <DocumentCanary /> },
       { path: "wireshark-guide", element: <DocumentWireshark /> },

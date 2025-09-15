@@ -10,6 +10,7 @@ const NavDoc = () => {
                 <nav className="doc-nav">
                     <Link to="/" className={`Link-button-doc ${isActive('/') ? 'active' : ''}`}>Dashboard</Link>
                     <Link to="/document" className={`Link-button-doc ${isActive('/document') ? 'active' : ''}`}>Home</Link>
+                    <Link to="/document/setup-guide" className={`Link-button-doc ${isActive('/setup-guide') ? 'active' : ''}`}>Setup</Link>
                     <Link to="/document/cowrie-guide" className={`Link-button-doc ${isActive('/cowrie-guide') ? 'active' : ''}`}>Cowrie</Link>
                     <Link to="/document/canary-guide" className={`Link-button-doc ${isActive('/canary-guide') ? 'active' : ''}`}>OpenCanary</Link>
                     <Link to="/document/wireshark-guide" className={`Link-button-doc ${isActive('/wireshark-guide') ? 'active' : ''}`}>Wireshark</Link>
