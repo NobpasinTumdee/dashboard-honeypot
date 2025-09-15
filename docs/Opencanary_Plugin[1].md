@@ -1,7 +1,7 @@
 ## Http/Https
 ### แก้ไขไฟล์ (1)
 ```bash
-cd ~/Honeypot/Opencanary_env/lib/python3.12/site-packages/opencanary/modules/
+cd /home/cpe27/env/lib/python3.12/site-packages/opencanary/modules
 code .
 ```
 * [http.py](/Plugin/Opencannary/modules/http.py)
@@ -25,7 +25,7 @@ sudo nano /etc/opencanaryd/opencanary.conf
 ### Run Honeypot
 เข้าไปที่ path ที่ติดตั้ง opencanry
 ```bash
-. Opencanary_env/bin/activate
+. env/bin/activate
 ```
 
 เริ่มทำงาน
