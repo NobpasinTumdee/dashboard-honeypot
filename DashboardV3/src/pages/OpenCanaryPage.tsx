@@ -36,14 +36,17 @@ const OpenCanaryPage: React.FC = () => {
       ? (item.logdata_msg_logdata && item.logdata_msg_logdata.toLowerCase() === protocolFilter.toLowerCase())
       : true
   );
+  // Filter by src_ip (case insensitive)
+  const [srcIpFilter, setSrcIpFilter] = useState("");
+  const IpfilteredData = filteredData.filter(item => !srcIpFilter || (item.src_host && item.src_host.includes(srcIpFilter)));
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 5;
 
   // Calculate the current items to display based on pagination
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const currentItems = filteredData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-  const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
+  const currentItems = IpfilteredData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(IpfilteredData.length / ITEMS_PER_PAGE);
 
 
 
@@ -164,7 +167,7 @@ const OpenCanaryPage: React.FC = () => {
         data: hourlyCounts,
         fill: true,
         borderColor: '#ef4444',
-        backgroundColor: '#400C11',
+        backgroundColor: '#400c1159',
         tension: 0.4,
         pointBackgroundColor: '#400C11',
         pointBorderColor: '#741720ff',
@@ -352,18 +355,19 @@ const OpenCanaryPage: React.FC = () => {
         </ChartCard>
       </div>
 
-      <div style={{ fontWeight: "400", textAlign: "center", display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '0 5% 20px' }}>
-        <p style={{ margin: '0px' }}>
-          <select value={protocolFilter} onChange={handleSelectChange} style={{ padding: '0.3rem 1rem', borderRadius: '4px', border: '1px solid #ccc' }}>
-            <option value="">All</option>
-            <option value="Canary running!!!">Running</option>
-            <option value="Added service from class CanaryHTTPS in opencanary.modules.https to fake">Canary HTTPS</option>
-            <option value="Added service from class CanaryHTTP in opencanary.modules.http to fake">Canary HTTP</option>
-            <option value="Added service from class CanaryFTP in opencanary.modules.ftp to fake">Canary FTP</option>
-          </select>
-        </p>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', margin: '0 0 20px', borderRadius: '10px', border: '1px solid #ccc', padding: '10px' }}>
+        <div>
+          <input type="text" id="searchInput" placeholder="Source IP..." onChange={(e) => setSrcIpFilter(e.target.value)} style={{ padding: '0.3rem 1rem', borderRadius: '4px', border: '1px solid #ccc' }} />
+          <button style={{ padding: '0.3rem 1rem', borderRadius: '4px', border: '1px solid #ccc', marginLeft: '10px' }}>Search</button>
+        </div>
+        <select value={protocolFilter} onChange={handleSelectChange} style={{ padding: '0.3rem 1rem', borderRadius: '4px', border: '1px solid #ccc' }}>
+          <option value="">All</option>
+          <option value="Canary running!!!">Running</option>
+          <option value="Added service from class CanaryHTTPS in opencanary.modules.https to fake">Canary HTTPS</option>
+          <option value="Added service from class CanaryHTTP in opencanary.modules.http to fake">Canary HTTP</option>
+          <option value="Added service from class CanaryFTP in opencanary.modules.ftp to fake">Canary FTP</option>
+        </select>
       </div>
-
 
       <div className="table-container">
         <div className="table-header">
