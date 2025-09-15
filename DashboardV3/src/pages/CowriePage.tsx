@@ -43,14 +43,18 @@ const CowriePage: React.FC = () => {
       : true
   );
 
+  // Filter by src_ip (case insensitive)
+  const [srcIpFilter, setSrcIpFilter] = useState("");
+  const IpfilteredData = filteredData.filter(item => !srcIpFilter || (item.src_ip && item.src_ip.includes(srcIpFilter)));
+
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 15;
 
   // Calculate the current items to display based on pagination
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const currentItems = filteredData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
-  const totalPages = Math.ceil(filteredData.length / ITEMS_PER_PAGE);
+  const currentItems = IpfilteredData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+  const totalPages = Math.ceil(IpfilteredData.length / ITEMS_PER_PAGE);
   // =========================================================================================
 
 
@@ -409,17 +413,7 @@ const CowriePage: React.FC = () => {
         </div>
       )}
 
-      <div style={{ fontWeight: "400", textAlign: "center", display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '0 5% 20px' }}>
-        <p style={{ margin: '0px' }}>
-          {protocolFilter && `| Filtered by: ${protocolFilter} `}
-          <select value={protocolFilter} onChange={handleSelectChange} style={{ padding: '0.3rem 1rem', borderRadius: '4px', border: '1px solid #ccc' }}>
-            <option value="">All</option>
-            <option value="cowrie.session.connect">connect</option>
-            <option value="cowrie.session.closed">closed</option>
-            <option value="cowrie.command.input">input</option>
-            <option value="cowrie.command.failed">failed</option>
-          </select>
-        </p>
+      <div style={{ fontWeight: "400", textAlign: "center", display: 'flex', justifyContent: 'space-between', alignItems: 'center', margin: '0 0 20px' }}>
         <button
           className="form-button"
           style={{ width: 'auto', padding: '0.5rem 1rem' }}
@@ -434,6 +428,20 @@ const CowriePage: React.FC = () => {
         >
           {popupChart ? 'Close Chart' : 'dayly activity'}
         </button>
+      </div>
+
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', margin: '0 0 20px', borderRadius: '10px', border: '1px solid #ccc', padding: '10px' }}>
+        <div>
+          <input type="text" id="searchInput" placeholder="Source IP..." onChange={(e) => setSrcIpFilter(e.target.value)} style={{ padding: '0.3rem 1rem', borderRadius: '4px', border: '1px solid #ccc' }} />
+          <button style={{ padding: '0.3rem 1rem', borderRadius: '4px', border: '1px solid #ccc', marginLeft: '10px' }}>Search</button>
+        </div>
+        <select value={protocolFilter} onChange={handleSelectChange} style={{ padding: '0.3rem 1rem', borderRadius: '4px', border: '1px solid #ccc' }}>
+          <option value="">All</option>
+          <option value="cowrie.session.connect">connect</option>
+          <option value="cowrie.session.closed">closed</option>
+          <option value="cowrie.command.input">input</option>
+          <option value="cowrie.command.failed">failed</option>
+        </select>
       </div>
 
       {popupChart && (
