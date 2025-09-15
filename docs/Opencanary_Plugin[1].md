@@ -40,6 +40,7 @@ rm /home/admin/Honeypot/Opencanary_env/bin/opencanaryd.pid
 ตรวจสอบ
 ```bash
 netstat -tulnp | grep -E '80|443'
+tail -f/var/tmp/opencanary.log
 ```
 หยุดการทำ
 ```bash
