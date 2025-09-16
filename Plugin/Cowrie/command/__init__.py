@@ -61,4 +61,8 @@ __all__ = [
     "top",
     "systemctl",
     "df",
+    "ip",
+    "grep",
+    "ss",
+    "nano",
 ]
