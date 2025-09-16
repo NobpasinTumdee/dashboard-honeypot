@@ -1,17 +1,24 @@
 # การสร้างสภาพแวดล้อมจำลอง 
 (Ubuntu 20.04.6 LTS)
-### ไลบารี่ที่จำเป็น
+### (1) ติดตั้งไลบารี่ที่จำเป็น
 ```
 sudo apt install debootstrap fakeroot
 sudo apt-get install qemu-user-static binfmt-support debootstrap
 sudo apt-get install acl
 sudo apt-get install python-is-python3
 ```
-### Setup
+### (2) สร้าง honeyfs
 ```
 sudo su - cowrie
-cd cowrie/cowrie
+cd /home/cowrie/
+mkdir script
+cd script
 ```
+```
+nano Create_honeyfs.py
+```
+* [Create_honeyfs.py](/Plugin/Cowrie/script/Create_honeyfs.py)
+#### รายละเอียด
 ```
 pwd -> /home/cowrie/cowrie
 rm -rf honeyfs
@@ -23,7 +30,7 @@ fakeroot debootstrap --variant=minbase focal honeyfs http://archive.ubuntu.com/u
 sudo debootstrap --arch=amd64 --variant=minbase focal honeyfs http://archive.ubuntu.com/ubuntu/
 sudo cp /usr/bin/qemu-x86_64-static honeyfs/usr/bin/
 ```
-### ปรับ banner ให้สมจริง
+#### ปรับ banner ให้สมจริง
 ```
 sudo setfacl -m u:cpe27:rwx /home/cowrie/cowrie/honeyfs/etc/
 sudo setfacl -m u:cpe27:rwx /home/cowrie/cowrie/honeyfs/etc/issue
@@ -36,13 +43,13 @@ echo "Ubuntu 20.04.6 LTS" > honeyfs/etc/issue
 echo "" > honeyfs/etc/motd
 ```
 
-### ปรับไม่ให้ Cowrieใช้ /etc/passwd 
+#### ปรับไม่ให้ Cowrieใช้ /etc/passwd 
 ```
 echo "root:x:0:0:root:/root:/bin/bash" > honeyfs/etc/passwd
 echo "root:*:19000:0:99999:7:::" > honeyfs/etc/shadow
 ```
 
-### เพิ่มความแนบเนียน
+### (3) เพิ่มข้อมูลพื้นฐาน
 - เพิ่ม user ใน directory home
 - สร้าง etc พื้นฐาน
 - ปรับเปลี่ยนเวลา timestamp
@@ -69,15 +76,8 @@ pip install Faker names
 sudo ./venv/bin/python3 run.py
 deactivate
 ```
-
-### ปรับชื่อให้สอดคล้อง
-```
-pwd -> /home/cowrie/cowrie/etc
-nano cowrie.cfg
-```
-svr04 -> ubuntu_svr
-
-### สร้าง fs.pickle ใหม่
+### (4) สร้าง fs.pickle ใหม่
+ต้องให้ cowrie เป็นคนรันคำสั่ง
 ```
 rm -f src/cowrie/data/fs.pickle
 ./bin/createfs -l honeyfs -o src/cowrie/data/fs.pickle
