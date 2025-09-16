@@ -1,0 +1,6 @@
+[
+    {
+        "src_ip": "127.0.0.1",
+        "nmap_scan": "Starting Nmap 7.94SVN ( https://nmap.org ) at 2025-09-16 12:26 UTC\nNmap scan report for localhost (127.0.0.1)\nHost is up (0.00045s latency).\n\nPORT   STATE SERVICE\n22/tcp open  ssh\n\nNmap done: 1 IP address (1 host up) scanned in 10.49 seconds\n"
+    }
+]
