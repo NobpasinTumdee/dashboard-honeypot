@@ -12,7 +12,7 @@ DB_FILE = '/home/os/dashboard-honeypot/server/API/socket/HeneyPot.db'
 MOCK_DIR = '/home/os/mock_ubuntu'
 OPEN_PORTS = [22, 23, 80, 443]
 WELL_KNOWN_PORTS = set(range(0, 1024))
-PREFERRED_PORTS = [8000, 8080, 5000, 3000, 8888]
+PREFERRED_PORTS = [8000, 8001, 8002, 8080, 5000, 3000, 8888]
 CURRENT_PORT_FILE = '/home/os/dashboard-honeypot/current_port.txt'
 IP_SERVER = "10.147.18.208"
 
@@ -26,38 +26,75 @@ request_lock = Lock()
 # -----------------------------
 # เลือกพอร์ตตามสถิติ
 # -----------------------------
+import sqlite3
+from collections import Counter
+from datetime import datetime, timedelta
+
+# -----------------------------
+# เลือกพอร์ตตามสถิติ (ย้อนหลังสูงสุด 7 วัน)
+# -----------------------------
 def select_port_from_stats():
+    today = datetime.now().date()
+    selected_port = None
+
     try:
         conn = sqlite3.connect(DB_FILE)
         c = conn.cursor()
-        c.execute("SELECT dst_port FROM DstPortStats")
-        rows = c.fetchall()
-        conn.close()
     except sqlite3.Error as e:
         print(f"[Honeypot] DB error: {e}")
-        rows = []
+        return None  # ไม่เปิด server
 
-    port_counts = Counter()
-    for dst_port_tuple in rows:
+    # ลูปย้อนหลังสูงสุด 7 วัน
+    for day_offset in range(0, 7):
+        check_date = today - timedelta(days=day_offset)
+        check_date_str = check_date.strftime("%Y-%m-%d")
+
         try:
-            port = int(dst_port_tuple[0])
-            if port not in OPEN_PORTS and port not in WELL_KNOWN_PORTS:
-                port_counts[port] += 1
-        except (TypeError, ValueError):
-            continue
+            # ใช้ SUM(count) เพื่อรวมจำนวนจริงของแต่ละพอร์ต
+            c.execute(
+                "SELECT dst_port, SUM(count) FROM DstPortStats WHERE date(timestamp) = ? GROUP BY dst_port",
+                (check_date_str,)
+            )
+            rows = c.fetchall()
+        except sqlite3.Error as e:
+            print(f"[Honeypot] DB query error: {e}")
+            rows = []
 
-    if not port_counts:
+        port_counts = Counter()
+        for dst_port, total_count in rows:
+            try:
+                port = int(dst_port)
+                if port not in OPEN_PORTS and port not in WELL_KNOWN_PORTS:
+                    port_counts[port] = int(total_count)
+            except (TypeError, ValueError):
+                continue
+
+        if port_counts:
+            # เลือกพอร์ตมากที่สุด
+            max_count = max(port_counts.values())
+            top_ports = [p for p, count in port_counts.items() if count == max_count]
+            selected_port = next((p for p in PREFERRED_PORTS if p in top_ports), top_ports[0])
+
+            # แสดงสถิติเรียงตาม PREFERRED_PORTS
+            print(f"[Honeypot] สถิติพอร์ตของวันที่ {check_date_str}:")
+            for p in PREFERRED_PORTS:
+                if p in port_counts:
+                    mark = " <-- เลือก" if p == selected_port else ""
+                    print(f"  พอร์ต {p}: {port_counts[p]} ครั้ง{mark}")
+
+            break  # เจอข้อมูลแล้ว ไม่ต้องย้อนวันต่อไป
+
+    conn.close()
+
+    if selected_port is None:
         print("[Honeypot] ไม่มีพอร์ตน่าสงสัยให้รัน server")
-        return 8000  # fallback port
+        return None
 
-    max_count = max(port_counts.values())
-    top_ports = [p for p, count in port_counts.items() if count == max_count]
-    selected_port = next((p for p in PREFERRED_PORTS if p in top_ports), top_ports[0])
-
+    # บันทึกพอร์ตปัจจุบัน
     with open(CURRENT_PORT_FILE, 'w') as f:
         f.write(str(selected_port))
 
-    print(f"[Honeypot] เลือกพอร์ตใหม่ตามสถิติ: {selected_port}")
+    print(f"[Honeypot] เลือกพอร์ตใหม่ตามสถิติ: {selected_port} (จากวันที่ {check_date_str})")
     return selected_port
 
 # -----------------------------
