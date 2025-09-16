@@ -81,5 +81,8 @@ svr04 -> ubuntu_svr
 ```
 rm -f src/cowrie/data/fs.pickle
 ./bin/createfs -l honeyfs -o src/cowrie/data/fs.pickle
+
+rm -f /home/cowrie/cowrie/src/cowrie/data/fs.pickle",
+/home/cowrie/cowrie/bin/createfs -l honeyfs -o /home/cowrie/cowrie/src/cowrie/data/fs.pickle",
 ```
 
