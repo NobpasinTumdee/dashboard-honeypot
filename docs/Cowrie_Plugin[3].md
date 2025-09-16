@@ -58,7 +58,11 @@ nano ping.py
   nano df.py
   nano __init__.py
   ```
-* [top.py](/Plugin/Cowrie/command/top.py)
-* [systemctl.py](/Plugin/Cowrie/command/systemctl.py)
-* [df.py](/Plugin/Cowrie/command/df.py)
 * [__init__.py](/Plugin/Cowrie/command/__init__.py)
+  * [top.py](/Plugin/Cowrie/command/top.py)
+  * [systemctl.py](/Plugin/Cowrie/command/systemctl.py)
+  * [df.py](/Plugin/Cowrie/command/df.py)
+  * [df.py](/Plugin/Cowrie/command/grep.py)
+  * [df.py](/Plugin/Cowrie/command/ip.py)
+  * [df.py](/Plugin/Cowrie/command/nano.py)
+  * [df.py](/Plugin/Cowrie/command/ss.py)
