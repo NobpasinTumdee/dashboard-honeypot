@@ -14,7 +14,15 @@ nano session.py
 ```
 * [session.py](/Plugin/Cowrie/telnet/session.py)
 ### เพิ่มความเนียน
-1. เจ้าของ
+
+1. ปรับชื่อให้สอดคล้อง
+```
+pwd -> /home/cowrie/cowrie/etc
+nano cowrie.cfg
+```
+svr04 -> ubuntu_svr
+
+2. เจ้าของ
 ```
 cd /home/cowrie/cowrie/honeyfs/
 ```
@@ -26,20 +34,20 @@ sudo setfacl -m u:cowrie:rw /home/cowrie/cowrie/honeyfs/etc/passwd
 sudo setfacl -m u:cowrie:rw /home/cowrie/cowrie/honeyfs/etc/group
 sudo setfacl -m u:cowrie:rw /home/cowrie/cowrie/honeyfs/home
 ```
-2. การ ping (google.com)
+3. การ ping (google.com)
 ```
 cd /home/cowrie/cowrie/src/cowrie/commands
 nano ping.py
 ```
 * [ping.py](/Plugin/Cowrie/command/ping.py)
-3. การตอบกลับของ (uname -a)
+4. การตอบกลับของ (uname -a)
   ```
   nano /home/cowrie/cowrie/etc/cowrie.cfg
   kernel_build_string = #43~20.04.1-Ubuntu SMP Fri May 5 18:23:44 UTC 2023 x86_64 GNU/Linux
   nano /home/cowrie/cowrie/src/cowrie/commands/uname.py
   ```
   * [uname.py](/Plugin/Cowrie/command/uname.py)
-4. เพิ่มกรตอบกลับของคำสั่ง
+5. เพิ่มกรตอบกลับของคำสั่ง
 - top
 - systemctl status
 - df -h
