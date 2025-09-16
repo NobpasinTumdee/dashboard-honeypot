@@ -1,0 +1,49 @@
+function doPost(e) {
+  try {
+    // ข้อมูลจาก Discord (Content-Type: application/json)
+    var data = JSON.parse(e.postData.contents);
+
+    // ดึงข้อความที่ user พิมพ์มา
+    var content = data.content ? data.content.trim() : "";
+    var ipRegex = /(\d{1,3}\.){3}\d{1,3}/;
+    var match = content.match(ipRegex);
+
+    var replyMsg = "กรุณาส่ง IP ที่ถูกต้อง เช่น 192.168.1.10";
+
+    if (match) {
+      var src_ip = match[0];
+
+      // เปิดชีต
+      var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName("Sheet1");
+      var values = sheet.getDataRange().getValues();
+
+      replyMsg = "ไม่พบข้อมูลสำหรับ IP: " + src_ip;
+
+      for (var i = 1; i < values.length; i++) {
+        if (values[i][0] == src_ip) {
+          replyMsg = "IP: " + values[i][0] + "\nScan: " + values[i][1];
+          break;
+        }
+      }
+    }
+
+    // ส่งกลับไปที่ Discord webhook
+    var discordWebhookUrl = "[discord Webhook Url]";
+    var payload = {
+      content: replyMsg
+    };
+
+    UrlFetchApp.fetch(discordWebhookUrl, {
+      method: "post",
+      contentType: "application/json",
+      payload: JSON.stringify(payload)
+    });
+
+    return ContentService.createTextOutput(JSON.stringify({ status: "ok" }))
+      .setMimeType(ContentService.MimeType.JSON);
+
+  } catch (err) {
+    return ContentService.createTextOutput(JSON.stringify({ error: err.toString() }))
+      .setMimeType(ContentService.MimeType.JSON);
+  }
+}
