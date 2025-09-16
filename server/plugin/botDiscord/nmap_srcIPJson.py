@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
 import json
 import subprocess
+import csv
+import os
 
 def scan_ips_and_save(input_file, output_file):
     """
     Reads a JSON file, extracts unique 'src_ip' values,
     runs nmap on each IP, and saves the results to a new JSON file.
+    Also writes the same results to a CSV file (same base name as output_file).
 
     Args:
         input_file (str): The path to the input JSON file (e.g., 'cowrie.json').
@@ -16,7 +19,7 @@ def scan_ips_and_save(input_file, output_file):
     scan_results = []
 
     try:
-        with open(input_file, 'r') as f:
+        with open(input_file, 'r', encoding='utf-8') as f:
             for line in f:
                 try:
                     data = json.loads(line)
@@ -69,17 +72,35 @@ def scan_ips_and_save(input_file, output_file):
                 "nmap_scan": generic_error_message
             })
 
+    # Write JSON as before
     try:
         with open(output_file, 'w', encoding='utf-8') as f:
             json.dump(scan_results, f, ensure_ascii=False, indent=4)
         print(f"Results saved to '{output_file}' successfully.")
-
     except IOError as e:
         print(f"Error writing to file '{output_file}': {e}")
+        # If JSON writing fails, still attempt CSV below (optional)
+
+    # Also write CSV (same base name, .csv)
+    try:
+        base, ext = os.path.splitext(output_file)
+        csv_file = f"{base}.csv"
+
+        # Use newline='' to avoid extra blank lines on Windows
+        with open(csv_file, 'w', newline='', encoding='utf-8') as csvf:
+            writer = csv.writer(csvf, quoting=csv.QUOTE_MINIMAL)
+            # header
+            writer.writerow(["src_ip", "nmap_scan"])
+            for row in scan_results:
+                # Ensure nmap_scan remains as a single CSV cell (contains newlines)
+                writer.writerow([row.get("src_ip", ""), row.get("nmap_scan", "")])
+
+        print(f"CSV results saved to '{csv_file}' successfully.")
+    except IOError as e:
+        print(f"Error writing CSV file: {e}")
 
 
 if __name__ == "__main__":
-    # input_file_name = '/home/cowrie/cowrie/var/log/cowrie/cowrie.json'
-    input_file_name = '/home/os/python_script/cowrie.json'
+    input_file_name = '/home/cowrie/cowrie/var/log/cowrie/cowrie.json'
     output_file_name = 'ScanSrc.json'
     scan_ips_and_save(input_file_name, output_file_name)
