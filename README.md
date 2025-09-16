@@ -19,6 +19,8 @@
 ### Wireshark
 * [Wireshark Setup](/docs/Wireshark/Wireshark.md)
 * [Exploit Demo](/docs/Wireshark/Attack_demo.md)
+### AutoNmapLog and discord bot
+* [Wireshark Setup](/docs/BotDiscord/NmapLog.md)
 
 # Graph ระบบโดยรวม
 ```mermaid
