@@ -77,7 +77,7 @@ const Xss = () => {
                         className="form-button"
                         style={{ width: 'auto', padding: '1rem 4.5rem', fontSize: '2.25rem', fontWeight: '900' }}
                         onClick={() => {
-                            navigate('/login');
+                            navigate('/home/login');
                             window.location.reload();
                         }}
                     >
