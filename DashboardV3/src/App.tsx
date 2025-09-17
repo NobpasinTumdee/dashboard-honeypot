@@ -29,12 +29,16 @@ import DocumentWireshark from './pages/documentation/DocumentWireshark';
 
 const router = createBrowserRouter([
   {
-    path: "/",
+    path: '/',
+    errorElement: <div style={{ position: 'fixed', width: '100vw', height: '100vh', backgroundColor: '#242424', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>404 Not found this page...</div>,
+    element: <HeroPage />
+  },
+  {
+    path: "/home",
     element: <Rootlayout />,
     errorElement: <div style={{ position: 'fixed', width: '100vw', height: '100vh', backgroundColor: '#242424', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>404 Not found this page...</div>,
     children: [
-      { index: true, element: <HeroPage /> },
-      { path: "home", element: <ProtectedRoute><HomePage /></ProtectedRoute> },
+      { index: true, element: <ProtectedRoute><HomePage /></ProtectedRoute> },
       { path: "cowrie", element: <ProtectedRoute><CowriePage /></ProtectedRoute> },
       { path: "open-canary", element: <ProtectedRoute><OpenCanaryPage /></ProtectedRoute> },
       { path: "wireshark", element: <ProtectedRoute><WiresharkPage /></ProtectedRoute> },
@@ -79,7 +83,7 @@ function App() {
           <ChatBotPopUp />
         </div>
       }
-      
+
     </ThemeProvider>
   );
 }

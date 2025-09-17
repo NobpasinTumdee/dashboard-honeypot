@@ -23,7 +23,7 @@ const Sidebar = () => {
     localStorage.removeItem("UserName");
     localStorage.removeItem("status");
     messageApi.success('Logout successful!', 3)
-    window.location.href = "/login";
+    window.location.href = "/home/login";
   }
   return (
     <>
@@ -78,7 +78,7 @@ const Sidebar = () => {
               {isLogin === 'true' && (
                 <>
                   <li className="nav-item">
-                    <Link to="/cowrie" className={`nav-link ${isActive('/cowrie') ? 'active' : ''}`}>
+                    <Link to="/home/cowrie" className={`nav-link ${isActive('/home/cowrie') ? 'active' : ''}`}>
                       <span className="nav-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><path d="M12.034 12.681a.498.498 0 0 1 .647-.647l9 3.5a.5.5 0 0 1-.033.943l-3.444 1.068a1 1 0 0 0-.66.66l-1.067 3.443a.5.5 0 0 1-.943.033z" /><path d="M21 11V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h6" /></svg>
                       </span>
@@ -88,7 +88,7 @@ const Sidebar = () => {
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <Link to="/open-canary" className={`nav-link ${isActive('/open-canary') ? 'active' : ''}`}>
+                    <Link to="/home/open-canary" className={`nav-link ${isActive('/home/open-canary') ? 'active' : ''}`}>
                       <span className="nav-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><path d="M8 2v4" /><path d="M12 2v4" /><path d="M16 2v4" /><path d="M16 4h2a2 2 0 0 1 2 2v2" /><path d="M20 12v2" /><path d="M20 18v2a2 2 0 0 1-2 2h-1" /><path d="M13 22h-2" /><path d="M7 22H6a2 2 0 0 1-2-2v-2" /><path d="M4 14v-2" /><path d="M4 8V6a2 2 0 0 1 2-2h2" /><path d="M8 10h6" /><path d="M8 14h8" /><path d="M8 18h5" /></svg>
                       </span>
@@ -98,7 +98,7 @@ const Sidebar = () => {
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <Link to="/wireshark" className={`nav-link ${isActive('/wireshark') ? 'active' : ''}`}>
+                    <Link to="/home/wireshark" className={`nav-link ${isActive('/home/wireshark') ? 'active' : ''}`}>
                       <span className="nav-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><path d="M12 22v-9" /><path d="M15.17 2.21a1.67 1.67 0 0 1 1.63 0L21 4.57a1.93 1.93 0 0 1 0 3.36L8.82 14.79a1.655 1.655 0 0 1-1.64 0L3 12.43a1.93 1.93 0 0 1 0-3.36z" /><path d="M20 13v3.87a2.06 2.06 0 0 1-1.11 1.83l-6 3.08a1.93 1.93 0 0 1-1.78 0l-6-3.08A2.06 2.06 0 0 1 4 16.87V13" /><path d="M21 12.43a1.93 1.93 0 0 0 0-3.36L8.83 2.2a1.64 1.64 0 0 0-1.63 0L3 4.57a1.93 1.93 0 0 0 0 3.36l12.18 6.86a1.636 1.636 0 0 0 1.63 0z" /></svg>
                       </span>
@@ -108,7 +108,7 @@ const Sidebar = () => {
                     </Link>
                   </li>
                   <li className="nav-item">
-                    <Link to="/users" className={`nav-link ${isActive('/users') ? 'active' : ''}`}>
+                    <Link to="/home/users" className={`nav-link ${isActive('/home/users') ? 'active' : ''}`}>
                       <span className="nav-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /><path d="M6.376 18.91a6 6 0 0 1 11.249.003" /><circle cx="12" cy="11" r="4" /></svg>
                       </span>
@@ -144,7 +144,7 @@ const Sidebar = () => {
               </li>
               {isLogin !== 'true' && (
                 <li className="nav-item">
-                  <Link to="/login" className={`nav-link ${isActive('/login') ? 'active' : ''}`}>
+                  <Link to="/home/login" className={`nav-link ${isActive('/home/login') ? 'active' : ''}`}>
                     <span className="nav-icon">
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z" /><circle cx="16.5" cy="7.5" r=".5" fill="currentColor" /></svg>
                     </span>
@@ -197,7 +197,7 @@ const Sidebar = () => {
             {isLogin === 'true' && (
               <>
                 <li className="mobile-navnav-item">
-                  <Link to="/cowrie" className={`mobile-nav-link ${isActive('/cowrie') ? 'active' : ''}`}>
+                  <Link to="/home/cowrie" className={`mobile-nav-link ${isActive('/home/cowrie') ? 'active' : ''}`}>
                     <span className="mobile-nav-icon">
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><path d="M12.034 12.681a.498.498 0 0 1 .647-.647l9 3.5a.5.5 0 0 1-.033.943l-3.444 1.068a1 1 0 0 0-.66.66l-1.067 3.443a.5.5 0 0 1-.943.033z" /><path d="M21 11V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h6" /></svg>
                     </span>
@@ -205,7 +205,7 @@ const Sidebar = () => {
                   </Link>
                 </li>
                 <li className="mobile-navnav-item">
-                  <Link to="/open-canary" className={`mobile-nav-link ${isActive('/open-canary') ? 'active' : ''}`}>
+                  <Link to="/home/open-canary" className={`mobile-nav-link ${isActive('/home/open-canary') ? 'active' : ''}`}>
                     <span className="mobile-nav-icon">
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><path d="M8 2v4" /><path d="M12 2v4" /><path d="M16 2v4" /><path d="M16 4h2a2 2 0 0 1 2 2v2" /><path d="M20 12v2" /><path d="M20 18v2a2 2 0 0 1-2 2h-1" /><path d="M13 22h-2" /><path d="M7 22H6a2 2 0 0 1-2-2v-2" /><path d="M4 14v-2" /><path d="M4 8V6a2 2 0 0 1 2-2h2" /><path d="M8 10h6" /><path d="M8 14h8" /><path d="M8 18h5" /></svg>
                     </span>
@@ -213,7 +213,7 @@ const Sidebar = () => {
                   </Link>
                 </li>
                 <li className="mobile-navnav-item">
-                  <Link to="/wireshark" className={`mobile-nav-link ${isActive('/wireshark') ? 'active' : ''}`}>
+                  <Link to="/home/wireshark" className={`mobile-nav-link ${isActive('/home/wireshark') ? 'active' : ''}`}>
                     <span className="mobile-nav-icon">
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><path d="M12 22v-9" /><path d="M15.17 2.21a1.67 1.67 0 0 1 1.63 0L21 4.57a1.93 1.93 0 0 1 0 3.36L8.82 14.79a1.655 1.655 0 0 1-1.64 0L3 12.43a1.93 1.93 0 0 1 0-3.36z" /><path d="M20 13v3.87a2.06 2.06 0 0 1-1.11 1.83l-6 3.08a1.93 1.93 0 0 1-1.78 0l-6-3.08A2.06 2.06 0 0 1 4 16.87V13" /><path d="M21 12.43a1.93 1.93 0 0 0 0-3.36L8.83 2.2a1.64 1.64 0 0 0-1.63 0L3 4.57a1.93 1.93 0 0 0 0 3.36l12.18 6.86a1.636 1.636 0 0 0 1.63 0z" /></svg>
                     </span>
@@ -221,7 +221,7 @@ const Sidebar = () => {
                   </Link>
                 </li>
                 <li className="mobile-navnav-item">
-                  <Link to="/users" className={`mobile-nav-link ${isActive('/users') ? 'active' : ''}`}>
+                  <Link to="/home/users" className={`mobile-nav-link ${isActive('/home/users') ? 'active' : ''}`}>
                     <span className="mobile-nav-icon">
                       <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z" /><path d="M6.376 18.91a6 6 0 0 1 11.249.003" /><circle cx="12" cy="11" r="4" /></svg>
                     </span>
@@ -248,7 +248,7 @@ const Sidebar = () => {
               </p>
             </li>
             <li className="mobile-navnav-item">
-              <Link to="/login" className={`mobile-nav-link ${isActive('/login') ? 'active' : ''}`}>
+              <Link to="/home/login" className={`mobile-nav-link ${isActive('/home/login') ? 'active' : ''}`}>
                 <span className="mobile-nav-icon">
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" ><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z" /><circle cx="16.5" cy="7.5" r=".5" fill="currentColor" /></svg>
                 </span>
