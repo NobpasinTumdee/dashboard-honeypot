@@ -7,12 +7,30 @@ sudo setfacl -m u:cowrie:rwx /home/cowrie/cowrie/honeyfs/etc/passwd
 sudo setfacl -m u:cowrie:rwx /home/cowrie/cowrie/honeyfs/etc/group
 sudo setfacl -m u:cowrie:rwx /home/cowrie/cowrie/honeyfs/home
 ```
-### ปรับปรุง session.py ของ cowrie
+### ปรับปรุง Telnet
+
 ```
 pwd -> /home/cowrie/cowrie/src/cowrie/telnet/
 nano session.py
 ```
 * [session.py](/Plugin/Cowrie/telnet/session.py)
+
+### ปรับปรุง SSH
+
+```
+nano /home/cowrie/cowrie/src/cowrie/shell/avatar.py
+nano /home/cowrie/cowrie/src/cowrie/shell/pwd.py
+nano /home/cowrie/cowrie/src/cowrie/ssh/session.py
+```
+ปรับปรุงการ return สำหรับสร้าง etc
+* [avatar.py](/Plugin/Cowrie/shell/avatar.py)
+    
+fix uid/gid
+* [pwd.py](/Plugin/Cowrie/shell/pwd.py)
+     
+update etc
+* [session.py](/Plugin/Cowrie/shell/session.py)    
+
 ### เพิ่มความเนียน
 
 1. ปรับชื่อให้สอดคล้อง
