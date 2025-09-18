@@ -38,7 +38,7 @@ const HeroPage: React.FC = () => {
             </div>
 
             <button className="hero-open-btn">
-              <Link to="/home/login" style={{ textDecoration: 'none' }}>Login</Link>
+              <Link to="/home/login" style={{ textDecoration: 'none', color: 'inherit' }}>Login</Link>
             </button>
           </div>
         </nav>
@@ -60,10 +60,10 @@ const HeroPage: React.FC = () => {
               </p>
 
               <div className="hero-buttons">
-                <button className="hero-btn hero-btn-primary" onClick={() => { window.location.href = 'https://github.com/NobpasinTumdee/dashboard-honeypot' } }>
+                <button className="hero-btn hero-btn-primary" onClick={() => { window.location.href = 'https://github.com/NobpasinTumdee/dashboard-honeypot' }}>
                   GitHub Repository
                 </button>
-                <button className="hero-btn hero-btn-secondary" onClick={() => { window.location.href = '/xss'} }>
+                <button className="hero-btn hero-btn-secondary" onClick={() => { window.location.href = '/xss' }}>
                   Create Qr Code
                 </button>
               </div>
@@ -127,7 +127,7 @@ const HeroPage: React.FC = () => {
           </div>
         </main>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginTop: '5%' }}>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', margin: '5% 0' }}>
           <div className="hero-features">
             <div className="hero-feature">
               <div className="hero-feature-icon">🔍</div>
@@ -154,7 +154,95 @@ const HeroPage: React.FC = () => {
             </div>
           </div>
         </div>
+
+
+        {/* Footer */}
+        <footer className="hero-footer">
+          <div className="hero-footer-content">
+            <div className="hero-footer-main">
+              <div className="hero-footer-brand">
+                <div className="hero-footer-logo">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="hero-footer-logo-icon" height="24px" viewBox="0 -960 960 960" width="24px" fill="#ffffffff"><path d="M520-600v-240h320v240H520ZM120-440v-400h320v400H120Zm400 320v-400h320v400H520Zm-400 0v-240h320v240H120Zm80-400h160v-240H200v240Zm400 320h160v-240H600v240Zm0-480h160v-80H600v80ZM200-200h160v-80H200v80Zm160-320Zm240-160Zm0 240ZM360-280Z" /></svg>
+                </div>
+
+                <div className="hero-footer-language">
+                  <h4 className="hero-footer-section-title">Language</h4>
+                  <select className="hero-footer-select">
+                    <option>English</option>
+                  </select>
+                </div>
+
+                <div className="hero-footer-social">
+                  <h4 className="hero-footer-section-title">Social</h4>
+                  <div className="hero-footer-social-links">
+                    <a href="#" className="hero-footer-social-link">
+                      {/* <Twitter className="hero-footer-social-icon" /> */}
+                    </a>
+                    <a href="#" className="hero-footer-social-link">
+                    </a>
+                    <a href="#" className="hero-footer-social-link">
+                    </a>
+                    <a href="#" className="hero-footer-social-link">
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div className="hero-footer-links">
+                <div className="hero-footer-column">
+                  <h4 className="hero-footer-column-title">Product</h4>
+                  <ul className="hero-footer-link-list">
+                    <li><a href="#" className="hero-footer-link">Download</a></li>
+                    <li><a href="#" className="hero-footer-link">Status</a></li>
+                    <li><a href="#" className="hero-footer-link">App Directory</a></li>
+                  </ul>
+                </div>
+
+                <div className="hero-footer-column">
+                  <h4 className="hero-footer-column-title">Company</h4>
+                  <ul className="hero-footer-link-list">
+                    <li><a href="#" className="hero-footer-link">About</a></li>
+                    <li><a href="#" className="hero-footer-link">Jobs</a></li>
+                    <li><a href="#" className="hero-footer-link">Brand</a></li>
+                    <li><a href="#" className="hero-footer-link">Newsroom</a></li>
+                  </ul>
+                </div>
+
+                <div className="hero-footer-column">
+                  <h4 className="hero-footer-column-title">Resources</h4>
+                  <ul className="hero-footer-link-list">
+                    <li><a href="#" className="hero-footer-link">College</a></li>
+                    <li><a href="#" className="hero-footer-link">Support</a></li>
+                    <li><a href="#" className="hero-footer-link">Safety</a></li>
+                    <li><a href="#" className="hero-footer-link">Blog</a></li>
+                    <li><a href="#" className="hero-footer-link">StreamKit</a></li>
+                    <li><a href="#" className="hero-footer-link">Creators</a></li>
+                    <li><a href="#" className="hero-footer-link">Community</a></li>
+                    <li><a href="#" className="hero-footer-link">Developers</a></li>
+                    <li><a href="#" className="hero-footer-link">Quests</a></li>
+                    <li><a href="#" className="hero-footer-link">Official 3rd Party Merch</a></li>
+                    <li><a href="#" className="hero-footer-link">Feedback</a></li>
+                  </ul>
+                </div>
+
+                <div className="hero-footer-column">
+                  <h4 className="hero-footer-column-title">Policies</h4>
+                  <ul className="hero-footer-link-list">
+                    <li><a href="#" className="hero-footer-link">Terms</a></li>
+                    <li><a href="#" className="hero-footer-link">Privacy</a></li>
+                    <li><a href="#" className="hero-footer-link">Cookie Settings</a></li>
+                    <li><a href="#" className="hero-footer-link">Guidelines</a></li>
+                    <li><a href="#" className="hero-footer-link">Acknowledgements</a></li>
+                    <li><a href="#" className="hero-footer-link">Licenses</a></li>
+                    <li><a href="#" className="hero-footer-link">Company Information</a></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </footer>
       </div>
+
 
 
 

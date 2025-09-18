@@ -7,7 +7,7 @@ const NavDoc = () => {
     return (
         <>
             <div className='doc-nav-container'>
-                <nav className="doc-nav">
+                <nav className="doc-nav" style={{ color: 'white' }}>
                     <Link to="/" className={`Link-button-doc ${isActive('/') ? 'active' : ''}`}>Dashboard</Link>
                     <Link to="/document" className={`Link-button-doc ${isActive('/document') ? 'active' : ''}`}>Home</Link>
                     <Link to="/document/setup-guide" className={`Link-button-doc ${isActive('/setup-guide') ? 'active' : ''}`}>Setup</Link>
