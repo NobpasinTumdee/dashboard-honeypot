@@ -435,7 +435,7 @@ const CowriePage: React.FC = () => {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', margin: '0 0 20px', borderRadius: '10px', border: '1px solid #ccc', padding: '10px' }}>
         <div>
           <input type="text" id="searchInput" placeholder="Source IP..." onChange={(e) => setSrcIpFilter(e.target.value)} style={{ padding: '0.3rem 1rem', borderRadius: '4px', border: '1px solid #ccc' }} />
-          <button style={{ padding: '0.3rem 1rem', borderRadius: '4px', border: '1px solid #ccc', marginLeft: '10px' }}>Search</button>
+          <button style={{ padding: '0.3rem 1rem', borderRadius: '4px', border: '1px solid #ccc', marginLeft: '10px' }}>{t('search')}</button>
         </div>
         <select value={protocolFilter} onChange={handleSelectChange} style={{ padding: '0.3rem 1rem', borderRadius: '4px', border: '1px solid #ccc' }}>
           <option value="">All</option>
@@ -471,7 +471,7 @@ const CowriePage: React.FC = () => {
             style={{ width: 'auto', padding: '0.5rem 1rem' }}
             onClick={handleDownload}
           >
-            Download CSV
+            {t('download_csv')}
           </button>
         </div>
         <div style={{ overflowX: 'auto' }}>
@@ -522,16 +522,16 @@ const CowriePage: React.FC = () => {
           className="form-button"
           style={{ width: '100px', padding: '0.3rem 1.5rem' }}
         >
-          ◀ Prev
+          {t('prev')}
         </button>
-        <span>Page {currentPage} of {totalPages}</span>
+        <span>{t('page')} {currentPage} of {totalPages}</span>
         <button
           onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
           disabled={currentPage === totalPages}
           className="form-button"
           style={{ width: '100px', padding: '0.3rem 1.5rem' }}
         >
-          Next ▶
+          {t('next')}
         </button>
       </div>
     </div>
