@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import Chart from '../components/Chart';
 import StatCard from '../components/StatCard';
@@ -13,6 +14,7 @@ import type { CanaryLog, CowrieLog, HttpsPacket } from '../types';
 import { useCanarySocket, useCowrieSocket, usePacketSocket } from '../service/websocket';
 
 const HomePage: React.FC = () => {
+  const { t } = useTranslation();
   // routing
   const navigate = useNavigate();
   // data services
@@ -257,19 +259,19 @@ const HomePage: React.FC = () => {
     <div>
       <Marquee />
       <div className="page-header">
-        <h1 className="page-title">Dashboard</h1>
-        <p className="page-subtitle">Overview of all honeypot systems <b style={{ color: isConnected ? 'var(--accent-primary)' : 'red' }}>Server : {isConnected ? 'Online 🌐' : 'Offline 🔴'}</b> <b style={{ color: 'var(--accent-primary)' }}>{isError}</b></p>
+        <h1 className="page-title">{t('dashboard_title')}</h1>
+        <p className="page-subtitle">{t('dashboard_overview')}<b style={{ color: isConnected ? 'var(--accent-primary)' : 'red' }}> {isConnected ? 'Online 🌐' : 'Offline 🔴'}</b> <b style={{ color: 'var(--accent-primary)' }}>{isError}</b></p>
       </div>
 
       <div className="stats-grid">
         <StatCard
-          title="Total Packets"
+          title={t('dashboard_total_packets')}
           value={CowrieData.length + CanaryData.length + dataPacket.length}
           icon="⚡"
           variant="danger"
         />
         <StatCard
-          title="SSH & TELNET"
+          title={t('dashboard_protocols')}
           value={CowrieData.length}
           change={CowrieData.filter(item => item.timestamp.split(' ')[0] === new Date().toISOString().split('T')[0]).length.toString()}
           changeType="positive"
@@ -277,7 +279,7 @@ const HomePage: React.FC = () => {
           variant="primary"
         />
         <StatCard
-          title="FTP & HTTP & HTTPS"
+          title={t('dashboard_web_protocols')}
           value={CanaryData.length}
           change={CanaryData.filter(item => item.local_time_adjusted.split(' ')[0] === new Date().toISOString().split('T')[0]).length.toString()}
           changeType="positive"
@@ -285,7 +287,7 @@ const HomePage: React.FC = () => {
           variant="primary"
         />
         <StatCard
-          title="Wireshark"
+          title={t('dashboard_wireshark')}
           value={dataPacket.length}
           change={dataPacket.filter(item => item.timestamp.split(' ')[0] === new Date().toISOString().split('T')[0]).length.toString()}
           changeType="positive"
@@ -296,20 +298,20 @@ const HomePage: React.FC = () => {
 
       <div className="charts-grid">
         <ChartCard
-          title="Top 10 Passwords"
-          subtitle="Most commonly used passwords"
+          title={t('stats_top_passwords_title')}
+          subtitle={t('stats_top_passwords_desc')}
         >
           <Chart type="bar" data={usernameData} height={250} options={CowrieOptions} />
         </ChartCard>
         <ChartCard
-          title="Daily OpenCanary Count"
-          subtitle="Packets detected per day"
+          title={t('stats_opencanary_title')}
+          subtitle={t('stats_opencanary_desc')}
         >
           <Chart type="line" data={dailyPacketsData} height={300} options={PacketsOptions} />
         </ChartCard>
         <ChartCard
-          title="Daily Wireshark Count"
-          subtitle="Packets detected per day"
+          title={t('stats_wireshark_title')}
+          subtitle={t('stats_wireshark_desc')}
         >
           <Chart type="bar" data={dailyWiresharkData} height={300} options={PacketsOptions} />
         </ChartCard>
@@ -326,11 +328,11 @@ const HomePage: React.FC = () => {
         style={{ width: 'auto', padding: '0.5rem 1rem', marginBottom: '1rem' }}
         onClick={handleFetchIP}
       >
-        Open Map
+        {t('dashboard_open_map')}
       </button>
 
       <DataTable
-        title="Recent Activity"
+        title={t('dashboard_recent_activity')}
         data={recentActivities}
         columns={activityColumns}
       />

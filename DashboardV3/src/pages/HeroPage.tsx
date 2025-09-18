@@ -4,7 +4,16 @@ import ThemeToggle from '../components/ThemeToggle';
 // import mc1 from '../assets/mc/MC4-Photoroom.png'
 // import mc2 from '../assets/mc/MC3-Photoroom.png'
 
+import { useTranslation } from 'react-i18next';
+import '../i18n';
+
 const HeroPage: React.FC = () => {
+  // TypeScript จะรู้จักประเภทข้อมูลของ t และ i18n โดยอัตโนมัติ
+  const { t, i18n } = useTranslation();
+
+  const changeLanguage = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    i18n.changeLanguage(e.target.value);
+  };
   return (
     <>
       {/* <section className="hero-section">
@@ -43,20 +52,18 @@ const HeroPage: React.FC = () => {
           </div>
         </nav>
 
-        {/* Hero Content */}
+        {/* Hero Content {t('')} */}
         <main className="hero-main">
           <div className="hero-content">
             <div className="hero-left">
               <h1 className="hero-title-new">
-                <span className="hero-title-new-line">Smart Tiny</span>
-                <span className="hero-title-new-line">HoneyPot</span>
-                <span className="hero-title-new-line">Monitoring</span>
+                <span className="hero-title-new-line">{t('title1')}</span>
+                <span className="hero-title-new-line">{t('title2')}</span>
+                <span className="hero-title-new-line">{t('title3')}</span>
               </h1>
 
               <p className="hero-description">
-                Real-time threat detection and analysis across multiple honeypot systems.
-                Monitor, analyze, and respond to security threats with comprehensive
-                visibility into your network's attack surface.
+                {t('description')}
               </p>
 
               <div className="hero-buttons">
@@ -137,49 +144,49 @@ const HeroPage: React.FC = () => {
           <div className="hero-features">
             <div className="hero-feature">
               <div className="hero-feature-icon">🔍</div>
-              <h3 className="hero-feature-title">Real-time Monitoring</h3>
+              <h3 className="hero-feature-title">{t('section1_title')}</h3>
               <p className="hero-feature-description">
-                Continuous monitoring of honeypot activities with instant alerts
+                {t('section1_desc')}
               </p>
             </div>
 
             <div className="hero-feature">
               <div className="hero-feature-icon">🛡️</div>
-              <h3 className="hero-feature-title">Threat Intelligence</h3>
+              <h3 className="hero-feature-title">{t('section2_title')}</h3>
               <p className="hero-feature-description">
-                Automated threat detection and intelligence gathering
+                {t('section2_desc')}
               </p>
             </div>
 
             <div className="hero-feature">
               <div className="hero-feature-icon">⚡</div>
-              <h3 className="hero-feature-title">Analysis</h3>
+              <h3 className="hero-feature-title">{t('section3_title')}</h3>
               <p className="hero-feature-description">
-                Clear and easy to interpret data visualization plans
+                {t('section3_desc')}
               </p>
             </div>
 
             <div className="hero-feature">
               <div className="hero-feature-icon">🤖</div>
-              <h3 className="hero-feature-title">AI chatbot</h3>
+              <h3 className="hero-feature-title">{t('section4_title')}</h3>
               <p className="hero-feature-description">
-                A smart assistant that will help you easily answer your questions.
+                {t('section4_desc')}
               </p>
             </div>
 
             <div className="hero-feature">
               <div className="hero-feature-icon">📚</div>
-              <h3 className="hero-feature-title">Document</h3>
+              <h3 className="hero-feature-title">{t('section5_title')}</h3>
               <p className="hero-feature-description">
-                A complete user guide that provides all the necessary information in one place, no need to search far.
+                {t('section5_desc')}
               </p>
             </div>
 
             <div className="hero-feature">
               <div className="hero-feature-icon">✨</div>
-              <h3 className="hero-feature-title">Set permissions</h3>
+              <h3 className="hero-feature-title">{t('section6_title')}</h3>
               <p className="hero-feature-description">
-                You can manage your employees by assigning access rights.
+                {t('section6_desc')}
               </p>
             </div>
           </div>
@@ -197,8 +204,14 @@ const HeroPage: React.FC = () => {
 
                 <div className="hero-footer-language">
                   <h4 className="hero-footer-section-title">Language</h4>
-                  <select className="hero-footer-select">
-                    <option>English</option>
+                  <h4 className="hero-footer-section-title">{t('welcome_message')}</h4>
+                  <select
+                    className="hero-footer-select"
+                    onChange={changeLanguage}
+                    value={i18n.language}
+                  >
+                    <option value="en">English</option>
+                    <option value="th">ภาษาไทย</option>
                   </select>
                 </div>
 
