@@ -48,9 +48,9 @@ const HeroPage: React.FC = () => {
           <div className="hero-content">
             <div className="hero-left">
               <h1 className="hero-title-new">
-                <span className="hero-title-new-line">Monitoring</span>
                 <span className="hero-title-new-line">Smart Tiny</span>
                 <span className="hero-title-new-line">HoneyPot</span>
+                <span className="hero-title-new-line">Monitoring</span>
               </h1>
 
               <p className="hero-description">
@@ -118,6 +118,12 @@ const HeroPage: React.FC = () => {
             <div className="hero-star hero-star-4"></div>
             <div className="hero-star hero-star-5"></div>
             <div className="hero-star hero-star-6"></div>
+            <div className="hero-star hero-star-7"></div>
+            <div className="hero-star hero-star-8"></div>
+            <div className="hero-star hero-star-9"></div>
+            <div className="hero-star hero-star-10"></div>
+            <div className="hero-star hero-star-11"></div>
+            <div className="hero-star hero-star-12"></div>
           </div>
 
           <div className="hero-gradient-orbs">
@@ -147,9 +153,33 @@ const HeroPage: React.FC = () => {
 
             <div className="hero-feature">
               <div className="hero-feature-icon">⚡</div>
-              <h3 className="hero-feature-title">Rapid Response</h3>
+              <h3 className="hero-feature-title">Analysis</h3>
               <p className="hero-feature-description">
-                Quick incident response with automated blocking and alerts
+                Clear and easy to interpret data visualization plans
+              </p>
+            </div>
+
+            <div className="hero-feature">
+              <div className="hero-feature-icon">🤖</div>
+              <h3 className="hero-feature-title">AI chatbot</h3>
+              <p className="hero-feature-description">
+                A smart assistant that will help you easily answer your questions.
+              </p>
+            </div>
+
+            <div className="hero-feature">
+              <div className="hero-feature-icon">📚</div>
+              <h3 className="hero-feature-title">Document</h3>
+              <p className="hero-feature-description">
+                A complete user guide that provides all the necessary information in one place, no need to search far.
+              </p>
+            </div>
+
+            <div className="hero-feature">
+              <div className="hero-feature-icon">✨</div>
+              <h3 className="hero-feature-title">Set permissions</h3>
+              <p className="hero-feature-description">
+                You can manage your employees by assigning access rights.
               </p>
             </div>
           </div>

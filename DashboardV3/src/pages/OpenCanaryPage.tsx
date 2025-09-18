@@ -93,11 +93,11 @@ const OpenCanaryPage: React.FC = () => {
 
   const labelsType = sortedLogdata.map(([message]) => {
     if (message === 'Added service from class CanaryHTTP in opencanary.modules.http to fake') {
-      return 'HTTP';
+      return 'Start Service HTTP';
     } else if (message === 'Added service from class CanaryHTTPS in opencanary.modules.https to fake') {
-      return 'HTTPS';
+      return 'Start Service HTTPS';
     } else if (message === 'Added service from class CanaryFTP in opencanary.modules.ftp to fake') {
-      return 'FTP';
+      return 'Start Service FTP';
     } else if (message === 'Canary running!!!') {
       return 'running';
     } else {
@@ -202,6 +202,47 @@ const OpenCanaryPage: React.FC = () => {
   };
 
 
+
+
+
+  // ===============================
+  // Function นับว่าแต่ละ port มีการเชื่อมต่อกี่ครั้ง
+  // ===============================
+  const countPorts = (): { [key: string]: number } => {
+    const portCounts: { [key: string]: number } = {};
+    data.forEach(log => {
+      const port = log.dst_port;
+      portCounts[port] = (portCounts[port] || 0) + 1;
+    });
+    return portCounts;
+  };
+
+  const countedData = countPorts();
+  const portData = {
+    labels: Object.keys(countedData),
+    datasets: [{
+      label: 'Number of ports',
+      data: Object.values(countedData),
+      borderColor: '#aeaeafff',
+      backgroundColor: '#aeaeaf30',
+      fill: true,
+      tension: 0.4,
+      pointRadius: 5,
+      pointBackgroundColor: '#aeaeafff',
+      pointBorderColor: '#fff',
+      pointHoverBackgroundColor: '#fff',
+      pointHoverBorderColor: '#aeaeafff',
+    }]
+  };
+
+  const optionsPort = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'bottom' as const,
+      },
+    },
+  };
 
 
 
@@ -343,6 +384,12 @@ const OpenCanaryPage: React.FC = () => {
           subtitle="Packets detected per day"
         >
           <Chart type="line" data={dailyPacketsData} height={300} options={options} />
+        </ChartCard>
+        <ChartCard
+          title="Number of connections per destination port"
+          subtitle="This information helps you see which ports are accessed most frequently. 💡"
+        >
+          <Chart type="pie" data={portData} height={250} options={optionsPort} />
         </ChartCard>
       </div>
 
