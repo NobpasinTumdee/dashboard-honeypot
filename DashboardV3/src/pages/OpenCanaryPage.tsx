@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { ChartData } from 'chart.js';
+import { useTranslation } from 'react-i18next';
 
 // components
 import Chart from '../components/Chart';
@@ -13,6 +14,7 @@ import type { CanaryLog } from '../types';
 import { useCanarySocket } from '../service/websocket';
 
 const OpenCanaryPage: React.FC = () => {
+  const { t } = useTranslation();
   // routing
   const navigate = useNavigate();
   // data services
@@ -339,33 +341,33 @@ const OpenCanaryPage: React.FC = () => {
   return (
     <div>
       <div className="page-header">
-        <h1 className="page-title">OpenCanary Honeypot</h1>
-        <p className="page-subtitle">Multi-protocol honeypot alerts and monitoring <b style={{ color: 'var(--accent-primary)' }}>{isError}</b></p>
+        <h1 className="page-title">{t('opencanary_title')}</h1>
+        <p className="page-subtitle">{t('opencanary_desc')} </p><span style={{ color: 'var(--accent-primary)' }}>{isError}</span>
       </div>
 
       <div className="stats-grid">
         <StatCard
-          title="Total Alerts"
+          title={t('opencanary_total_alerts')}
           value={data.length}
           changeType="negative"
           icon="⚡"
           variant="danger"
         />
         <StatCard
-          title="Unique Attackers"
+          title={t('opencanary_unique_attackers')}
           value={uniqueSourceIPs}
           changeType="negative"
           icon="👤"
           variant="warning"
         />
         <StatCard
-          title="Most Targeted Port"
+          title={t('opencanary_top_port')}
           value={Object.keys(portDistribution).sort((a, b) => portDistribution[Number(b)] - portDistribution[Number(a)])[0] || 'N/A'}
           icon="🔌"
           variant="primary"
         />
         <StatCard
-          title="Websockets status"
+          title={t('opencanary_websockets')}
           value={isConnected ? 'Online' : 'Offline'}
           icon="💻"
           variant="danger"
@@ -374,20 +376,20 @@ const OpenCanaryPage: React.FC = () => {
 
       <div className="charts-grid">
         <ChartCard
-          title="Alert Messages Distribution"
-          subtitle="Types of detected activities"
+          title={t('opencanary_alert_distribution')}
+          subtitle={t('opencanary_alert_types')}
         >
           <Chart type="bar" data={messageData} height={300} options={options} />
         </ChartCard>
         <ChartCard
-          title="Daily Packet Count"
-          subtitle="Packets detected per day"
+          title={t('opencanary_daily_packets_title')}
+          subtitle={t('opencanary_daily_packets_desc')}
         >
           <Chart type="line" data={dailyPacketsData} height={300} options={options} />
         </ChartCard>
         <ChartCard
-          title="Number of connections per destination port"
-          subtitle="This information helps you see which ports are accessed most frequently. 💡"
+          title={t('opencanary_connections_per_port')}
+          subtitle={t('opencanary_port_info')}
         >
           <Chart type="pie" data={portData} height={250} options={optionsPort} />
         </ChartCard>
@@ -395,8 +397,8 @@ const OpenCanaryPage: React.FC = () => {
 
       <div className="charts-grid">
         <ChartCard
-          title="dayly activity"
-          subtitle="activity per day"
+          title={t('cowrie_daily_activity_title')}
+          subtitle={t('cowrie_activity_per_day')}
         >
           <Chart type="line" data={datatest} height={250} options={options} />
         </ChartCard>
@@ -405,7 +407,7 @@ const OpenCanaryPage: React.FC = () => {
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', margin: '0 0 20px', borderRadius: '10px', border: '1px solid #ccc', padding: '10px' }}>
         <div>
           <input type="text" id="searchInput" placeholder="Source IP..." onChange={(e) => setSrcIpFilter(e.target.value)} style={{ padding: '0.3rem 1rem', borderRadius: '4px', border: '1px solid #ccc' }} />
-          <button style={{ padding: '0.3rem 1rem', borderRadius: '4px', border: '1px solid #ccc', marginLeft: '10px' }}>Search</button>
+          <button style={{ padding: '0.3rem 1rem', borderRadius: '4px', border: '1px solid #ccc', marginLeft: '10px' }}>{t('search')}</button>
         </div>
         <select value={protocolFilter} onChange={handleSelectChange} style={{ padding: '0.3rem 1rem', borderRadius: '4px', border: '1px solid #ccc' }}>
           <option value="">All</option>
@@ -418,13 +420,13 @@ const OpenCanaryPage: React.FC = () => {
 
       <div className="table-container">
         <div className="table-header">
-          <h3 className="table-title">Recent OpenCanary Alerts</h3>
+          <h3 className="table-title">{t('opencanary_recent_alerts')}</h3>
           <button
             className="form-button"
             style={{ width: 'auto', padding: '0.75rem 1.5rem' }}
             onClick={handleDownload}
           >
-            Download CSV
+            {t('download_csv')}
           </button>
         </div>
         <div style={{ overflowX: 'auto' }}>
@@ -488,16 +490,16 @@ const OpenCanaryPage: React.FC = () => {
           className="form-button"
           style={{ width: '100px', padding: '0.3rem 1.5rem' }}
         >
-          ◀ Prev
+          {t('prev')}
         </button>
-        <span>Page {currentPage} of {totalPages}</span>
+        <span>{t('page')} {currentPage} of {totalPages}</span>
         <button
           onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
           disabled={currentPage === totalPages}
           className="form-button"
           style={{ width: '100px', padding: '0.3rem 1.5rem' }}
         >
-          Next ▶
+          {t('next')}
         </button>
       </div>
     </div>

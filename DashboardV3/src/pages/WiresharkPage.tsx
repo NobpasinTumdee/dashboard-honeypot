@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 
 import Modal from "react-modal";
@@ -28,6 +29,7 @@ const COLORS = ["#2563eb", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6", "#14b8a6"
 try { Modal.setAppElement("#root"); } catch { }
 
 const WiresharkPage: React.FC = () => {
+  const { t } = useTranslation();
   // react router
   const navigate = useNavigate();
 
@@ -362,16 +364,16 @@ const WiresharkPage: React.FC = () => {
       {/* Page Header */}
       <div className="page-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div>
-          <h1 className="page-title">Wireshark Analysis</h1>
+          <h1 className="page-title">{t('wireshark_title')}</h1>
           <p className="page-subtitle" style={{ margin: 0 }}>
-            Network packet analysis and HTTP/HTTPS traffic monitoring
+            {t('wireshark_desc')}
           </p>
         </div>
 
         <div>
           <Dropdown overlay={exportMenu} trigger={['click']}>
             <Button>
-              Download CSV <DownOutlined />
+              {t('download_csv')} <DownOutlined />
             </Button>
           </Dropdown>
         </div>
@@ -379,10 +381,10 @@ const WiresharkPage: React.FC = () => {
 
       {/* Stats Grid */}
       <div className="stats-grid">
-        <StatCard title="Captured Packets" value={data.reduce((sum, p) => sum + p.count, 0)} changeType="positive" icon="📦" variant="primary" />
-        <StatCard title="Unique Sources" value={uniqueSourceIPs} changeType="positive" icon="🌐" variant="success" />
-        <StatCard title="Most Common Method" value={Object.keys(methodDistribution).sort((a, b) => methodDistribution[b] - methodDistribution[a])[0] || 'N/A'} icon="📡" variant="warning" />
-        <StatCard title="Websockets Status" value={isConnected ? 'Online' : 'Offline'} icon="🔒" variant="success" />
+        <StatCard title={t('wireshark_captured_packets')} value={data.reduce((sum, p) => sum + p.count, 0)} changeType="positive" icon="📦" variant="primary" />
+        <StatCard title={t('wireshark_unique_sources')} value={uniqueSourceIPs} changeType="positive" icon="🌐" variant="success" />
+        <StatCard title={t('wireshark_common_method')} value={Object.keys(methodDistribution).sort((a, b) => methodDistribution[b] - methodDistribution[a])[0] || 'N/A'} icon="📡" variant="warning" />
+        <StatCard title={t('wireshark_websockets_status')} value={isConnected ? 'Online' : 'Offline'} icon="🔒" variant="success" />
       </div>
 
 
@@ -425,10 +427,10 @@ const WiresharkPage: React.FC = () => {
 
       {/* Method Stats */}
       <div className="stats-grid">
-        <StatCard title="GET Requests" value={getCount} changeType="positive" icon="⬇️" />
-        <StatCard title="POST Requests" value={postCount} changeType="positive" icon="⬇️" />
-        <StatCard title="PUT Requests" value={putCount} changeType="positive" icon="⬇️" />
-        <StatCard title="DELETE Requests" value={deleteCount} changeType="positive" icon="⬇️" />
+        <StatCard title={t('wireshark_get_requests')} value={getCount} changeType="positive" icon="⬇️" />
+        <StatCard title={t('wireshark_post_requests')} value={postCount} changeType="positive" icon="⬇️" />
+        <StatCard title={t('wireshark_put_requests')} value={putCount} changeType="positive" icon="⬇️" />
+        <StatCard title={t('wireshark_delete_requests')} value={deleteCount} changeType="positive" icon="⬇️" />
       </div>
 
 
@@ -446,13 +448,13 @@ const WiresharkPage: React.FC = () => {
       </div>
 
       {/* Data Table */}
-      <DataTable title="Captured HTTP/HTTPS Packets" data={currentItems} columns={wiresharkColumns} />
+      <DataTable title={t('wireshark_captured_http')} data={currentItems} columns={wiresharkColumns} />
 
       {/* Pagination */}
       <div style={{ margin: "2% 0 10%", textAlign: "center", display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px' }}>
-        <button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1} className="form-button" style={{ width: '100px', padding: '0.3rem 1.5rem' }}>◀ Prev</button>
-        <span>Page {currentPage} of {totalPages}</span>
-        <button onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages} className="form-button" style={{ width: '100px', padding: '0.3rem 1.5rem' }}>Next ▶</button>
+        <button onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))} disabled={currentPage === 1} className="form-button" style={{ width: '100px', padding: '0.3rem 1.5rem' }}>{t('prev')}</button>
+        <span>{t('page')} {currentPage} of {totalPages}</span>
+        <button onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))} disabled={currentPage === totalPages} className="form-button" style={{ width: '100px', padding: '0.3rem 1.5rem' }}>{t('next')}</button>
       </div>
 
       {/* Modal */}
@@ -507,7 +509,7 @@ const WiresharkPage: React.FC = () => {
             fontWeight: 600,
             color: "var(--text-primary)"
           }}>
-            Compare Network Items
+            {t('wireshark_compare_items')}
           </h2>
         </div>
 

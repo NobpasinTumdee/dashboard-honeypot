@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import StatCard from '../components/StatCard';
 import Loader from '../components/loader/Loader';
@@ -10,6 +11,7 @@ import { UsersSocket } from '../service/websocket';
 import { AuthNewUser, DeAuthNewUser } from '../service/api';
 
 const UsersPage: React.FC = () => {
+  const { t } = useTranslation();
   // routing
   const navigate = useNavigate();
   // data services
@@ -136,19 +138,19 @@ const UsersPage: React.FC = () => {
   return (
     <div>
       <div className="page-header">
-        <h1 className="page-title">User Management</h1>
-        <p className="page-subtitle">Manage system users and access controls</p>
+        <h1 className="page-title">{t('user_mgmt_title')}</h1>
+        <p className="page-subtitle">{t('user_mgmt_desc')}</p>
       </div>
 
       <div className="stats-grid">
         <StatCard
-          title="Total Users"
+          title={t('user_mgmt_total_users')}
           value={users.length}
           icon="👥"
           variant="primary"
         />
         <StatCard
-          title="Admin Users"
+          title={t('user_mgmt_admin_users')}
           value={activeUsers}
           change={`${Math.round((activeUsers / (users.length)) * 100)}%`}
           changeType="positive"
@@ -156,7 +158,7 @@ const UsersPage: React.FC = () => {
           variant="success"
         />
         <StatCard
-          title="Guest Users"
+          title={t('user_mgmt_guest_users')}
           value={inactiveUsers}
           change={`${Math.round((inactiveUsers / users.length) * 100)}%`}
           changeType="negative"
@@ -164,7 +166,7 @@ const UsersPage: React.FC = () => {
           variant="warning"
         />
         <StatCard
-          title="websocket"
+          title={t('user_mgmt_websocket')}
           value={isConnected ? 'Connected' : 'Disconnected'}
           icon="🔐"
           variant="primary"
@@ -174,11 +176,11 @@ const UsersPage: React.FC = () => {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
         <div className="chart-container">
           <div className="chart-header">
-            <h3 className="chart-title">User Authenticated</h3>
-            <p className="chart-subtitle">Here is a list of all authorized moderators.</p>
+            <h3 className="chart-title">{t('user_mgmt_authenticated')}</h3>
+            <p className="chart-subtitle">{t('user_mgmt_moderators_info')}</p>
           </div>
           <div className="chart-placeholder">
-            Member list
+            {t('user_mgmt_member_list')}
             <div style={{ overflowX: 'auto', maxHeight: '200px', overflowY: 'scroll' }}>
               <table className="data-table">
                 <tbody>
@@ -199,11 +201,11 @@ const UsersPage: React.FC = () => {
 
         <div className="chart-container">
           <div className="chart-header">
-            <h3 className="chart-title">Role Guest</h3>
-            <p className="chart-subtitle">Guest list required for approval</p>
+            <h3 className="chart-title">{t('user_mgmt_role_guest')}</h3>
+            <p className="chart-subtitle">{t('user_mgmt_guest_list_info')}</p>
           </div>
           <div className="chart-placeholder">
-            Member list
+            {t('user_mgmt_member_list')}
             <div style={{ overflowX: 'auto', maxHeight: '200px', overflowY: 'scroll' }}>
               <table className="data-table">
                 <tbody>
@@ -229,7 +231,7 @@ const UsersPage: React.FC = () => {
           style={{ width: 'auto', padding: '0.75rem 1.5rem' }}
           onClick={() => navigate('/login')}
         >
-          Add New User
+          {t('user_mgmt_add_user')}
         </button>
         <button
           className="form-button"
@@ -240,13 +242,13 @@ const UsersPage: React.FC = () => {
           }}
           onClick={handleDownload}
         >
-          Export Users
+          {t('user_mgmt_export_users')}
         </button>
       </div>
 
       <div className="table-container">
         <div className="table-header">
-          <h3 className="table-title">System Users</h3>
+          <h3 className="table-title">{t('user_mgmt_system_users')}</h3>
         </div>
         <div style={{ overflowX: 'auto' }}>
           <table className="data-table">
@@ -273,14 +275,14 @@ const UsersPage: React.FC = () => {
                           className="auth-button"
                           onClick={() => handleAuthUser(String(row.UserID))}
                         >
-                          Approve
+                          {t('approve')}
                         </button>
                       ) : (
                         <button
                           className="auth-button revoke"
                           onClick={() => handleDeAuthUser(String(row.UserID))}
                         >
-                          Revoke
+                          {t('revoke')}
                         </button>
                       )
                     }

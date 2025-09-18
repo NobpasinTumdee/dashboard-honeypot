@@ -119,6 +119,9 @@
 .next-step p {
     font-weight: 200;
 }
+.next-step h1 {
+    font-weight: 500;
+}
 
 
 .move-step {
