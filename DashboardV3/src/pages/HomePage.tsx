@@ -242,7 +242,7 @@ const HomePage: React.FC = () => {
         <h2>
           You are not logged in. Please log in to access this page.
         </h2>
-        <button onClick={() => navigate('/login')}>Go to Log in</button>
+        <button onClick={() => navigate('/home/login')}>Go to Log in</button>
       </div>
     )
   }

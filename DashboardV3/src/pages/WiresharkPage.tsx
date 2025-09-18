@@ -334,7 +334,7 @@ const WiresharkPage: React.FC = () => {
     return (
       <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", height: "80vh", textAlign: "center" }}>
         <h2>You are not logged in. Please log in to view the Wireshark overview.</h2>
-        <Button type="primary" onClick={() => navigate("/login")}>Login</Button>
+        <Button type="primary" onClick={() => navigate("/home/login")}>Login</Button>
       </div>
     );
   }

@@ -334,7 +334,7 @@ const CowriePage: React.FC = () => {
           You are not logged in. Please log in to access this page.
         </h2>
         <p>{isError}</p>
-        <button onClick={() => navigate('/login')}>Go to Log in</button>
+        <button onClick={() => navigate('/home/login')}>Go to Log in</button>
       </div>
     )
   }
