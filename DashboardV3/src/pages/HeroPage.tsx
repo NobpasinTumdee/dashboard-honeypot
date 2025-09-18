@@ -44,6 +44,11 @@ const HeroPage: React.FC = () => {
               <Link to="/home/users" className="hero-nav-link">User Management</Link>
               <Link to="/document" className="hero-nav-link">Document</Link>
               <ThemeToggle />
+              <div className="hero-lang-toggle" style={{ cursor: 'pointer' }}>
+                <span className="hero-lang-toggle-text" onClick={() => i18n.language === 'en' ? i18n.changeLanguage('th') : i18n.changeLanguage('en')}>
+                  {i18n.language === 'en' ? 'TH' : 'EN'}
+                </span>
+              </div>
             </div>
 
             <button className="hero-open-btn">
