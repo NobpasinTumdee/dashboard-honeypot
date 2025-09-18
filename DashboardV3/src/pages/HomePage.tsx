@@ -103,8 +103,8 @@ const HomePage: React.FC = () => {
         const chart = ctx.chart;
         const { ctx: canvas } = chart;
         const gradient = canvas.createLinearGradient(0, 0, 0, 200);
-        gradient.addColorStop(0, "#ef4444");
-        gradient.addColorStop(1, "#400C11");
+        gradient.addColorStop(0, "#b2b5b8ff");
+        gradient.addColorStop(1, "#484849ff");
         return gradient;
       },
       borderRadius: 4,
@@ -155,8 +155,8 @@ const HomePage: React.FC = () => {
     datasets: [{
       label: 'Packets',
       data: countsDaily,
-      borderColor: '#ef4444',
-      backgroundColor: '#400c114b',
+      borderColor: '#b2b5b8ff',
+      backgroundColor: '#b2b5b834',
       fill: true,
       tension: 0.4,
     }]
@@ -182,8 +182,8 @@ const HomePage: React.FC = () => {
     datasets: [{
       label: 'Wireshark',
       data: countsPacketDaily,
-      borderColor: '#ef4444',
-      backgroundColor: '#630a13bb',
+      borderColor: '#b2b5b8ff',
+      backgroundColor: '#b2b5b8ff',
       fill: true,
       tension: 0.4,
     }]

@@ -34,16 +34,16 @@ const generateChartData = (data: any[] | undefined, labelKey: string, chartLabel
     const counts = aggregatedArray.map(item => item.count);
 
     const backgroundColors = [
-        '#43362C',
-        '#7A4440',
-        '#CFBC9B',
-        '#9F9E98',
-        '#C2B8AA',
-        '#D9C9A1',
+        '#BFBFBF',
+        '#8B8B8D',
+        '#3F464C',
+        '#69686D',
+        '#4B4E55',
+        '#4A4E50',
         '#8D867C',
         '#A99F93',
-        '#FFB347',
-        '#FF6961',
+        '#868E91',
+        '#677077',
     ];
 
     return {

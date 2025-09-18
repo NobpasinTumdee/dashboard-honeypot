@@ -110,7 +110,7 @@ const OpenCanaryPage: React.FC = () => {
     datasets: [{
       label: 'Count',
       data: countsType,
-      backgroundColor: '#BAAE98',
+      backgroundColor: '#aeaeafff',
       borderRadius: 4,
     }]
   };
@@ -136,8 +136,8 @@ const OpenCanaryPage: React.FC = () => {
     datasets: [{
       label: 'Packets',
       data: countsDaily,
-      borderColor: '#BAAE98',
-      backgroundColor: '#baae981f',
+      borderColor: '#aeaeafff',
+      backgroundColor: '#aeaeaf30',
       fill: true,
       tension: 0.4,
     }]
@@ -166,13 +166,13 @@ const OpenCanaryPage: React.FC = () => {
         label: 'จำนวนข้อมูล',
         data: hourlyCounts,
         fill: true,
-        borderColor: '#ef4444',
-        backgroundColor: '#400c1159',
+        borderColor: '#8c8d8eff',
+        backgroundColor: '#8c8d8e43',
         tension: 0.4,
-        pointBackgroundColor: '#400C11',
-        pointBorderColor: '#741720ff',
+        pointBackgroundColor: '#8c8d8eff',
+        pointBorderColor: '#fff',
         pointHoverBackgroundColor: '#fff',
-        pointHoverBorderColor: '#5f523dff',
+        pointHoverBorderColor: '#8c8d8eff',
       },
     ],
   };
@@ -307,7 +307,7 @@ const OpenCanaryPage: React.FC = () => {
           title="Total Alerts"
           value={data.length}
           changeType="negative"
-          icon="🚨"
+          icon="⚡"
           variant="danger"
         />
         <StatCard

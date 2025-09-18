@@ -96,7 +96,7 @@ const CowriePage: React.FC = () => {
     datasets: [{
       data: [data.filter(log => log.protocol === 'ssh').length,
       data.filter(log => log.protocol === 'telnet').length],
-      backgroundColor: ['#400C11', '#c9baa2ff'],
+      backgroundColor: ['#2a2a2aff', '#b2b5b8ff'],
       borderWidth: 0,
     }]
   };
@@ -131,8 +131,8 @@ const CowriePage: React.FC = () => {
         const chart = ctx.chart;
         const { ctx: canvas } = chart;
         const gradient = canvas.createLinearGradient(0, 0, 0, 200);
-        gradient.addColorStop(0, "#BAAE98");
-        gradient.addColorStop(1, "#5f523dff");
+        gradient.addColorStop(0, "#e2e8f0");
+        gradient.addColorStop(1, "#8c8d8eff");
         return gradient;
       },
       borderRadius: 4,
@@ -170,8 +170,8 @@ const CowriePage: React.FC = () => {
         const chart = ctx.chart;
         const { ctx: canvas } = chart;
         const gradient = canvas.createLinearGradient(0, 0, 0, 200);
-        gradient.addColorStop(0, "#BAAE98");
-        gradient.addColorStop(1, "#400C11");
+        gradient.addColorStop(0, "#e2e8f0");
+        gradient.addColorStop(1, "#3b3b3bff");
         return gradient;
       },
       borderRadius: 4,
@@ -200,13 +200,13 @@ const CowriePage: React.FC = () => {
         label: 'จำนวนข้อมูล',
         data: hourlyCounts,
         fill: true,
-        borderColor: '#BAAE98',
-        backgroundColor: '#baae9880',
+        borderColor: '#8c8d8eff',
+        backgroundColor: '#8c8d8e43',
         tension: 0.4,
-        pointBackgroundColor: '#5f523dff',
+        pointBackgroundColor: '#8c8d8eff',
         pointBorderColor: '#fff',
         pointHoverBackgroundColor: '#fff',
-        pointHoverBorderColor: '#5f523dff',
+        pointHoverBorderColor: '#8c8d8eff',
       },
     ],
   };
@@ -220,7 +220,7 @@ const CowriePage: React.FC = () => {
     datasets: [{
       data: [data.filter(log => log.eventid === 'cowrie.command.failed').length,
       data.filter(log => log.eventid === 'cowrie.command.input').length],
-      backgroundColor: ['#400C11', '#c9baa2ff'],
+      backgroundColor: ['#8c8d8eff', '#4b4b4bff'],
       borderWidth: 0,
     }]
   };
@@ -357,7 +357,7 @@ const CowriePage: React.FC = () => {
           title="Total Sessions"
           value={totalSessions}
           changeType="negative"
-          icon="🔗"
+          icon="⚡"
           variant="primary"
         />
         <StatCard

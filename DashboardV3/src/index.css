@@ -8,13 +8,13 @@
   --text-secondary: #7e7e7e;
   --text-muted: #64748b;
   --border-color: #242424;
-  --accent-primary: #DDD3C3;
+  --accent-primary: #dadada;
   --accent-success: #10b981;
   --accent-warning: #f59e0b;
   --accent-danger: #ef4444;
   --shadow: rgba(0, 0, 0, 0.3);
-  --gradient-primary: linear-gradient(135deg, #BAAE98 0%, #32271C 100%);
-  --gradient-card: linear-gradient(35deg, #000000 0%, #443e39 100%);
+  --gradient-primary: linear-gradient(135deg, #cecece 0%, #414345 100%);
+  --gradient-card: linear-gradient(35deg, #000000 0%, #414345 100%);
   --gradient-hero: linear-gradient(342deg, #232526 0%, #414345 100%);
   --gradient-hero-footer: linear-gradient(180deg, #232526 0%, #414345 100%);
 
@@ -35,12 +35,12 @@
   --text-secondary: #475569;
   --text-muted: #64748b;
   --border-color: #e2e8f0;
-  --accent-primary: #d6be81;
+  --accent-primary: #1e293b;
   --accent-success: #10b981;
   --accent-warning: #f59e0b;
   --accent-danger: #ef4444;
   --shadow: rgba(0, 0, 0, 0.1);
-  --gradient-primary: linear-gradient(135deg, #e6d098 0%, #6d561c 100%);
+  --gradient-primary: linear-gradient(135deg, #1e293b 0%, #e2e8f0 100%);
   --gradient-card: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
   --gradient-hero: linear-gradient(152deg, #ECE9E6 0%, #FFFFFF 100%);
   --gradient-hero-footer: linear-gradient(180deg, #ECE9E6 0%, #FFFFFF 100%);
@@ -390,7 +390,7 @@ body {
   top: 0;
   left: 0;
   right: 0;
-  height: 3px;
+  height: 1px;
   background: var(--gradient-primary);
   transform: scaleX(0);
   transition: transform 0.3s ease;
@@ -445,22 +445,22 @@ body {
 
 /* Color Variants */
 .stat-card.primary .stat-icon {
-  background: rgba(59, 130, 246, 0.1);
+  background: #a1c0f01a;
   color: var(--accent-primary);
 }
 
 .stat-card.success .stat-icon {
-  background: rgba(16, 185, 129, 0.1);
+  background: #b3ffe51a;
   color: var(--accent-success);
 }
 
 .stat-card.warning .stat-icon {
-  background: rgba(245, 158, 11, 0.1);
+  background: #fdedd11a;
   color: var(--accent-warning);
 }
 
 .stat-card.danger .stat-icon {
-  background: rgba(239, 68, 68, 0.1);
+  background: #f7bebe1a;
   color: var(--accent-danger);
 }
 
