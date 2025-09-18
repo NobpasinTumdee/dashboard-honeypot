@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import Chart from '../components/Chart';
 import StatCard from '../components/StatCard';
@@ -13,6 +14,7 @@ import CowrieLogTerminal from '../components/terminal/CowrieLogTerminal';
 import type { ChartData } from 'chart.js';
 
 const CowriePage: React.FC = () => {
+  const { t } = useTranslation();
   // routing
   const navigate = useNavigate();
   // data services
@@ -348,33 +350,33 @@ const CowriePage: React.FC = () => {
   return (
     <div>
       <div className="page-header">
-        <h1 className="page-title">Cowrie Honeypot</h1>
-        <p className="page-subtitle">SSH/Telnet honeypot monitoring and analysis <b style={{ color: 'var(--accent-primary)' }}>{isError}</b></p>
+        <h1 className="page-title">{t('cowrie_title')}</h1>
+        <p className="page-subtitle">{t('cowrie_desc')}<b style={{ color: 'var(--accent-primary)' }}>{isError}</b></p>
       </div>
 
       <div className="stats-grid">
         <StatCard
-          title="Total Sessions"
+          title={t('cowrie_total_sessions')}
           value={totalSessions}
           changeType="negative"
           icon="⚡"
           variant="primary"
         />
         <StatCard
-          title="Active Protocols"
+          title={t('cowrie_active_protocols')}
           value={`SSH ${data.filter(log => log.protocol === 'ssh').length} Telnet ${data.filter(log => log.protocol === 'telnet').length}`}
           icon="🔒"
           variant="success"
         />
         <StatCard
-          title="Unique Source IPs"
+          title={t('cowrie_unique_ips')}
           value={uniqueIPs}
           changeType="negative"
           icon="🌐"
           variant="warning"
         />
         <StatCard
-          title="Websockets status"
+          title={t('cowrie_websockets')}
           value={isConnected ? 'Online' : 'Offline'}
           icon="💻"
           variant="danger"
@@ -383,20 +385,20 @@ const CowriePage: React.FC = () => {
 
       <div className="charts-grid">
         <ChartCard
-          title="Protocol Distribution"
-          subtitle="SSH vs Telnet connections"
+          title={t('cowrie_protocol_distribution_1')}
+          subtitle={t('cowrie_protocol_compare_1')}
         >
           <Chart type="pie" data={protocolData} height={250} options={PieOptions} />
         </ChartCard>
         <ChartCard
-          title="Top 10 Passwords"
-          subtitle="Most commonly used passwords"
+          title={t('cowrie_top_passwords_title')}
+          subtitle={t('cowrie_top_passwords_desc')}
         >
           <Chart type="bar" data={passwordData} height={250} options={options} />
         </ChartCard>
         <ChartCard
-          title="Top 10 Usernames"
-          subtitle="Most commonly used usernames"
+          title={t('cowrie_top_usernames_title')}
+          subtitle={t('cowrie_top_usernames_desc')}
         >
           <Chart type="bar" data={usernameData} height={250} options={options} />
         </ChartCard>
@@ -419,7 +421,7 @@ const CowriePage: React.FC = () => {
           style={{ width: 'auto', padding: '0.5rem 1rem' }}
           onClick={handleFetchIP}
         >
-          Open Map
+          {t('dashboard_open_map')}
         </button>
         <button
           className="form-button"
@@ -447,14 +449,14 @@ const CowriePage: React.FC = () => {
       {popupChart && (
         <div className="charts-grid">
           <ChartCard
-            title="dayly activity"
-            subtitle="activity per day"
+            title={t('cowrie_daily_activity_title')}
+            subtitle={t('cowrie_activity_per_day')}
           >
             <Chart type="line" data={datatest} height={250} options={options} />
           </ChartCard>
           <ChartCard
-            title="Protocol Distribution"
-            subtitle="SSH vs Telnet connections"
+            title={t('cowrie_protocol_distribution_2')}
+            subtitle={t('cowrie_protocol_compare_2')}
           >
             <Chart type="pie" data={statusData} height={250} options={PieOptions} />
           </ChartCard>
@@ -463,7 +465,7 @@ const CowriePage: React.FC = () => {
 
       <div className="table-container">
         <div className="table-header">
-          <h3 className="table-title">Recent Cowrie Sessions</h3>
+          <h3 className="table-title">{t('cowrie_recent_sessions')}</h3>
           <button
             className="form-button"
             style={{ width: 'auto', padding: '0.5rem 1rem' }}
