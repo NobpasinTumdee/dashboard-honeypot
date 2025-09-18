@@ -351,7 +351,7 @@ const CowriePage: React.FC = () => {
     <div>
       <div className="page-header">
         <h1 className="page-title">{t('cowrie_title')}</h1>
-        <p className="page-subtitle">{t('cowrie_desc')}<b style={{ color: 'var(--accent-primary)' }}>{isError}</b></p>
+        <p className="page-subtitle">{t('cowrie_desc')}</p><span style={{ color: 'var(--accent-primary)' }}>{isError}</span>
       </div>
 
       <div className="stats-grid">

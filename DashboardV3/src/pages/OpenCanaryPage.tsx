@@ -342,7 +342,7 @@ const OpenCanaryPage: React.FC = () => {
     <div>
       <div className="page-header">
         <h1 className="page-title">{t('opencanary_title')}</h1>
-        <p className="page-subtitle">{t('opencanary_desc')} <b style={{ color: 'var(--accent-primary)' }}>{isError}</b></p>
+        <p className="page-subtitle">{t('opencanary_desc')} </p><span style={{ color: 'var(--accent-primary)' }}>{isError}</span>
       </div>
 
       <div className="stats-grid">

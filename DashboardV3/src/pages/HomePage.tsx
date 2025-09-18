@@ -260,7 +260,7 @@ const HomePage: React.FC = () => {
       <Marquee />
       <div className="page-header">
         <h1 className="page-title">{t('dashboard_title')}</h1>
-        <p className="page-subtitle">{t('dashboard_overview')}<b style={{ color: isConnected ? 'var(--accent-primary)' : 'red' }}> {isConnected ? 'Online 🌐' : 'Offline 🔴'}</b> <b style={{ color: 'var(--accent-primary)' }}>{isError}</b></p>
+        <p className="page-subtitle">{t('dashboard_overview')}</p><span style={{ color: isConnected ? 'var(--accent-primary)' : 'red' }}> {isConnected ? 'Online 🌐' : 'Offline 🔴'}</span> <span style={{ color: 'var(--accent-primary)' }}>{isError}</span>
       </div>
 
       <div className="stats-grid">
