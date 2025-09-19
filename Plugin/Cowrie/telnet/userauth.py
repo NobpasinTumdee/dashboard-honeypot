@@ -40,12 +40,38 @@ from twisted.python import log
 import shutil
 import subprocess
 import os
-from twisted.python import log
+
 from cowrie.shell import fs
 from cowrie.shell import server
+import json
+import datetime
+import uuid
+from pathlib import Path
 
+import pickle
 
+## การเก็บ log
 
+cowrie_json_path = Path("/home/cowrie/cowrie/var/log/cowrie/cowrie.json")
+
+def append_to_cowrie_json(payload: dict):
+    with open(cowrie_json_path, "a", encoding="utf-8") as f:
+        f.write(json.dumps(payload, ensure_ascii=False) + "\n")
+
+def create_payload(message: str, src_ip: str = None, session_id: str = None, eventid: str = "cowrie.custom.event"):
+    """
+    สร้าง log payload แบบ custom
+    """
+    payload = {
+        "eventid": eventid,
+        "timestamp": datetime.datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
+        "src_ip": src_ip,
+        "session": session_id,
+        "message": message,
+    }
+    append_to_cowrie_json(payload)
+
+## --------------------------------------------
 
 def normalize(val):
     if isinstance(val, bytes):
@@ -112,15 +138,6 @@ def get_user_entry(filename, username):
             return None
         return None
     
-import pickle
-
-import datetime
-from twisted.python import log
-from cowrie.core.config import CowrieConfig
-
-
-
-
 
 class HoneyPotTelnetAuthProtocol(AuthenticatingTelnetProtocol):
     """
@@ -132,9 +149,6 @@ class HoneyPotTelnetAuthProtocol(AuthenticatingTelnetProtocol):
     passwordPrompt = b"Password: "
     windowSize: list[int]
 
-    
-
-    
     def connectionMade(self):
         
         self.windowSize = [40, 80]
@@ -142,8 +156,13 @@ class HoneyPotTelnetAuthProtocol(AuthenticatingTelnetProtocol):
         self.transport.write(self.loginPrompt)
         
         self.login_attempts_made = 0                        # เก็บจำนวนรอบที่ login
-        self.required_login_attempts = random.randint(1, 5) # สุ่มจำนวนครั้งที่ต้อง login
-        # log.msg(f"[*] Telnet: การเชื่อมต่อใหม่ต้องการการล็อกอินที่สำเร็จ {self.required_login_attempts} ครั้ง.")
+        self.required_login_attempts = random.randint(5, 10) # สุ่มจำนวนครั้งที่ต้อง login
+
+        message = "จำนวนครั้งที่ต้อง login = " + str(self.required_login_attempts)
+        try: 
+            create_payload(message, self.transport.getPeer().host, session_id="", eventid="cowrie.custom.login")
+        except Exception as e:
+            log.msg(f"Error logging attempt to cowrie.json: {e}")
         
 
     def connectionLost(self, reason: failure.Failure = connectionDone) -> None:
@@ -219,6 +238,8 @@ class HoneyPotTelnetAuthProtocol(AuthenticatingTelnetProtocol):
             else:
                 self.login_attempts_made += 1
                 log.msg(f"Telnet: พยายามล็อกอินครั้งที่ {self.login_attempts_made}/{self.required_login_attempts}")
+
+            
             
                 
 
