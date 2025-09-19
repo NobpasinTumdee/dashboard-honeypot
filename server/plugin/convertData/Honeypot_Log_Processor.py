@@ -243,7 +243,7 @@ if __name__ == "__main__":
                 monitor_log_file(OPENCANARY_LOG_PATH, cursor, process_opencanary_log_entry, last_file_positions)
                 
                 conn.commit() 
-                time.sleep(2)
+                time.sleep(0.5)
 
         except KeyboardInterrupt:
             print("Monitoring stopped by user.")
