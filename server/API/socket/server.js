@@ -39,6 +39,39 @@ const io = new Server(server, {
   }
 });
 
+// ==================
+// ตัวเก็บขนาดของ array
+// ==================
+let CowrieCount = 0;
+let OpenCanaryCount = 0;
+let UserCount = 0;
+try {
+  const logs = await prisma.honeypot_logs.findMany({
+    take: 1000,
+  });
+  CowrieCount = logs.length;
+  console.log(`[+] Initial Cowrie logs Total: ${CowrieCount} [+]`);
+} catch (error) {
+  console.error('Error fetching Cowrie logs :', error);
+}
+try {
+  const logs = await prisma.opencanary_logs.findMany({
+    take: 1000,
+  });
+  OpenCanaryCount = logs.length;
+  console.log(`[+] Initial OpenCanary logs Total: ${OpenCanaryCount} [+]`);
+} catch (error) {
+  console.error('Error fetching OpenCanary logs :', error);
+}
+try {
+  const logs = await prisma.users.findMany();
+  UserCount = logs.length;
+  console.log(`[+] Initial User logs Total: ${UserCount} [+]`);
+} catch (error) {
+  console.error('Error fetching User logs :', error);
+}
+
+
 
 io.use((socket, next) => {
   const token = socket.handshake.auth.token;
@@ -57,55 +90,82 @@ io.use((socket, next) => {
       return next(new Error('Authentication error: User is not admin'));
     }
     socket.user = user;
-    console.log(`✅ User ${user.UserID} authenticated for WebSocket.`);
+    console.log(`[Verified] User ${user.UserID} authenticated for WebSocket. [Verified]`);
     next();
   });
 });
 
 io.on('connection', (socket) => {
-  console.log(`🟢 A client connected: ${socket.id} (User Name: ${socket.user.UserName}, Role: ${socket.user.Status})`);
+  console.log(`[+] A client connected [+] : ${socket.id} (User Name: ${socket.user.UserName}, Role: ${socket.user.Status})`);
 
   // ส่งข้อความต้อนรับเมื่อเชื่อมต่อสำเร็จ
   socket.emit('Welcome-Message', `Welcome, User ${socket.user.UserName}!`);
 
-  // Event handler สำหรับการดึง logs honeypot
-  socket.on('request-cowrie-logs', async () => {
+
+
+
+  // ====================================
+  // Event handler สำหรับการดึง cowrie logs
+  // ====================================
+  const sendInitialCowrieLogs = async () => {
     try {
       const logs = await prisma.honeypot_logs.findMany({
         orderBy: { id: 'desc' },
         take: 1000,
       });
+      // Update the CowrieCount with the initial number of logs
+      CowrieCount = logs.length;
       socket.emit('Update-cowrie-logs', logs);
+      console.log(`Initial Cowrie logs sent to ${socket.user.UserName}. Total: ${logs.length}`);
     } catch (error) {
-      console.error('Error fetching honeypot logs via WebSocket:', error);
-      socket.emit('error', 'Failed to fetch honeypot logs.');
+      console.error('Error fetching initial Cowrie logs via WebSocket:', error);
+      socket.emit('error', 'Failed to fetch initial Cowrie logs.');
     }
-  });
+  };
+  socket.on('request-cowrie-logs', sendInitialCowrieLogs);
 
+
+
+
+  // ========================================
   // Event handler สำหรับการดึง logs opencanary
-  socket.on('request-opencanary-logs', async () => {
+  // ========================================
+  const sendInitialOpenCanaryLogs = async () => {
     try {
       const logs = await prisma.opencanary_logs.findMany({
         orderBy: { id: 'desc' },
         take: 1000,
       });
+      // Update the OpenCanaryCount with the initial number of logs
+      OpenCanaryCount = logs.length;
       socket.emit('Update-opencanary-logs', logs);
+      console.log(`Initial OpenCanary logs sent to ${socket.user.UserName}. Total: ${logs.length}`);
     } catch (error) {
-      console.error('Error fetching opencanary logs via WebSocket:', error);
-      socket.emit('error', 'Failed to fetch opencanary logs.');
+      console.error('Error fetching initial OpenCanary logs via WebSocket:', error);
+      socket.emit('error', 'Failed to fetch initial OpenCanary logs.');
     }
-  });
+  };
+  socket.on('request-opencanary-logs', sendInitialOpenCanaryLogs);
 
+
+
+
+  // ================================
   // Event handler สำหรับการดึงข้อมูลผู้ใช้
-  socket.on('request-users', async () => {
+  // ================================
+  const sendInitialUserLogs = async () => {
     try {
-      const users = await prisma.users.findMany({});
-      socket.emit('Update-users', users);
+      const logs = await prisma.users.findMany();
+      // Update the UserCount with the initial number of logs
+      UserCount = logs.length;
+      socket.emit('Update-users', logs);
+      console.log(`Initial users logs sent to ${socket.user.UserName}. Total: ${logs.length}`);
     } catch (error) {
-      console.error('Error fetching users via WebSocket:', error);
-      socket.emit('error', 'Failed to fetch users.');
+      console.error('Error fetching initial users logs via WebSocket:', error);
+      socket.emit('error', 'Failed to fetch initial users logs.');
     }
-  });
+  };
+  socket.on('request-users', sendInitialUserLogs);
 
 
 
@@ -187,27 +247,6 @@ io.on('connection', (socket) => {
 
   // ส่งข้อมูล Real-time
   const interval = setInterval(async () => {
-    try {
-      const logs = await prisma.honeypot_logs.findMany({
-        orderBy: { id: 'desc' },
-        take: 1000,
-      });
-      socket.emit('real-time-cowrie', logs);
-    } catch (error) {
-      console.error('Error fetching real-time honeypot logs cowrie:', error);
-    }
-
-    try {
-      const logs = await prisma.opencanary_logs.findMany({
-        orderBy: { id: 'desc' },
-        take: 1000,
-      });
-      socket.emit('real-time-canary', logs);
-    } catch (error) {
-      console.error('Error fetching real-time honeypot logs opencanary:', error);
-    }
-
-
 
     // real-time logs https packets
     try {
@@ -263,10 +302,57 @@ io.on('connection', (socket) => {
   }, 5000);
 
   socket.on('disconnect', () => {
-    console.log('🔴 A client disconnected');
+    console.log('[-] A client disconnected [-]');
     clearInterval(interval);
   });
 });
+
+
+setInterval(async () => {
+  try {
+    const logs = await prisma.honeypot_logs.findMany({
+      orderBy: { id: 'desc' },
+      take: 1000,
+    });
+    // Check if the number of logs has changed
+    if (logs.length !== CowrieCount) {
+      CowrieCount = logs.length;
+      io.emit('real-time-cowrie', logs);
+      console.log(`New Cowrie logs detected and sent. Total: ${logs.length}`);
+    }
+  } catch (error) {
+    console.error('Error fetching real-time honeypot logs cowrie:', error);
+  }
+
+  try {
+    const logs = await prisma.opencanary_logs.findMany({
+      orderBy: { id: 'desc' },
+      take: 1000,
+    });
+    // Check if the number of logs has changed
+    if (logs.length !== OpenCanaryCount) {
+      OpenCanaryCount = logs.length;
+      io.emit('real-time-canary', logs);
+      console.log(`New OpenCanary logs detected and sent. Total: ${logs.length}`);
+    }
+  } catch (error) {
+    console.error('Error fetching real-time honeypot logs opencanary:', error);
+  }
+
+  try {
+    const logs = await prisma.users.findMany();
+    // Check if the number of logs has changed
+    if (logs.length !== UserCount) {
+      UserCount = logs.length;
+      io.emit('real-time-users', logs);
+      console.log(`New users logs detected and sent. Total: ${logs.length}`);
+    }
+  } catch (error) {
+    console.error('Error fetching real-time users logs opencanary:', error);
+  }
+}, 500);
+
+
 // web socket ================================================================
 
 server.listen(port, () => {

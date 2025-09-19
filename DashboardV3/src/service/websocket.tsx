@@ -372,6 +372,11 @@ export const UsersSocket = (
             console.log("Update users logs:", new Date().toString());
         });
 
+        socket.on("real-time-users", (items: Users[]) => {
+            setData(items);
+            console.log("New data:", new Date().toString());
+        });
+
         socket.on("Welcome-Message", (msg) => {
             console.log("Message:", msg);
         });
