@@ -5,15 +5,9 @@ Telnet Transport and Authentication for the Honeypot
 @author: Olivier Bilodeau <obilodeau@gosecure.ca>
 """
 
+# Original import 
 from __future__ import annotations
-
-import ast
 import struct
-import random
-import os
-from twisted.internet import reactor
-import random
-
 from twisted.conch.telnet import (
     ECHO,
     LINEMODE,
@@ -24,34 +18,29 @@ from twisted.conch.telnet import (
 )
 from twisted.internet.protocol import connectionDone
 from twisted.python import failure, log
-import time
 from cowrie.core.config import CowrieConfig
 from cowrie.core.credentials import UsernamePasswordIP
-# เพิ่มการ import ที่จำเป็น
-import os
+
+
+# Develop import
+import ast
 import random
+import os
+import time
 import datetime
 import subprocess
 import shutil
-import subprocess
-import os
-from twisted.python import log
-
-import shutil
-import subprocess
-import os
-
-from cowrie.shell import fs
-from cowrie.shell import server
 import json
-import datetime
 import uuid
 from pathlib import Path
-
 import pickle
 
-## การเก็บ log
+from twisted.internet import reactor
+from cowrie.shell import fs
+from cowrie.shell import server
 
+
+# การเก็บ log json แบบ manual
 cowrie_json_path = Path("/home/cowrie/cowrie/var/log/cowrie/cowrie.json")
 
 def append_to_cowrie_json(payload: dict):
@@ -71,14 +60,22 @@ def create_payload(message: str, src_ip: str = None, session_id: str = None, eve
     }
     append_to_cowrie_json(payload)
 
-## --------------------------------------------
+# ฟังก์ชันการหน่วงเวลาตอบสนอง
+def random_delay(min_delay, max_delay):
+    delay_time = random.uniform(min_delay, max_delay)
+    reactor.callLater(delay_time, lambda: None)
+    
+def random_delay_and_call(min_delay, max_delay, callable_function, *args):
+    delay_time = random.uniform(min_delay, max_delay)
+    reactor.callLater(delay_time, callable_function, *args)
 
+# ฟังก์ชันแปลง str ให้อยู่ในรูปทั่วไป
 def normalize(val):
     if isinstance(val, bytes):
         return val.decode(errors="ignore").strip()
     return str(val).strip()
 
-
+# ฟังก์ชันบันทึก username,password
 def write_user(filename, username, password):
     def to_str(val):
         return val.decode() if isinstance(val, bytes) else str(val)
@@ -98,7 +95,7 @@ def write_user(filename, username, password):
     except (FileNotFoundError, SyntaxError, ValueError):
         users = []
 
-    # --- ป้องกันการซ้ำ ---
+    # ป้องกันการซ้ำ 
     if (u, p) not in users:
         users.append((u, p))
         with open(filename, 'w') as f:
@@ -106,7 +103,7 @@ def write_user(filename, username, password):
 
 
 # ฟังก์ชัน ตรวจสอบ password เก่า
-def password_exists(filename, password):
+def password_old(filename, password):
     
     def to_str(val):
         return val.decode() if isinstance(val, bytes) else str(val)
@@ -122,7 +119,7 @@ def password_exists(filename, password):
         return False
     return False
 
-# ตรวจสอบว่ามี username ใน users.txt ไหม
+# ค้นหา (username,password) ใน users.txt ที่มีชื่อตรงกับที่ login
 def get_user_entry(filename, username):
         def to_str(val):
             return val.decode() if isinstance(val, bytes) else str(val)
@@ -155,8 +152,9 @@ class HoneyPotTelnetAuthProtocol(AuthenticatingTelnetProtocol):
         self.transport.write(self.factory.banner.replace(b"\n", b"\r\r\n"))
         self.transport.write(self.loginPrompt)
         
-        self.login_attempts_made = 0                        # เก็บจำนวนรอบที่ login
-        self.required_login_attempts = random.randint(5, 10) # สุ่มจำนวนครั้งที่ต้อง login
+        # เพิ่มการบังคับ login ตามจำนวนครั้ง
+        self.login_attempts_made = 0                        
+        self.required_login_attempts = random.randint(5, 10) 
 
         message = "จำนวนครั้งที่ต้อง login = " + str(self.required_login_attempts)
         try: 
@@ -183,91 +181,80 @@ class HoneyPotTelnetAuthProtocol(AuthenticatingTelnetProtocol):
         # self.transport.write(self.passwordPrompt)
         
         # เพิ่มการหน่วงเวลาแสดงการกรอก password
-        delay = random.uniform(0.3, 1.0)
-        reactor.callLater(delay, self.transport.write, self.passwordPrompt)
+        random_delay_and_call(0.3, 1.0, self.transport.write, self.passwordPrompt)
+        
         return "Password"
 
     def telnet_Password(self, line):
         username, password = self.username, line  # .decode()
         
-        # เก็บ username/password ไว้ที่ instance variable
-        self._last_success_username = username
+        # username,password ที่คาดว่าจะเก็บ
+        self._last_success_username = username      
         self._last_success_password = password
         
         del self.username
 
         def login(ignored):
-            
             self.src_ip = self.transport.getPeer().host
             creds = UsernamePasswordIP(username, password, self.src_ip)
             
             userfile_path = "/home/cowrie/users.txt"
                 
-            username_data = get_user_entry(userfile_path, username)
-            password_status = password_exists(userfile_path, password)
+            username_data = get_user_entry(userfile_path, username)         # username เก่า
+            password_status = password_old(userfile_path, password)         # password เก่า
             
-            # ตรวจสอบ username ว่ามีอยู่ในไฟล์หรือไม่
+            # หากเป็น login ด้วย username เก่า
             if username_data:
-                # password ตรงกับที่เคยใช้แล้ว
+                
+                # หาก login ด้วย password ที่ถูกต้อง
                 if normalize(username_data[1]) == normalize(password):
                     self.login_attempts_made = self.required_login_attempts
                     log.msg("Telnet: username/password ตรงกับที่เคยใช้แล้ว")
                     
+                # หากไม่ = ไม่ให้ผ่าน    
                 else:
                     self.login_attempts_made = 0
                     log.msg("Telnet: username นี้มีอยู่แล้ว แต่ password ไม่ตรง รีเซ็ตจำนวนครั้ง login")
                     self.transport.wontChain(ECHO)
-                    # self.transport.write(b"\nLogin incorrect\n")
-                    # self.transport.write(self.loginPrompt)
-                    
+                                
                     # เพิ่มการหน่วงเวลา ล็อกอินไม่ผ่าน
-                    delay_incorrect = random.uniform(0.3, 1.0)
-                    reactor.callLater(delay_incorrect, self.transport.write, b"\nLogin incorrect\n")
-                    
-                    # delay แสดง login prompt ใหม่ 
-                    delay_prompt = random.uniform(0.2, 0.5)
-                    reactor.callLater(delay_prompt, self.transport.write, self.loginPrompt)
+                    random_delay_and_call(0.3, 0.5, self.transport.write, b"\nLogin incorrect\n")
+                    random_delay_and_call(0.3, 0.5, self.transport.write, self.loginPrompt)
                     
                     self.state = "User"
                     return
-            # หากมี password ใน users.txt จะผ่านได้เลย
+                
+            # หาก login ด้วย password ที่มี
             elif password_status:
                 self.login_attempts_made = self.required_login_attempts
                 log.msg("Telnet: password นี้เคยถูกใช้แล้ว แต่ username ไม่เคยใช้")
                 
+                
+            # หาก login ด้วย username,password ใหม่  
             else:
                 self.login_attempts_made += 1
                 log.msg(f"Telnet: พยายามล็อกอินครั้งที่ {self.login_attempts_made}/{self.required_login_attempts}")
 
             
-            
-                
-
             # ตรวจสอบจำนวนครั้งที่พยายามล็อกอิน
             if self.login_attempts_made < self.required_login_attempts:
                 
-                log.msg(f"Telnet: ยังต้องการการล็อกอินอีก {self.required_login_attempts - self.login_attempts_made} ครั้ง.") # เก็บความพยายามไว้ใน log
+                log.msg(f"Telnet: ยังต้องการการล็อกอินอีก {self.required_login_attempts - self.login_attempts_made} ครั้ง.") 
                 self.transport.wontChain(ECHO)               # ปิด ECHO เพื่อไม่ให้แสดงข้อความล็อกอิน
+                random_delay(0.3,0.5)
                 self.transport.write(b"\nLogin incorrect\n") # แจ้งผู้ใช้ว่าล็อกอินไม่ถูกต้อง
+                random_delay(0.3,0.5)
                 self.transport.write(self.loginPrompt)       # แสดง prompt สำหรับล็อกอินใหม่
                 self.state = "User"                          # กลับไปยังสถานะ User เพื่อ login ใหม่
             else:
-                # log.msg(f"Telnet: ครบ {self.required_login_attempts} ครั้งแล้ว. กำลังตรวจสอบล็อกอินจริง.")
-                # d = self.portal.login(creds, self.src_ip, ITelnetProtocol)
-                # d.addCallback(self._cbLogin)
-                # d.addErrback(self._ebLogin)
-                
-                
-                log.msg(f"Telnet: ครบ {self.required_login_attempts} ครั้งแล้ว. กำลังตรวจสอบล็อกอินจริง.")
-
-                delay_success = random.uniform(1.0, 2.0)  # delay แบบสุ่ม 1–2 วิ
+                log.msg(f"Telnet: ครบ {self.required_login_attempts} ครั้งแล้ว")
 
                 def do_real_login():
                     d = self.portal.login(creds, self.src_ip, ITelnetProtocol)
                     d.addCallback(self._cbLogin)
                     d.addErrback(self._ebLogin)
-                # หน่วงเวลา
-                reactor.callLater(delay_success, do_real_login)
+                
+                random_delay_and_call(0.3, 0.5, do_real_login)
             
 
         # are we dealing with a real Telnet client?
@@ -300,22 +287,15 @@ class HoneyPotTelnetAuthProtocol(AuthenticatingTelnetProtocol):
         self.transport.write(b"\n")
         
         
-        # เมื่อ login สำเร็จ จะบันทึก username และ password ลงไฟล์ users.txt
+        # เก็บ username,password ที่ login สำเร็จ
         userfile_path = "/home/cowrie/users.txt"
         try:
             write_user(userfile_path, self._last_success_username, self._last_success_password)
         except Exception as e:
             log.msg(f"Error writing login: {e}")
 
-
-        # เรียกใช้ create_login_user และรอให้ทำงานเสร็จ
-        try:
-            self.protocol.create_login_user(self._last_success_username)
-        except Exception as e:
-            log.msg(f"Error creating login user: {e}")
         
-
-        # เพิ่มการหน่วงเวลา 2 วินาทีหลังจาก create_login_user ทำงานเสร็จ
+        # เพิ่มการหน่วงเวลา
         def continue_after_delay():
             self.transport.write(b"$ ")  # แสดง prompt ถัดไป
 
@@ -328,7 +308,8 @@ class HoneyPotTelnetAuthProtocol(AuthenticatingTelnetProtocol):
             protocol.makeConnection(self.transport)
             self.transport.protocol = protocol
 
-        reactor.callLater(2.0, continue_after_delay)
+        
+        random_delay_and_call(1.0, 1.5, continue_after_delay)
 
     def _ebLogin(self, failure):
         # TODO: provide a way to have user configurable strings for wrong password
