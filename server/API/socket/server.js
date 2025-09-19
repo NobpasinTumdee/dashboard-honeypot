@@ -45,12 +45,17 @@ const io = new Server(server, {
 let CowrieCount = 0;
 let OpenCanaryCount = 0;
 let UserCount = 0;
+let HttpsPacketsCount = 0;
+let TimeSeriesPacketsCount = 0;
+let ProtocolStatsCount = 0;
+let SrcIpStatsCount = 0;
+let DstPortStatsCount = 0;
 try {
   const logs = await prisma.honeypot_logs.findMany({
     take: 1000,
   });
   CowrieCount = logs.length;
-  console.log(`[+] Initial Cowrie logs Total: ${CowrieCount} [+]`);
+  console.log(`[Initial] Cowrie logs Total: ${CowrieCount} `);
 } catch (error) {
   console.error('Error fetching Cowrie logs :', error);
 }
@@ -59,16 +64,61 @@ try {
     take: 1000,
   });
   OpenCanaryCount = logs.length;
-  console.log(`[+] Initial OpenCanary logs Total: ${OpenCanaryCount} [+]`);
+  console.log(`[Initial] OpenCanary logs Total: ${OpenCanaryCount} `);
 } catch (error) {
   console.error('Error fetching OpenCanary logs :', error);
 }
 try {
   const logs = await prisma.users.findMany();
   UserCount = logs.length;
-  console.log(`[+] Initial User logs Total: ${UserCount} [+]`);
+  console.log(`[Initial] User logs Total: ${UserCount} `);
 } catch (error) {
   console.error('Error fetching User logs :', error);
+}
+try {
+  const logs = await prisma.HttpsPackets.findMany({
+    take: 1000,
+  });
+  HttpsPacketsCount = logs.length;
+  console.log(`[Initial] HttpsPackets logs Total: ${HttpsPacketsCount} `);
+} catch (error) {
+  console.error('Error fetching HttpsPackets logs :', error);
+}
+try {
+  const logs = await prisma.TimeSeriesPackets.findMany({
+    take: 1000,
+  });
+  TimeSeriesPacketsCount = logs.length;
+  console.log(`[Initial] TimeSeriesPackets logs Total: ${TimeSeriesPacketsCount} `);
+} catch (error) {
+  console.error('Error fetching TimeSeriesPackets logs :', error);
+}
+try {
+  const logs = await prisma.ProtocolStats.findMany({
+    take: 1000,
+  });
+  ProtocolStatsCount = logs.length;
+  console.log(`[Initial] ProtocolStats logs Total: ${ProtocolStatsCount} `);
+} catch (error) {
+  console.error('Error fetching ProtocolStats logs :', error);
+}
+try {
+  const logs = await prisma.SrcIpStats.findMany({
+    take: 1000,
+  });
+  SrcIpStatsCount = logs.length;
+  console.log(`[Initial] SrcIpStats logs Total: ${SrcIpStatsCount} `);
+} catch (error) {
+  console.error('Error fetching SrcIpStats logs :', error);
+}
+try {
+  const logs = await prisma.DstPortStats.findMany({
+    take: 1000,
+  });
+  DstPortStatsCount = logs.length;
+  console.log(`[Initial] DstPortStats logs Total: ${DstPortStatsCount} `);
+} catch (error) {
+  console.error('Error fetching DstPortStats logs :', error);
 }
 
 
@@ -170,140 +220,115 @@ io.on('connection', (socket) => {
 
 
 
-
-
-
-
-
-  // ================================================================================
+  // ===========================================
   // Event handler สำหรับการดึง logs https packets
-  socket.on('requestlogs', async () => {
+  // ===========================================
+  const sendInitialHttpsPacketsLogs = async () => {
     try {
       const logs = await prisma.HttpsPackets.findMany({
         orderBy: { id: 'desc' },
         take: 1000,
       });
+      HttpsPacketsCount = logs.length;
       socket.emit('Updatelogs', logs);
+      console.log(`Initial HttpsPackets logs sent to ${socket.user.UserName}. Total: ${logs.length}`);
     } catch (error) {
-      console.error('Error fetching honeypot logs via WebSocket:', error);
+      console.error('Error fetching initial HttpsPackets logs via WebSocket:', error);
+      socket.emit('error', 'Failed to fetch initial HttpsPackets logs.');
     }
-  });
+  };
+  socket.on('requestlogs', sendInitialHttpsPacketsLogs);
 
-  socket.on('request-time-series-logs', async () => {
+
+
+
+  // =========================================
+  // Event handler สำหรับการดึง logs time-series
+  // =========================================
+  const sendInitialTimeSeriesPacketsLogs = async () => {
     try {
       const logs = await prisma.TimeSeriesPackets.findMany({
         orderBy: { id: 'desc' },
         take: 1000,
       });
+      TimeSeriesPacketsCount = logs.length;
       socket.emit('Update-packet-overtime', logs);
+      console.log(`Initial TimeSeriesPackets logs sent to ${socket.user.UserName}. Total: ${logs.length}`);
     } catch (error) {
-      console.error('Error fetching honeypot logs via WebSocket:', error);
+      console.error('Error fetching initial TimeSeriesPackets logs via WebSocket:', error);
+      socket.emit('error', 'Failed to fetch initial TimeSeriesPackets logs.');
     }
-  });
+  };
+  socket.on('request-time-series-logs', sendInitialTimeSeriesPacketsLogs);
 
-  socket.on('request-protocol-logs', async () => {
+
+
+
+  // ===========================================
+  // Event handler สำหรับการดึง logs ProtocolStats
+  // ===========================================
+  const sendInitialProtocolStatsLogs = async () => {
     try {
       const logs = await prisma.ProtocolStats.findMany({
         orderBy: { id: 'desc' },
         take: 1000,
       });
+      ProtocolStatsCount = logs.length;
       socket.emit('Update-protocol', logs);
+      console.log(`Initial ProtocolStats logs sent to ${socket.user.UserName}. Total: ${logs.length}`);
     } catch (error) {
-      console.error('Error fetching honeypot logs via WebSocket:', error);
+      console.error('Error fetching initial ProtocolStats logs via WebSocket:', error);
+      socket.emit('error', 'Failed to fetch initial ProtocolStats logs.');
     }
-  });
+  };
+  socket.on('request-protocol-logs', sendInitialProtocolStatsLogs);
 
-  socket.on('request-source-ip-logs', async () => {
+
+
+
+  // ===================================
+  // Event handler สำหรับการดึง SrcIpStats
+  // ===================================
+  const sendInitialSrcIpStatsLogs = async () => {
     try {
       const logs = await prisma.SrcIpStats.findMany({
         orderBy: { id: 'desc' },
         take: 1000,
       });
+      SrcIpStatsCount = logs.length;
       socket.emit('Update-source-ip', logs);
+      console.log(`Initial SrcIpStats logs sent to ${socket.user.UserName}. Total: ${logs.length}`);
     } catch (error) {
-      console.error('Error fetching honeypot logs via WebSocket:', error);
+      console.error('Error fetching initial SrcIpStats logs via WebSocket:', error);
+      socket.emit('error', 'Failed to fetch initial SrcIpStats logs.');
     }
-  });
+  };
+  socket.on('request-source-ip-logs', sendInitialSrcIpStatsLogs);
 
-  socket.on('request-dest-port-logs', async () => {
+
+
+
+  // =====================================
+  // Event handler สำหรับการดึง DstPortStats
+  // =====================================
+  const sendInitialDstPortStatsLogs = async () => {
     try {
       const logs = await prisma.DstPortStats.findMany({
         orderBy: { id: 'desc' },
         take: 1000,
       });
+      DstPortStatsCount = logs.length;
       socket.emit('Update-dest-port', logs);
+      console.log(`Initial DstPortStats logs sent to ${socket.user.UserName}. Total: ${logs.length}`);
     } catch (error) {
-      console.error('Error fetching honeypot logs via WebSocket:', error);
+      console.error('Error fetching initial DstPortStats logs via WebSocket:', error);
+      socket.emit('error', 'Failed to fetch initial DstPortStats logs.');
     }
-  });
-  // ================================================================================
-
-
-
-
-
-
-
-
-  // ส่งข้อมูล Real-time
-  const interval = setInterval(async () => {
-
-    // real-time logs https packets
-    try {
-      const logs = await prisma.HttpsPackets.findMany({
-        orderBy: { id: 'desc' },
-        take: 1000,
-      });
-      socket.emit('real-time', logs);
-    } catch (error) {
-      console.error('Error fetching real-time honeypot logs http packets:', error);
-    }
-
-    try {
-      const logs = await prisma.TimeSeriesPackets.findMany({
-        orderBy: { id: 'desc' },
-        take: 1000,
-      });
-      socket.emit('real-time-packet-stats', logs);
-    } catch (error) {
-      console.error('Error fetching real-time honeypot logs time series packets:', error);
-    }
-
-    try {
-      const logs = await prisma.ProtocolStats.findMany({
-        orderBy: { id: 'desc' },
-        take: 1000,
-      });
-      socket.emit('real-time-protocol-stats', logs);
-    } catch (error) {
-      console.error('Error fetching real-time honeypot logs protocol stats:', error);
-    }
-
-    try {
-      const logs = await prisma.SrcIpStats.findMany({
-        orderBy: { id: 'desc' },
-        take: 1000,
-      });
-      socket.emit('real-time-ip-stats', logs);
-    } catch (error) {
-      console.error('Error fetching real-time honeypot logs source ip stats:', error);
-    }
-
-    try {
-      const logs = await prisma.DstPortStats.findMany({
-        orderBy: { id: 'desc' },
-        take: 1000,
-      });
-      socket.emit('real-time-port-stats', logs);
-    } catch (error) {
-      console.error('Error fetching real-time honeypot logs dest port stats:', error);
-    }
-
-  }, 5000);
+  };
+  socket.on('request-dest-port-logs', sendInitialDstPortStatsLogs);
 
   socket.on('disconnect', () => {
     console.log('[-] A client disconnected [-]');
-    clearInterval(interval);
   });
 });
 
@@ -348,9 +373,83 @@ setInterval(async () => {
       console.log(`New users logs detected and sent. Total: ${logs.length}`);
     }
   } catch (error) {
-    console.error('Error fetching real-time users logs opencanary:', error);
+    console.error('Error fetching real-time users :', error);
+  }
+
+  try {
+    const logs = await prisma.HttpsPackets.findMany({
+      orderBy: { id: 'desc' },
+      take: 1000,
+    });
+    if (logs.length !== HttpsPacketsCount) {
+      HttpsPacketsCount = logs.length;
+      io.emit('real-time', logs);
+      console.log(`New HttpsPackets logs detected and sent. Total: ${logs.length}`);
+    }
+  } catch (error) {
+    console.error('Error fetching real-time honeypot logs HttpsPackets:', error);
   }
 }, 500);
+
+setInterval(async () => {
+  try {
+    const logs = await prisma.TimeSeriesPackets.findMany({
+      orderBy: { id: 'desc' },
+      take: 1000,
+    });
+    if (logs.length !== TimeSeriesPacketsCount) {
+      TimeSeriesPacketsCount = logs.length;
+      io.emit('real-time-packet-stats', logs);
+      console.log(`New TimeSeriesPackets logs detected and sent. Total: ${logs.length}`);
+    }
+  } catch (error) {
+    console.error('Error fetching real-time honeypot logs TimeSeriesPackets:', error);
+  }
+
+  try {
+    const logs = await prisma.ProtocolStats.findMany(
+      {
+        orderBy: { id: 'desc' },
+        take: 1000,
+      }
+    );
+    if (logs.length !== ProtocolStatsCount) {
+      ProtocolStatsCount = logs.length;
+      io.emit('real-time-protocol-stats', logs);
+      console.log(`New ProtocolStats logs detected and sent. Total: ${logs.length}`);
+    }
+  } catch (error) {
+    console.error('Error fetching real-time honeypot logs ProtocolStats:', error);
+  }
+
+  try {
+    const logs = await prisma.SrcIpStats.findMany({
+      orderBy: { id: 'desc' },
+      take: 1000,
+    });
+    if (logs.length !== SrcIpStatsCount) {
+      SrcIpStatsCount = logs.length;
+      io.emit('real-time-ip-stats', logs);
+      console.log(`New SrcIpStats logs detected and sent. Total: ${logs.length}`);
+    }
+  } catch (error) {
+    console.error('Error fetching real-time honeypot logs SrcIpStats:', error);
+  }
+
+  try {
+    const logs = await prisma.DstPortStats.findMany({
+      orderBy: { id: 'desc' },
+      take: 1000,
+    });
+    if (logs.length !== DstPortStatsCount) {
+      DstPortStatsCount = logs.length;
+      io.emit('real-time-port-stats', logs);
+      console.log(`New DstPortStats logs detected and sent. Total: ${logs.length}`);
+    }
+  } catch (error) {
+    console.error('Error fetching real-time honeypot logs DstPortStats:', error);
+  }
+}, 5000);
 
 
 // web socket ================================================================
