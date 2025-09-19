@@ -47,7 +47,32 @@ def append_user_txt(username: str, password: str, path=USERS_FILE):
         except Exception as e:
             log.msg(f"Cannot append to {path}: {e}")
 
+## การเก็บ log
+import json
+import datetime
+import uuid
+from pathlib import Path
 
+cowrie_json_path = Path("/home/cowrie/cowrie/var/log/cowrie/cowrie.json")
+
+def append_to_cowrie_json(payload: dict):
+    with open(cowrie_json_path, "a", encoding="utf-8") as f:
+        f.write(json.dumps(payload, ensure_ascii=False) + "\n")
+
+def create_payload(message: str, src_ip: str = None, session_id: str = None, eventid: str = "cowrie.custom.event"):
+    """
+    สร้าง log payload แบบ custom
+    """
+    payload = {
+        "eventid": eventid,
+        "timestamp": datetime.datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
+        "src_ip": src_ip,
+        "session": session_id,
+        "message": message,
+    }
+    append_to_cowrie_json(payload)
+
+## --------------------------------------------
 
 
 
@@ -85,14 +110,35 @@ class HoneyPotSSHUserAuthServer(userauth.SSHUserAuthServer):
             )
         self._pamDeferred: defer.Deferred | None = None
 
-        # Reset login attempts state
+        
         self._login_attempts = {}
 
-        # Reset random login state for each session
-        self._required_attempts = random.randint(1, 5)
+        
+        self._required_attempts = random.randint(5, 10)
         self._current_attempts = 0
 
-        # Call parent method
+        message = f"จำนวนครั้งที่ต้อง login = {self._required_attempts}"
+
+        src_ip = None
+        if hasattr(self, 'transport') and self.transport is not None:
+            src_ip = self.transport.transport.getPeer().host
+        
+        session_id = getattr(self, 'session', None)
+        if session_id:
+            session_id = str(session_id.id) 
+
+        try:
+            create_payload(
+                message=message,
+                src_ip=src_ip,
+                session_id=getattr(self, 'session', None),  # ใช้ session จริงถ้ามี
+                eventid="cowrie.custom.login"
+            )
+        except Exception as e:
+            log.msg(f"Error logging attempt to cowrie.json: {e}")
+
+
+        
         userauth.SSHUserAuthServer.serviceStarted(self)
 
     # แสดงข้อความต้อนรับ
