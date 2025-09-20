@@ -10,13 +10,13 @@ import random
 # -----------------------------
 # Config
 # -----------------------------
-DB_FILE = '/home/os/dashboard-honeypot/server/API/socket/HeneyPot.db'
+DB_FILE ='/home/cpe27/HeneyPot.db'
 MOCK_DIR = '/home/os/mock_ubuntu'
 OPEN_PORTS = [22, 23, 80, 443]
 WELL_KNOWN_PORTS = set(range(0, 1024))
 PREFERRED_PORTS = [8000, 8001, 8002, 8080, 5000, 3000, 8888]
-CURRENT_PORT_FILE = '/home/os/dashboard-honeypot/current_port.txt'
-IP_SERVER = "10.147.18.208"
+CURRENT_PORT_FILE = '/home/cpe27/dashboard-honeypot/server/plugin/wireshark/current_port.txt'
+IP_SERVER = "172.29.169.27"
 
 # -----------------------------
 # DDos Detection Config

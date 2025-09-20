@@ -4,7 +4,7 @@ import os
 from datetime import datetime
 
 # === CONFIGURATION ===
-INTERFACE = 'ztmosdoimw'
+INTERFACE = 'ztcfw2abid'
 CSV_FILE = 'scan_log.csv'
 
 # สร้างไฟล์ถ้ายังไม่มี และใส่ header แค่ครั้งแรก
