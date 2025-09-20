@@ -4,6 +4,8 @@ from collections import Counter, defaultdict
 import os
 import time
 from threading import Lock
+from datetime import datetime, timedelta
+import random
 
 # -----------------------------
 # Config
@@ -18,17 +20,93 @@ IP_SERVER = "10.147.18.208"
 
 # -----------------------------
 # DDos Detection Config
-# -----------------------------ib'q
+# -----------------------------
 MAX_REQUESTS_PER_SECOND = 20  # ถ้าเกิน จะ shutdown
 request_times = []
 request_lock = Lock()
 
-# -----------------------------
-# เลือกพอร์ตตามสถิติ
-# -----------------------------
-import sqlite3
-from collections import Counter
-from datetime import datetime, timedelta
+def create_mock_fs(root, files_per_dir=2):
+    """
+    สร้างโครงสร้างโฟลเดอร์ไม่ให้ดู 'กลวง' และสร้างไฟล์เปล่า (empty files)
+    - root: พาธรากของ mock filesystem
+    - files_per_dir: จำนวนไฟล์ placeholder ที่จะสร้างในแต่ละไดเรกทอรี (default 2)
+    """
+    now = time.time()
+    os.makedirs(root, exist_ok=True)
+
+    # โครงสร้างโฟลเดอร์มาตรฐานที่มักพบบน Ubuntu
+    dirs = [
+        "bin", "boot", "dev", "etc", "home/os", "home/user", "home/os/.ssh",
+        "lib", "lib64", "opt", "proc", "root", "sbin", "srv", "tmp",
+        "usr/bin", "usr/local/bin", "var/log", "var/log/apt", "var/www/html",
+        "var/backups", "run", "mnt", "media", "srv/www"
+    ]
+
+    # ไฟล์ระบบ/ไฟล์ที่มักเห็น (จะถูกสร้างเป็นไฟล์เปล่า)
+    common_files = [
+        "etc/hostname",
+        "etc/os-release",
+        "etc/passwd",
+        "etc/shadow",
+        "home/os/.bashrc",
+        "home/os/.bash_history",
+        "home/os/README.txt",
+        "home/os/.ssh/authorized_keys",
+        "var/www/html/index.html",
+        "usr/local/bin/fakeapp",
+        "README_HOSTING.txt",
+        "var/log/syslog",
+        "var/log/auth.log",
+        "var/log/apt/history.log",
+        "tmp/temp_upload",
+        "root/.profile",
+        "usr/bin/ls",
+    ]
+
+    # สร้างไดเรกทอรี
+    for d in dirs:
+        full_dir = os.path.join(root, d)
+        try:
+            os.makedirs(full_dir, exist_ok=True)
+        except Exception as e:
+            print(f"[Honeypot] Failed to create dir {full_dir}: {e}")
+
+    # สร้างไฟล์ common (empty)
+    for relpath in common_files:
+        full = os.path.join(root, relpath)
+        try:
+            parent = os.path.dirname(full)
+            if parent and not os.path.exists(parent):
+                os.makedirs(parent, exist_ok=True)
+            # สร้างไฟล์เปล่า
+            open(full, "wb").close()
+            # ตั้งเวลาแก้ไขแบบสุ่มเล็กน้อยเพื่อให้ดูสมจริง
+            mtime = now - random.randint(0, 30 * 24 * 3600)
+            os.utime(full, (mtime, mtime))
+        except Exception as e:
+            print(f"[Honeypot] Failed to create file {full}: {e}")
+
+    # เติมไฟล์ placeholder ในแต่ละโฟลเดอร์เพื่อไม่ให้ดูว่างเปล่า
+    placeholder_names = ["README", "placeholder1", "placeholder2", "notes.txt", "index.html"]
+    for d in dirs:
+        dir_full = os.path.join(root, d)
+        # อย่าใส่ไฟล์เพิ่มเติมในบางโฟลเดอร์ที่ไม่ควร (เช่น proc, dev)
+        if d in ("proc", "dev", "run"):
+            continue
+        try:
+            for i in range(files_per_dir):
+                name = placeholder_names[i % len(placeholder_names)]
+                # หลีกเลี่ยงชื่อซ้ำ: เพิ่มเลขหากไฟล์มีอยู่แล้ว
+                candidate = os.path.join(dir_full, name)
+                if os.path.exists(candidate):
+                    candidate = os.path.join(dir_full, f"{name}.{i}")
+                open(candidate, "wb").close()
+                mtime = now - random.randint(0, 30 * 24 * 3600)
+                os.utime(candidate, (mtime, mtime))
+        except Exception as e:
+            print(f"[Honeypot] Failed to add placeholders in {dir_full}: {e}")
+
+    print(f"[Honeypot] Mock filesystem ready at {root}")
 
 # -----------------------------
 # เลือกพอร์ตตามสถิติ (ย้อนหลังสูงสุด 7 วัน)
@@ -104,10 +182,11 @@ class HoneypotHTTPRequestHandler(SimpleHTTPRequestHandler):
 
     # Sandbox path
     def translate_path(self, path):
-        path = os.path.normpath(os.path.join(MOCK_DIR, path.lstrip('/')))
-        if not path.startswith(MOCK_DIR):
+        # ปรับ path ให้ชี้ภายใน MOCK_DIR เท่านั้น
+        requested = os.path.normpath(os.path.join(MOCK_DIR, path.lstrip('/')))
+        if not requested.startswith(os.path.abspath(MOCK_DIR)):
             return None
-        return path
+        return requested
 
     # DDos check
     def check_ddos(self):
@@ -130,7 +209,35 @@ class HoneypotHTTPRequestHandler(SimpleHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(b'403 Forbidden')
             return
-        super().do_GET()
+
+        # ถ้าเป็นไฟล์จริง ให้ตอบ 404 เพื่อหลอกคนที่กดดูไฟล์
+        if os.path.isfile(safe_path):
+            # Log เบื้องต้น
+            print(f"[Honeypot] File access attempt -> returning 404 for {self.path} (mapped {safe_path})")
+            self.send_response(404)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.end_headers()
+            # ข้อความ 404 แบบเรียบง่าย
+            body = b"<html><head><title>404 Not Found</title></head><body><h1>404 Not Found</h1><p>The requested file was not found on this server.</p></body></html>"
+            self.wfile.write(body)
+            return
+
+        # ถ้าเป็นไดเรกทอรี ให้ใช้ behavior ปกติของ SimpleHTTPRequestHandler (list directory / serve index)
+        if os.path.isdir(safe_path):
+            # เปลี่ยน working dir ชั่วคราวให้ SimpleHTTPRequestHandler ทำงานถูกต้อง
+            cwd = os.getcwd()
+            try:
+                os.chdir(MOCK_DIR)
+                # ปรับ self.path ให้ relative กับ MOCK_DIR ก่อนเรียก parent
+                super().do_GET()
+            finally:
+                os.chdir(cwd)
+            return
+
+        # ถ้า path ไม่มีอยู่จริง ให้ตอบ 404 ตามปกติ
+        self.send_response(404)
+        self.end_headers()
+        self.wfile.write(b'404 Not Found')
 
     # ป้องกัน method อันตราย
     def do_POST(self):
@@ -167,12 +274,19 @@ class HoneypotHTTPRequestHandler(SimpleHTTPRequestHandler):
 # เปิด server
 # -----------------------------
 if __name__ == "__main__":
+    # สร้าง mock fs ถ้ายังไม่มี
+    if not os.path.exists(MOCK_DIR) or not os.listdir(MOCK_DIR):
+        create_mock_fs(MOCK_DIR)
+
     port = select_port_from_stats()
-    os.chdir(MOCK_DIR)
-    server_address = (IP_SERVER, port)
-    httpd = ThreadingHTTPServer(server_address, HoneypotHTTPRequestHandler)
-    print(f"[Honeypot] Fake Ubuntu server (sandboxed) running at http://{IP_SERVER}:{port}")
-    try:
-        httpd.serve_forever()
-    except KeyboardInterrupt:
-        print("[Honeypot] Server stopped manually")
+    if port is None:
+        print("[Honeypot] ไม่มีพอร์ตให้รัน server — abort")
+    else:
+        # chdir ไม่จำเป็นเพราะ handler จะ chdir ชั่วคราวก่อน serve directory
+        server_address = (IP_SERVER, port)
+        httpd = ThreadingHTTPServer(server_address, HoneypotHTTPRequestHandler)
+        print(f"[Honeypot] Fake Ubuntu server (sandboxed) running at http://{IP_SERVER}:{port}")
+        try:
+            httpd.serve_forever()
+        except KeyboardInterrupt:
+            print("[Honeypot] Server stopped manually")
