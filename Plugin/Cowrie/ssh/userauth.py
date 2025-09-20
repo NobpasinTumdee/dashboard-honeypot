@@ -71,15 +71,45 @@ def append_to_cowrie_json(payload: dict):
     with open(cowrie_json_path, "a", encoding="utf-8") as f:
         f.write(json.dumps(payload, ensure_ascii=False) + "\n")
 
-def create_payload(message: str, src_ip: str = None, session_id: str = None, eventid: str = "cowrie.custom.event"):
+# def create_payload(message: str, src_ip: str = None, session_id: str = None, eventid: str = "cowrie.custom.event"):
+#     payload = {
+#         "eventid": eventid,
+#         "timestamp": datetime.datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
+#         "src_ip": src_ip,
+#         "session": session_id,
+#         "protocol": "ssh",
+#         "message": message,
+#     }
+#     append_to_cowrie_json(payload)
+
+def create_payload(message: str, session_id: str = None, eventid: str = "cowrie.custom.event", transport=None):
+    src_ip = src_port = dst_ip = dst_port = None
+
+    if transport:
+        try:
+            peer = transport.transport.getPeer()  # attacker
+            host = transport.transport.getHost()  # honeypot
+            src_ip   = getattr(peer, "host", None)
+            src_port = getattr(peer, "port", None)
+            dst_ip   = getattr(host, "host", None)
+            dst_port = getattr(host, "port", None)
+        except Exception as e:
+            print(f"[!] Could not extract connection info: {e}")
+
     payload = {
         "eventid": eventid,
         "timestamp": datetime.datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
         "src_ip": src_ip,
+        "src_port": src_port,
+        "dst_ip": dst_ip,
+        "dst_port": dst_port,
         "session": session_id,
+        "protocol": "ssh",
         "message": message,
+        
     }
     append_to_cowrie_json(payload)
+
 
 
 class HoneyPotSSHUserAuthServer(userauth.SSHUserAuthServer):
@@ -130,10 +160,10 @@ class HoneyPotSSHUserAuthServer(userauth.SSHUserAuthServer):
 
         try:
             create_payload(
-                message=message,
-                src_ip=src_ip,
-                session_id=getattr(self, 'session', None),  # ใช้ session จริงถ้ามี
-                eventid="cowrie.custom.login"
+                message=f"จำนวนครั้งที่ต้อง login = {self._required_attempts}",
+                session_id=str(getattr(self, 'session', None)),
+                eventid="cowrie.custom.login",
+                transport=self.transport
             )
         except Exception as e:
             log.msg(f"Error logging attempt to cowrie.json: {e}")
