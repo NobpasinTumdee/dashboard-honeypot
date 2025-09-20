@@ -375,33 +375,25 @@ setInterval(async () => {
   } catch (error) {
     console.error('Error fetching real-time users :', error);
   }
+}, 500);
 
+setInterval(async () => {
   try {
     const logs = await prisma.HttpsPackets.findMany({
       orderBy: { id: 'desc' },
       take: 1000,
     });
-    if (logs.length !== HttpsPacketsCount) {
-      HttpsPacketsCount = logs.length;
-      io.emit('real-time', logs);
-      console.log(`New HttpsPackets logs detected and sent. Total: ${logs.length}`);
-    }
+    io.emit('real-time', logs);
   } catch (error) {
     console.error('Error fetching real-time honeypot logs HttpsPackets:', error);
   }
-}, 500);
 
-setInterval(async () => {
   try {
     const logs = await prisma.TimeSeriesPackets.findMany({
       orderBy: { id: 'desc' },
       take: 1000,
     });
-    if (logs.length !== TimeSeriesPacketsCount) {
-      TimeSeriesPacketsCount = logs.length;
-      io.emit('real-time-packet-stats', logs);
-      console.log(`New TimeSeriesPackets logs detected and sent. Total: ${logs.length}`);
-    }
+    io.emit('real-time-packet-stats', logs);
   } catch (error) {
     console.error('Error fetching real-time honeypot logs TimeSeriesPackets:', error);
   }
@@ -413,11 +405,7 @@ setInterval(async () => {
         take: 1000,
       }
     );
-    if (logs.length !== ProtocolStatsCount) {
-      ProtocolStatsCount = logs.length;
-      io.emit('real-time-protocol-stats', logs);
-      console.log(`New ProtocolStats logs detected and sent. Total: ${logs.length}`);
-    }
+    io.emit('real-time-protocol-stats', logs);
   } catch (error) {
     console.error('Error fetching real-time honeypot logs ProtocolStats:', error);
   }
@@ -427,11 +415,7 @@ setInterval(async () => {
       orderBy: { id: 'desc' },
       take: 1000,
     });
-    if (logs.length !== SrcIpStatsCount) {
-      SrcIpStatsCount = logs.length;
-      io.emit('real-time-ip-stats', logs);
-      console.log(`New SrcIpStats logs detected and sent. Total: ${logs.length}`);
-    }
+    io.emit('real-time-ip-stats', logs);
   } catch (error) {
     console.error('Error fetching real-time honeypot logs SrcIpStats:', error);
   }
@@ -441,11 +425,7 @@ setInterval(async () => {
       orderBy: { id: 'desc' },
       take: 1000,
     });
-    if (logs.length !== DstPortStatsCount) {
-      DstPortStatsCount = logs.length;
-      io.emit('real-time-port-stats', logs);
-      console.log(`New DstPortStats logs detected and sent. Total: ${logs.length}`);
-    }
+    io.emit('real-time-port-stats', logs);
   } catch (error) {
     console.error('Error fetching real-time honeypot logs DstPortStats:', error);
   }
