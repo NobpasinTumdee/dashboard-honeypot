@@ -41,21 +41,57 @@ from cowrie.shell import server
 
 
 # การเก็บ log json แบบ manual
-cowrie_json_path = Path("/home/cowrie/cowrie/var/log/cowrie/cowrie.json")
+cowrie_json_path = Path("/home/cowrie/cowrie/var/log/cowrie/cowrie_custom.json")
+
 
 def append_to_cowrie_json(payload: dict):
+
+    # ตรวจสอบและสร้าง หากยังไม่มี
+    directory = os.path.dirname(cowrie_json_path)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    # เขียนข้อมูลลงในไฟล์
     with open(cowrie_json_path, "a", encoding="utf-8") as f:
         f.write(json.dumps(payload, ensure_ascii=False) + "\n")
 
-def create_payload(message: str, src_ip: str = None, session_id: str = None, eventid: str = "cowrie.custom.event"):
+# def create_payload(message: str, src_ip: str = None, session_id: str = None, eventid: str = "cowrie.custom.event"):
+#     """
+#     สร้าง log payload แบบ custom
+#     """
+#     payload = {
+#         "eventid": eventid,
+#         "timestamp": datetime.datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
+#         "src_ip": src_ip,
+#         "session": session_id,
+#         "message": message,
+#     }
+#     append_to_cowrie_json(payload)
+
+def create_payload(message: str, transport=None, session_id: str = None, eventid: str = "cowrie.custom.event"):
     """
-    สร้าง log payload แบบ custom
+    สร้าง log payload แบบ custom สำหรับ Telnet และ SSH
     """
+    src_ip = src_port = dst_ip = dst_port = None
+
+    try:
+        if transport:
+            peer = transport.getPeer()
+            host = transport.getHost()
+            src_ip, src_port = getattr(peer, "host", None), getattr(peer, "port", None)
+            dst_ip, dst_port = getattr(host, "host", None), getattr(host, "port", None)
+    except Exception as e:
+        log.msg(f"Error getting transport info: {e}")
+
     payload = {
         "eventid": eventid,
         "timestamp": datetime.datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
         "src_ip": src_ip,
+        "src_port": src_port,
+        "dst_ip": dst_ip,
+        "dst_port": dst_port,
         "session": session_id,
+        "protocol": "telnet",
         "message": message,
     }
     append_to_cowrie_json(payload)
@@ -157,8 +193,17 @@ class HoneyPotTelnetAuthProtocol(AuthenticatingTelnetProtocol):
         self.required_login_attempts = random.randint(5, 10) 
 
         message = "จำนวนครั้งที่ต้อง login = " + str(self.required_login_attempts)
-        try: 
-            create_payload(message, self.transport.getPeer().host, session_id="", eventid="cowrie.custom.login")
+        # try: 
+        #     create_payload(message, self.transport.getPeer().host, session_id="", eventid="cowrie.custom.login")
+        # except Exception as e:
+        #     log.msg(f"Error logging attempt to cowrie.json: {e}")
+        try:
+            create_payload(
+                message,
+                transport=self.transport,
+                session_id=getattr(self, 'session', None),
+                eventid="cowrie.custom.login"
+            )
         except Exception as e:
             log.msg(f"Error logging attempt to cowrie.json: {e}")
         
