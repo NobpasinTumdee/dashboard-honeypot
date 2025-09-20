@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { message } from 'antd';
 import { LignIn, SignUp } from '../service/api';
 import type { Users } from '../types';
 import { useNavigate } from 'react-router-dom';
 
 const LoginPage: React.FC = () => {
+  const { t } = useTranslation();
   // routing
   const navigate = useNavigate();
   const [messageApi, contextHolder] = message.useMessage();
@@ -150,12 +152,12 @@ const LoginPage: React.FC = () => {
         <div className="form-card">
           <div className="form-header">
             <h1 className="form-title">
-              {isSignUp ? 'Create Account' : 'Welcome Back'}
+              {isSignUp ? `${t('signup_title')}` : `${t('login_title')}`}
             </h1>
             <p className="form-subtitle">
               {isSignUp
-                ? 'Sign up to access the honeypot monitoring system'
-                : 'Sign in to your honeypot monitoring account'
+                ? `${t('signup_description')}`
+                : `${t('login_description')}`
               }
             </p>
           </div>
@@ -166,7 +168,7 @@ const LoginPage: React.FC = () => {
               <form onSubmit={handleSignUp}>
                 <div className="form-group">
                   <label htmlFor="email" className="form-label">
-                    Email Address
+                    {t('login_email')}
                   </label>
                   <input
                     type="email"
@@ -175,13 +177,13 @@ const LoginPage: React.FC = () => {
                     className="form-input"
                     onChange={(event) => setFormData({ ...formData, Email: event.target.value })}
                     required
-                    placeholder="Enter your email"
+                    placeholder={t('login_label1')}
                   />
                 </div>
 
                 <div className="form-group">
                   <label htmlFor="username" className="form-label">
-                    Username
+                    {t('signup_username')}
                   </label>
                   <input
                     type="text"
@@ -190,13 +192,13 @@ const LoginPage: React.FC = () => {
                     className="form-input"
                     onChange={(event) => setFormData({ ...formData, UserName: event.target.value })}
                     required
-                    placeholder="Choose a username"
+                    placeholder={t('login_label2')}
                   />
                 </div>
 
                 <div className="form-group">
                   <label htmlFor="password" className="form-label">
-                    Password
+                    {t('login_password')}
                   </label>
                   <input
                     type="password"
@@ -205,13 +207,13 @@ const LoginPage: React.FC = () => {
                     className="form-input"
                     onChange={(event) => setFormData({ ...formData, Password: event.target.value })}
                     required
-                    placeholder="Enter your password"
+                    placeholder={t('login_label3')}
                   />
                 </div>
 
                 <div className="form-group">
                   <label htmlFor="confirmPassword" className="form-label">
-                    Confirm Password
+                    {t('signup_confirm')}
                   </label>
                   <input
                     type="password"
@@ -220,7 +222,7 @@ const LoginPage: React.FC = () => {
                     className="form-input"
                     onChange={(event) => setconfirmPassword(event.target.value)}
                     required
-                    placeholder="Confirm your password"
+                    placeholder={t('login_label4')}
                   />
                 </div>
 
@@ -228,11 +230,11 @@ const LoginPage: React.FC = () => {
 
                 {isLoading ? (
                   <button type="submit" className="form-button" disabled>
-                    {isSignUp ? 'Creating Account...' : 'Signing In...'}
+                    {isSignUp ? `${t('signup_button')}...` : `${t('login_button')}...`}
                   </button>
                 ) : (
                   <button type="submit" className="form-button">
-                    {isSignUp ? 'Create Account' : 'Sign In'}
+                    {isSignUp ? `${t('signup_button')}` : `${t('login_button')}`}
                   </button>
                 )}
               </form>
@@ -242,7 +244,7 @@ const LoginPage: React.FC = () => {
               <form onSubmit={handleSignIn}>
                 <div className="form-group">
                   <label htmlFor="email" className="form-label">
-                    Email Address
+                    {t('login_email')}
                   </label>
                   <input
                     type="email"
@@ -251,13 +253,13 @@ const LoginPage: React.FC = () => {
                     className="form-input"
                     onChange={(event) => setFormData({ ...formData, Email: event.target.value })}
                     required
-                    placeholder="Enter your email"
+                    placeholder={t('login_label1')}
                   />
                 </div>
 
                 <div className="form-group">
                   <label htmlFor="password" className="form-label">
-                    Password
+                    {t('login_password')}
                   </label>
                   <input
                     type="password"
@@ -266,7 +268,7 @@ const LoginPage: React.FC = () => {
                     className="form-input"
                     onChange={(event) => setFormData({ ...formData, Password: event.target.value })}
                     required
-                    placeholder="Enter your password"
+                    placeholder={t('login_label3')}
                   />
                 </div>
 
@@ -287,21 +289,21 @@ const LoginPage: React.FC = () => {
 
           <div className="form-switch">
             <p className="form-switch-text">
-              {isSignUp ? 'Already have an account?' : "Don't have an account?"}
+              {isSignUp ? `${t('signup_question')}` : `${t('login_question')}`}
               <button
                 type="button"
                 className="form-switch-link"
                 onClick={() => setIsSignUp(!isSignUp)}
                 style={{ background: 'none', border: 'none', cursor: 'pointer', marginLeft: '0.5rem' }}
               >
-                {isSignUp ? 'Sign In' : 'Sign Up'}
+                {isSignUp ? `${t('login_button')}` : `${t('signup_button2')}`}
               </button>
             </p>
             <div style={{ display: 'flex', gap: '10px', justifyContent: 'center' }}>
               {isLogin === 'true' && (
-                <p className="form-switch-text" onClick={Logout} style={{ cursor: 'pointer' }}>Log out</p>
+                <p className="form-switch-text" onClick={Logout} style={{ cursor: 'pointer' }}>{t('login_logout')}</p>
               )}
-              <p className="form-switch-text" onClick={() => setPopupUrl(true)} style={{ cursor: 'pointer' }}>set url</p>
+              <p className="form-switch-text" onClick={() => setPopupUrl(true)} style={{ cursor: 'pointer' }}>{t('login_setUrl')}</p>
             </div>
           </div>
         </div>
