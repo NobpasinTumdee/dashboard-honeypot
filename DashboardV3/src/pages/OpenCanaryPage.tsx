@@ -73,7 +73,9 @@ const OpenCanaryPage: React.FC = () => {
   // ===============
   const uniqueSourceIPs = new Set(data.map(log => log.src_host)).size;
   const portDistribution = data.reduce((acc, log) => {
-    acc[log.dst_port] = (acc[log.dst_port] || 0) + 1;
+    if (log.dst_port !== -1) {
+      acc[log.dst_port] = (acc[log.dst_port] || 0) + 1;
+    }
     return acc;
   }, {} as Record<number, number>);
 
@@ -86,24 +88,22 @@ const OpenCanaryPage: React.FC = () => {
   // ===========================
   const logdataCounts: Record<string, number> = {};
   data.forEach(item => {
-    const message = item.logdata_msg_logdata || 'Other';
-    logdataCounts[message] = (logdataCounts[message] || 0) + 1;
+    const logtype = item.logtype;
+    logdataCounts[logtype] = (logdataCounts[logtype] || 0) + 1;
   });
 
   const sortedLogdata = Object.entries(logdataCounts)
     .sort(([, countA], [, countB]) => countB - countA);
 
-  const labelsType = sortedLogdata.map(([message]) => {
-    if (message === 'Added service from class CanaryHTTP in opencanary.modules.http to fake') {
-      return 'Start Service HTTP';
-    } else if (message === 'Added service from class CanaryHTTPS in opencanary.modules.https to fake') {
-      return 'Start Service HTTPS';
-    } else if (message === 'Added service from class CanaryFTP in opencanary.modules.ftp to fake') {
-      return 'Start Service FTP';
-    } else if (message === 'Canary running!!!') {
-      return 'running';
+  const labelsType = sortedLogdata.map(([logtype]) => {
+    if (logtype === '1001') {
+      return 'Server Start Service';
+    } else if (logtype === '5001') {
+      return 'Service Port Scan';
+    } else if (logtype === '3000') {
+      return 'Service Web Fake';
     } else {
-      return message.slice(0, 20) + '...';
+      return logtype.slice(0, 20) + 'other Service ...';
     }
   });
   const countsType = sortedLogdata.map(([, count]) => count);
@@ -115,6 +115,30 @@ const OpenCanaryPage: React.FC = () => {
       backgroundColor: '#aeaeafff',
       borderRadius: 4,
     }]
+  };
+
+  const ListServiceCountoptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'bottom' as const,
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: 'Number of packets'
+        }
+      },
+      x: {
+        title: {
+          display: true,
+          text: 'Service'
+        }
+      }
+    }
   };
 
 
@@ -191,13 +215,13 @@ const OpenCanaryPage: React.FC = () => {
         beginAtZero: true,
         title: {
           display: true,
-          text: 'Number of times'
+          text: 'Number of packets'
         }
       },
       x: {
         title: {
           display: true,
-          text: 'Password or Username'
+          text: 'Date'
         }
       }
     }
@@ -241,7 +265,7 @@ const OpenCanaryPage: React.FC = () => {
     responsive: true,
     plugins: {
       legend: {
-        position: 'bottom' as const,
+        display: false
       },
     },
   };
@@ -379,7 +403,7 @@ const OpenCanaryPage: React.FC = () => {
           title={t('opencanary_alert_distribution')}
           subtitle={t('opencanary_alert_types')}
         >
-          <Chart type="bar" data={messageData} height={300} options={options} />
+          <Chart type="bar" data={messageData} height={300} options={ListServiceCountoptions} />
         </ChartCard>
         <ChartCard
           title={t('opencanary_daily_packets_title')}
