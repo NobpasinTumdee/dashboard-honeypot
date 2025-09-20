@@ -43,7 +43,7 @@ const OpenCanaryPage: React.FC = () => {
   const IpfilteredData = filteredData.filter(item => !srcIpFilter || (item.src_host && item.src_host.includes(srcIpFilter)));
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
-  const ITEMS_PER_PAGE = 5;
+  const ITEMS_PER_PAGE = 15;
 
   // Calculate the current items to display based on pagination
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -464,7 +464,7 @@ const OpenCanaryPage: React.FC = () => {
             </thead>
             <tbody>
               {currentItems.map((item, index) => (
-                <tr key={item.id || index}>
+                <tr key={item.id || index} className='canary-row'>
                   <td>
                     {new Date(String(item.local_time_adjusted).replace("Z", "")).toLocaleString("th-TH", {
                       day: "2-digit",
