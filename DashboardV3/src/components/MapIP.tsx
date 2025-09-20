@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
@@ -40,6 +41,7 @@ const MapIP: React.FC<MapIPProps> = ({ ipAddresses }) => {
     const mapCenter: [number, number] = [20, 0];
     const [ipLocations, setIpLocations] = useState<IpLocation[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
+    const { t } = useTranslation();
 
     useEffect(() => {
         const fetchLocations = async () => {
@@ -75,7 +77,9 @@ const MapIP: React.FC<MapIPProps> = ({ ipAddresses }) => {
     }, [ipAddresses]);
 
     if (loading) {
-        return <div>Loading map data... <br /> Please wait a few seconds. <br /> ยิ่งมี ip ต่างกันเยอะยิ่งนานเพราะ API มันจำกัดคำขอ ผมจึงตั้งเวลา 0.5 วินาที ต่อ 1 ip</div>;
+        return (
+            <div style={{ textAlign: 'center' }}>{t('map1')} <br /> {t('map2')} <br /> {t('map3')}</div>
+        );
     }
 
     return (

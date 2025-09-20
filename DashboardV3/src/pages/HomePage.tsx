@@ -125,13 +125,13 @@ const HomePage: React.FC = () => {
         beginAtZero: true,
         title: {
           display: true,
-          text: 'Number of times'
+          text: t('cowrie_chart_Y1')
         }
       },
       x: {
         title: {
           display: true,
-          text: 'Password or Username'
+          text: t('cowrie_chart_x1')
         }
       }
     }
@@ -155,7 +155,7 @@ const HomePage: React.FC = () => {
   const dailyPacketsData = {
     labels: labelsDaily,
     datasets: [{
-      label: 'Packets',
+      label: t('opencanary_chart_tooltip2'),
       data: countsDaily,
       borderColor: '#b2b5b8ff',
       backgroundColor: '#b2b5b834',
@@ -204,13 +204,13 @@ const HomePage: React.FC = () => {
         beginAtZero: true,
         title: {
           display: true,
-          text: 'Number of times'
+          text: t('opencanary_chart_Y')
         }
       },
       x: {
         title: {
           display: true,
-          text: 'Date (YYYY-MM-DD)'
+          text: t('opencanary_chart_x2')
         }
       }
     }
