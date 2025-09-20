@@ -33,16 +33,16 @@ const HeroPage: React.FC = () => {
         <nav className="hero-nav">
           <div className="hero-nav-content">
             <div className="hero-logo">
-              <span className="hero-logo-text">HoneyPot</span>
+              <span className="hero-logo-text">{t('title2')}</span>
             </div>
 
             <div className="hero-nav-links">
-              <Link to="/home" className="hero-nav-link">Dashboard</Link>
-              <Link to="/home/cowrie" className="hero-nav-link">Cowrie</Link>
-              <Link to="/home/open-canary" className="hero-nav-link">OpenCanary</Link>
-              <Link to="/home/wireshark" className="hero-nav-link">Wireshark</Link>
-              <Link to="/home/users" className="hero-nav-link">User Management</Link>
-              <Link to="/document" className="hero-nav-link">Document</Link>
+              <Link to="/home" className="hero-nav-link">{t('sidebar_munu_title2')}</Link>
+              <Link to="/home/cowrie" className="hero-nav-link">{t('sidebar_munu_title3')}</Link>
+              <Link to="/home/open-canary" className="hero-nav-link">{t('sidebar_munu_title4')}</Link>
+              <Link to="/home/wireshark" className="hero-nav-link">{t('sidebar_munu_title5')}</Link>
+              <Link to="/home/users" className="hero-nav-link">{t('sidebar_munu_title6')}</Link>
+              <Link to="/document" className="hero-nav-link">{t('sidebar_munu_title7')}</Link>
               <ThemeToggle />
               <div className="hero-lang-toggle" style={{ cursor: 'pointer' }}>
                 <span className="hero-lang-toggle-text" onClick={() => i18n.language === 'en' ? i18n.changeLanguage('th') : i18n.changeLanguage('en')}>
@@ -52,7 +52,7 @@ const HeroPage: React.FC = () => {
             </div>
 
             <button className="hero-open-btn">
-              <Link to="/home/login" style={{ textDecoration: 'none', color: 'inherit' }}>Login</Link>
+              <Link to="/home/login" style={{ textDecoration: 'none', color: 'inherit' }}>{t('login_button')}</Link>
             </button>
           </div>
         </nav>

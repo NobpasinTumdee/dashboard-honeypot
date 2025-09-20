@@ -276,11 +276,11 @@ const LoginPage: React.FC = () => {
 
                 {isLoading ? (
                   <button type="submit" className="form-button" disabled>
-                    {isSignUp ? 'Creating Account...' : 'Signing In...'}
+                    {isSignUp ? `${t('signup_button')}...` : `${t('login_button')}...`}
                   </button>
                 ) : (
                   <button type="submit" className="form-button">
-                    {isSignUp ? 'Create Account' : 'Sign In'}
+                    {isSignUp ? `${t('signup_button')}` : `${t('login_button')}`}
                   </button>
                 )}
               </form>

@@ -235,6 +235,7 @@ body {
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  margin-bottom: 10px;
   padding: 0.5rem 1rem;
   color: var(--text-secondary);
   text-decoration: none;
@@ -264,6 +265,9 @@ body {
 }
 
 .nav-icon {
+  display: flex;
+  height: 100%;
+  align-items: center;
   font-size: 1.125rem;
   min-width: 1.25rem;
 }
@@ -1883,9 +1887,9 @@ html {
 }
 
 .hero-footer-select {
-  background: #36393f;
-  color: white;
-  border: 1px solid #4f545c;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
   border-radius: 4px;
   padding: 0.5rem;
   font-size: 0.9rem;
@@ -1894,12 +1898,12 @@ html {
 }
 
 .hero-footer-select:hover {
-  border-color: #5865f2;
+  border-color: #e7cca4;
 }
 
 .hero-footer-select:focus {
   outline: none;
-  border-color: #5865f2;
+  border-color: var(--gradient-primary);
   box-shadow: 0 0 0 2px rgba(88, 101, 242, 0.2);
 }
 
