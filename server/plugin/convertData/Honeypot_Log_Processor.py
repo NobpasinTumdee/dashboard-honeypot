@@ -6,6 +6,8 @@ from datetime import datetime
 
 # กำหนดเส้นทางไฟล์ Linux
 COWRIE_JSON_LOG_PATH = '/home/cowrie/cowrie/var/log/cowrie/cowrie.json'
+CUSTOM_JSON_LOG_PATH = '/home/cowrie/cowrie/var/log/cowrie/cowrie_custom.json'
+
 OPENCANARY_LOG_PATH = '/var/tmp/opencanary.log'
 SQLITE_DB_PATH = '/home/cpe27/HeneyPot.db'
 
@@ -17,7 +19,8 @@ SQLITE_DB_PATH = '/home/cpe27/HeneyPot.db'
 # Dictionary เก็บตำแหน่งสุดท้ายที่อ่านของแต่ละไฟล์
 last_file_positions = {
     COWRIE_JSON_LOG_PATH: 0,
-    OPENCANARY_LOG_PATH: 0
+    OPENCANARY_LOG_PATH: 0,
+    CUSTOM_JSON_LOG_PATH: 0
 }
 
 def setup_database():
@@ -222,9 +225,24 @@ if __name__ == "__main__":
     conn, cursor, is_new_db = setup_database()
     
     if conn and cursor:
+        # if is_new_db:
+        #     print("New database created. Performing initial full load...")
+        #     monitor_log_file(COWRIE_JSON_LOG_PATH, cursor, process_cowrie_log_entry, last_file_positions, initial_load=True)
+        #     monitor_log_file(OPENCANARY_LOG_PATH, cursor, process_opencanary_log_entry, last_file_positions, initial_load=True)
+        #     conn.commit()
+        #     print("Initial load complete. Starting real-time monitoring.")
+        # else:
+        #     print("Existing database found. Starting real-time monitoring for new data.")
+        #     # สำหรับ DB ที่มีอยู่แล้ว เราจะตั้งค่า last_file_positions ให้เป็นขนาดไฟล์ปัจจุบัน
+        #     # เพื่อให้เริ่มอ่านจากท้ายไฟล์ทันทีเมื่อรันโปรแกรม
+        #     if os.path.exists(COWRIE_JSON_LOG_PATH):
+        #         last_file_positions[COWRIE_JSON_LOG_PATH] = os.path.getsize(COWRIE_JSON_LOG_PATH)
+        #     if os.path.exists(OPENCANARY_LOG_PATH):
+        #         last_file_positions[OPENCANARY_LOG_PATH] = os.path.getsize(OPENCANARY_LOG_PATH)
         if is_new_db:
             print("New database created. Performing initial full load...")
             monitor_log_file(COWRIE_JSON_LOG_PATH, cursor, process_cowrie_log_entry, last_file_positions, initial_load=True)
+            monitor_log_file(CUSTOM_JSON_LOG_PATH, cursor, process_cowrie_log_entry, last_file_positions, initial_load=True)
             monitor_log_file(OPENCANARY_LOG_PATH, cursor, process_opencanary_log_entry, last_file_positions, initial_load=True)
             conn.commit()
             print("Initial load complete. Starting real-time monitoring.")
@@ -234,14 +252,18 @@ if __name__ == "__main__":
             # เพื่อให้เริ่มอ่านจากท้ายไฟล์ทันทีเมื่อรันโปรแกรม
             if os.path.exists(COWRIE_JSON_LOG_PATH):
                 last_file_positions[COWRIE_JSON_LOG_PATH] = os.path.getsize(COWRIE_JSON_LOG_PATH)
+            if os.path.exists(CUSTOM_JSON_LOG_PATH):
+                last_file_positions[CUSTOM_JSON_LOG_PATH] = os.path.getsize(CUSTOM_JSON_LOG_PATH)
             if os.path.exists(OPENCANARY_LOG_PATH):
                 last_file_positions[OPENCANARY_LOG_PATH] = os.path.getsize(OPENCANARY_LOG_PATH)
+
 
         try:
             while True:
                 monitor_log_file(COWRIE_JSON_LOG_PATH, cursor, process_cowrie_log_entry, last_file_positions)
                 monitor_log_file(OPENCANARY_LOG_PATH, cursor, process_opencanary_log_entry, last_file_positions)
-                
+                monitor_log_file(OPENCANARY_LOG_PATH, cursor, process_opencanary_log_entry, last_file_positions)
+
                 conn.commit() 
                 time.sleep(0.5)
 
