@@ -229,7 +229,31 @@ const CowriePage: React.FC = () => {
 
 
 
-  const options = {
+  const Passoptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'bottom' as const,
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: 'times'
+        }
+      },
+      x: {
+        title: {
+          display: true,
+          text: 'Password'
+        }
+      }
+    }
+  };
+
+  const Useroptions = {
     responsive: true,
     plugins: {
       legend: {
@@ -247,7 +271,31 @@ const CowriePage: React.FC = () => {
       x: {
         title: {
           display: true,
-          text: 'Password or Username'
+          text: 'Username'
+        }
+      }
+    }
+  };
+
+  const Daylyoptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: 'bottom' as const,
+      },
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: 'Number of times'
+        }
+      },
+      x: {
+        title: {
+          display: true,
+          text: 'Time of day'
         }
       }
     }
@@ -260,13 +308,6 @@ const CowriePage: React.FC = () => {
         position: 'bottom' as const,
       },
     },
-    scales: {
-      x: {
-        title: {
-          display: true,
-        }
-      }
-    }
   };
 
 
@@ -394,13 +435,13 @@ const CowriePage: React.FC = () => {
           title={t('cowrie_top_passwords_title')}
           subtitle={t('cowrie_top_passwords_desc')}
         >
-          <Chart type="bar" data={passwordData} height={250} options={options} />
+          <Chart type="bar" data={passwordData} height={250} options={Passoptions} />
         </ChartCard>
         <ChartCard
           title={t('cowrie_top_usernames_title')}
           subtitle={t('cowrie_top_usernames_desc')}
         >
-          <Chart type="bar" data={usernameData} height={250} options={options} />
+          <Chart type="bar" data={usernameData} height={250} options={Useroptions} />
         </ChartCard>
       </div>
 
@@ -452,7 +493,7 @@ const CowriePage: React.FC = () => {
             title={t('cowrie_daily_activity_title')}
             subtitle={t('cowrie_activity_per_day')}
           >
-            <Chart type="line" data={datatest} height={250} options={options} />
+            <Chart type="line" data={datatest} height={250} options={Daylyoptions} />
           </ChartCard>
           <ChartCard
             title={t('cowrie_protocol_distribution_2')}

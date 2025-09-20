@@ -561,6 +561,12 @@ body {
   overflow-x: hidden;
 }
 
+.canary-row td {
+  padding: 0 1rem;
+  border: 1px solid var(--border-color);
+  overflow-x: hidden;
+}
+
 .cowrie-message {
   max-width: 100px;
   overflow-x: hidden;
