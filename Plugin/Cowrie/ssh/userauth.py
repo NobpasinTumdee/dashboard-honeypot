@@ -1,25 +1,34 @@
 # Copyright (c) 2009-2014 Upi Tamminen <desaster@gmail.com>
 # See the COPYRIGHT file for more information
 
+# Original import 
 from __future__ import annotations
-
 import struct
-import random
 from typing import Any
+
 from twisted.conch import error
 from twisted.conch.interfaces import IConchUser
 from twisted.conch.ssh import userauth
 from twisted.conch.ssh.common import NS, getNS
 from twisted.conch.ssh.transport import DISCONNECT_PROTOCOL_ERROR
 from twisted.internet import reactor, defer
-from twisted.cred import error
-from twisted.python.failure import Failure
 from twisted.python import log
 from cowrie.core import credentials
 from cowrie.core.config import CowrieConfig
+
+# Develop import
+import random
+from twisted.cred import error
+from twisted.python.failure import Failure
 import ast
 import os
+import json
+import datetime
+import uuid
+from pathlib import Path
 
+import fcntl
+import tempfile
 
 USERS_FILE = "/home/cowrie/users.txt"
 
@@ -35,7 +44,7 @@ def load_users_txt(path=USERS_FILE):
         print(f"[!] Error loading users.txt: {e}")
     return users
 
-
+# เพิ่ม user ใหม่
 def append_user_txt(username: str, password: str, path=USERS_FILE):
     users = load_users_txt(path)
     if (username, password) not in users:
@@ -47,22 +56,22 @@ def append_user_txt(username: str, password: str, path=USERS_FILE):
         except Exception as e:
             log.msg(f"Cannot append to {path}: {e}")
 
-## การเก็บ log
-import json
-import datetime
-import uuid
-from pathlib import Path
 
-cowrie_json_path = Path("/home/cowrie/cowrie/var/log/cowrie/cowrie.json")
+# การเก็บ log
+cowrie_json_path = Path("/home/cowrie/cowrie/var/log/cowrie/cowrie_custom.json")
 
 def append_to_cowrie_json(payload: dict):
+
+    # ตรวจสอบและสร้าง หากยังไม่มี
+    directory = os.path.dirname(cowrie_json_path)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+
+    # เขียนข้อมูลลงในไฟล์
     with open(cowrie_json_path, "a", encoding="utf-8") as f:
         f.write(json.dumps(payload, ensure_ascii=False) + "\n")
 
 def create_payload(message: str, src_ip: str = None, session_id: str = None, eventid: str = "cowrie.custom.event"):
-    """
-    สร้าง log payload แบบ custom
-    """
     payload = {
         "eventid": eventid,
         "timestamp": datetime.datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
@@ -71,9 +80,6 @@ def create_payload(message: str, src_ip: str = None, session_id: str = None, eve
         "message": message,
     }
     append_to_cowrie_json(payload)
-
-## --------------------------------------------
-
 
 
 class HoneyPotSSHUserAuthServer(userauth.SSHUserAuthServer):
@@ -85,22 +91,18 @@ class HoneyPotSSHUserAuthServer(userauth.SSHUserAuthServer):
     * IP based authentication
     """
 
-    bannerSent: bool = False                # ประกาศตัวแปรแบบ boolean โดยค่าเริ่มต้นเป็น False
+    bannerSent: bool = False                
     user: bytes
-    _pamDeferred: defer.Deferred | None     # ประกาศตัวแปรแบบ Deferred ที่สามารถเป็น None ได้
-                                            # Deferred ออบเจกต์ที่ทำหน้าที่เป็นตัวแทนของผลลัพธ์ที่จะเกิดขึ้นในอนาคต (T/F)
+    _pamDeferred: defer.Deferred | None     
+                                            
     
     # เพิ่มตัวแปรสำหรับเก็บสถานะการล็อกอินล้มเหลว
     _login_attempts: dict[tuple[bytes, str], dict[str, int]]
 
     # ฟังก์ชันนี้จะถูกเรียก เมื่อเริ่มต้นเซสชัน SSH (None = ไม่มีค่า return)
     def serviceStarted(self) -> None:
-        """
-        Called when the SSH session starts. Initializes authentication methods and resets login state.
-        """
         self.interfaceToMethod[credentials.IUsername] = b"none"
         self.interfaceToMethod[credentials.IUsernamePasswordIP] = b"password"
-
         keyboard: bool = CowrieConfig.getboolean(
             "ssh", "auth_keyboard_interactive_enabled", fallback=False
         )
@@ -110,13 +112,12 @@ class HoneyPotSSHUserAuthServer(userauth.SSHUserAuthServer):
             )
         self._pamDeferred: defer.Deferred | None = None
 
-        
+        # ตัวแปรสำหรับบังคับ login
         self._login_attempts = {}
-
-        
         self._required_attempts = random.randint(5, 10)
         self._current_attempts = 0
 
+        # การเก็บ log json
         message = f"จำนวนครั้งที่ต้อง login = {self._required_attempts}"
 
         src_ip = None
@@ -138,7 +139,6 @@ class HoneyPotSSHUserAuthServer(userauth.SSHUserAuthServer):
             log.msg(f"Error logging attempt to cowrie.json: {e}")
 
 
-        
         userauth.SSHUserAuthServer.serviceStarted(self)
 
     # แสดงข้อความต้อนรับ
@@ -147,8 +147,6 @@ class HoneyPotSSHUserAuthServer(userauth.SSHUserAuthServer):
         This is the pre-login banner. The post-login banner is the MOTD file
         Display contents of <honeyfs>/etc/issue.net
         """
-
-        # ตรวจสอบว่ามีการส่งข้อความต้อนรับไปแล้วหรือไม่
         if self.bannerSent:
             return
         self.bannerSent = True
@@ -170,53 +168,61 @@ class HoneyPotSSHUserAuthServer(userauth.SSHUserAuthServer):
         return userauth.SSHUserAuthServer.ssh_USERAUTH_REQUEST(self, packet)
 
 
-
     # การ login แบบไม่มีรหัสผ่าน
     def auth_none(self, _packet: bytes) -> Any:
         """
         Allow every login
         """
-        # สร้างออบเจกต์ที่เก็บชื่อผู้ใช้ + IP และส่งไปยัง portal เพื่อทำการ login
-        # portal เป็นส่วนที่จัดการการรับรองตัวตนของผู้ใช้
         c = credentials.Username(self.user)
         srcIp: str = self.transport.transport.getPeer().host  # type: ignore
         return self.portal.login(c, srcIp, IConchUser)
 
+
     def auth_password(self, packet: bytes) -> Any:
-        password = getNS(packet[1:])[0]
+        password = getNS(packet[1:])[0]     # ดึง password
+        
+        # แปลง byte -> str
         password_str = password.decode() if isinstance(password, bytes) else str(password)
         username_str = self.user.decode() if isinstance(self.user, bytes) else str(self.user)
 
+        # เก็บ username,password ล่าสุด
         self._last_username = username_str
         self._last_password = password_str
 
-        users = load_users_txt(USERS_FILE)  # list of tuple
-        user_dict = dict(users)
+        
+        users = load_users_txt(USERS_FILE)  # ดึง username,password tuple
+        user_dict = dict(users)             # แปลงเป็น dict
 
         c = credentials.UsernamePasswordIP(self.user, password, None)
         d = self.portal.login(c, None, IConchUser)
+        
+        # ตรวจสอบแบบ asynchronous ที่จะไม่รอผลลัพธ์
         d.addCallback(self._cb_login_success, username_str, password_str, user_dict)
         d.addErrback(lambda f: self._deny_access())
         return d
 
-
+    # ฟังก์ชันตรวจสอบการ login
     def _cb_login_success(self, result, username_str, password_str, user_dict):
-        # --- กรณี User เก่า ---
+        
+        # หากเป็น user เก่า 
         if username_str in user_dict:
+            # หากใช้ password ถูก
             if user_dict[username_str] == password_str:
                 log.msg(f"Existing user {username_str} logged in with correct password.")
                 return self._grant_access(result)
+            
+            # หากใช้ password ผิด
             else:
                 log.msg(f"Existing user {username_str} tried wrong password -> DENIED")
                 return self._deny_access()
 
-        # --- กรณี User ใหม่ ---
+        # หากใช้ password เดียวกับที่บันทึก
         if password_str in user_dict.values():
             log.msg(f"New user {username_str} logged in with known password '{password_str}'.")
             self._save_user(username_str, password_str)
             return self._grant_access(result)
 
-        # --- Random attempts ---
+        # หากเป็น user ใหม่ให้บังคับ login
         self._current_attempts += 1
         if self._current_attempts >= self._required_attempts:
             log.msg(f"New user {username_str} logged in after {self._current_attempts} attempts.")
@@ -226,9 +232,8 @@ class HoneyPotSSHUserAuthServer(userauth.SSHUserAuthServer):
             log.msg(f"New user {username_str} needs {self._required_attempts - self._current_attempts} more attempts.")
             return self._deny_access()
 
-
+    # บันทึก username,password
     def _save_user(self, username, password):
-        """บันทึก user ใหม่ลง users.txt (แบบ list of tuple)"""
         users = load_users_txt(USERS_FILE)
         if (username, password) not in users:
             users.append((username, password))
@@ -239,30 +244,22 @@ class HoneyPotSSHUserAuthServer(userauth.SSHUserAuthServer):
             except Exception as e:
                 log.msg(f"Cannot append to users.txt: {e}")
 
-
+    # login สำเร็จ
     def _grant_access(self, result):
-        """อนุญาต login + delay"""
         self._required_attempts = random.randint(1, 5)
         self._current_attempts = 0
+        
+        # delay
         d = defer.Deferred()
-        reactor.callLater(random.uniform(1.0, 2.5), d.callback, result)
+        reactor.callLater(random.uniform(1.0, 1.5), d.callback, result)
         return d
 
-
+    # login ไม่สำเร็จ
     def _deny_access(self):
-        """ปฏิเสธ login + delay"""
         d = defer.Deferred()
-        reactor.callLater(
-            random.uniform(3, 4),
-            d.errback,
-            error.UnauthorizedLogin("Authentication failed. Please try again."),
-        )
+        msg = "Authentication failed. Please try again."
+        reactor.callLater(random.uniform(1, 1.5),d.errback,error.UnauthorizedLogin(msg),)
         return d
-
-
-        
-
-        
 
     # การ login ด้วยคีย์บอร์ดแบบโต้ตอบ (PAM)
     def auth_keyboard_interactive(self, _packet: bytes) -> Any:
@@ -330,7 +327,7 @@ class HoneyPotSSHUserAuthServer(userauth.SSHUserAuthServer):
             ...
             string response n
         """
-        assert self._pamDeferred is not None        # ตรวจสแบว่าเคยมีการเรียกใช้ _pamConv
+        assert self._pamDeferred is not None        # ตรวจสอบว่าเคยมีการเรียกใช้ _pamConv
         d: defer.Deferred = self._pamDeferred       # สร้างตัวแปร d เพื่อใช้แทนที่ _pamDeferred
         self._pamDeferred = None                    # รีเซ็ต _pamDeferred เพื่อรอรับการตอบกลับใหม่ในอนาคต
         resp: list
