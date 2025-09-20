@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { io, Socket } from "socket.io-client";
 import { jwtDecode } from "jwt-decode";
+import { useTranslation } from "react-i18next";
 
 import type {
     CanaryLog,
@@ -42,13 +43,14 @@ export const useCowrieSocket = (
     setIsError: (status: string) => void
 ) => {
     const socketRef = useRef<Socket | null>(null);
+    const { t } = useTranslation();
 
     useEffect(() => {
         const token = getToken();
         if (!token) {
             console.log("No token found. Cannot connect to WebSocket.");
             setIsLogin(false);
-            setIsError("No token found");
+            setIsError(t('No_token'));
             return;
         }
 
@@ -58,7 +60,7 @@ export const useCowrieSocket = (
         } catch (err) {
             console.error("Invalid token:", err);
             setIsLogin(false);
-            setIsError("Invalid token format");
+            setIsError(t('Invalid_token'));
             return;
         }
 
@@ -66,7 +68,7 @@ export const useCowrieSocket = (
         if (decoded.Status !== "Authenticated") {
             console.log("User is not authenticated. Cannot connect to WebSocket.");
             setIsLogin(false);
-            setIsError("User not authenticated");
+            setIsError(t('not_auth'));
             return;
         }
 
@@ -75,13 +77,13 @@ export const useCowrieSocket = (
         if (decoded.exp && decoded.exp < now) {
             console.log("Token expired. Cannot connect to WebSocket.");
             setIsLogin(false);
-            setIsError("Token expired");
+            setIsError(t('Token_expired'));
             return;
         }
 
         // ถ้า token ถูกต้องทั้งหมด
         setIsLogin(true);
-        setIsError("Access rights verified successfully!");
+        setIsError(t('verified'));
 
         const socket = io(apiUrl, { auth: { token }, transports: ['websocket'], withCredentials: true });
         socketRef.current = socket;
@@ -126,13 +128,14 @@ export const useCanarySocket = (
     setIsError: (status: string) => void
 ) => {
     const socketRef = useRef<Socket | null>(null);
+    const { t } = useTranslation();
 
     useEffect(() => {
         const token = getToken();
         if (!token) {
             console.log("No token found. Cannot connect to WebSocket.");
             setIsLogin(false);
-            setIsError("No token found");
+            setIsError(t('No_token'));
             return;
         }
 
@@ -142,7 +145,7 @@ export const useCanarySocket = (
         } catch (err) {
             console.error("Invalid token:", err);
             setIsLogin(false);
-            setIsError("Invalid token format");
+            setIsError(t('Invalid_token'));
             return;
         }
 
@@ -150,7 +153,7 @@ export const useCanarySocket = (
         if (decoded.Status !== "Authenticated") {
             console.log("User is not authenticated. Cannot connect to WebSocket.");
             setIsLogin(false);
-            setIsError("User not authenticated");
+            setIsError(t('not_auth'));
             return;
         }
 
@@ -159,13 +162,13 @@ export const useCanarySocket = (
         if (decoded.exp && decoded.exp < now) {
             console.log("Token expired. Cannot connect to WebSocket.");
             setIsLogin(false);
-            setIsError("Token expired");
+            setIsError(t('Token_expired'));
             return;
         }
 
         // ถ้า token ถูกต้องทั้งหมด
         setIsLogin(true);
-        setIsError("Access rights verified successfully!");
+        setIsError(t('verified'));
 
         const socket = io(apiUrl, { auth: { token }, transports: ['websocket'], withCredentials: true });
         socketRef.current = socket;

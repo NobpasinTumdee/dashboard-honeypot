@@ -110,7 +110,7 @@ const OpenCanaryPage: React.FC = () => {
   const messageData = {
     labels: labelsType,
     datasets: [{
-      label: 'Count',
+      label: t('opencanary_chart_tooltip1'),
       data: countsType,
       backgroundColor: '#aeaeafff',
       borderRadius: 4,
@@ -129,13 +129,13 @@ const OpenCanaryPage: React.FC = () => {
         beginAtZero: true,
         title: {
           display: true,
-          text: 'Number of packets'
+          text: t('opencanary_chart_Y')
         }
       },
       x: {
         title: {
           display: true,
-          text: 'Service'
+          text: t('opencanary_chart_x1')
         }
       }
     }
@@ -160,7 +160,7 @@ const OpenCanaryPage: React.FC = () => {
   const dailyPacketsData = {
     labels: labelsDaily,
     datasets: [{
-      label: 'Packets',
+      label: t('opencanary_chart_tooltip2'),
       data: countsDaily,
       borderColor: '#aeaeafff',
       backgroundColor: '#aeaeaf30',
@@ -189,7 +189,7 @@ const OpenCanaryPage: React.FC = () => {
     labels: Array.from({ length: 24 }, (_, i) => `${i < 10 ? '0' : ''}${i}:00`),
     datasets: [
       {
-        label: 'จำนวนข้อมูล',
+        label: t('opencanary_chart_tooltip3'),
         data: hourlyCounts,
         fill: true,
         borderColor: '#8c8d8eff',
@@ -215,13 +215,13 @@ const OpenCanaryPage: React.FC = () => {
         beginAtZero: true,
         title: {
           display: true,
-          text: 'Number of packets'
+          text: t('opencanary_chart_Y')
         }
       },
       x: {
         title: {
           display: true,
-          text: 'Date'
+          text: t('opencanary_chart_x2')
         }
       }
     }
@@ -348,10 +348,10 @@ const OpenCanaryPage: React.FC = () => {
     return (
       <div style={{ position: 'fixed', width: '90vw', height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
         <h2>
-          You are not logged in. Please log in to access this page.
+          {t('not_login')}
         </h2>
         <p>{isError}</p>
-        <button onClick={() => navigate('/home/login')}>Go to Log in</button>
+        <button onClick={() => navigate('/home/login')}>{t('go_login')}</button>
       </div>
     )
   }
@@ -516,7 +516,7 @@ const OpenCanaryPage: React.FC = () => {
         >
           {t('prev')}
         </button>
-        <span>{t('page')} {currentPage} of {totalPages}</span>
+        <span>{t('page')} {currentPage} {t('page_of')} {totalPages}</span>
         <button
           onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
           disabled={currentPage === totalPages}

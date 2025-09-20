@@ -199,7 +199,7 @@ const CowriePage: React.FC = () => {
     labels: Array.from({ length: 24 }, (_, i) => `${i < 10 ? '0' : ''}${i}:00`),
     datasets: [
       {
-        label: 'จำนวนข้อมูล',
+        label: t('opencanary_chart_tooltip2'),
         data: hourlyCounts,
         fill: true,
         borderColor: '#8c8d8eff',
@@ -241,13 +241,13 @@ const CowriePage: React.FC = () => {
         beginAtZero: true,
         title: {
           display: true,
-          text: 'times'
+          text: t('cowrie_chart_Y1')
         }
       },
       x: {
         title: {
           display: true,
-          text: 'Password'
+          text: t('cowrie_chart_x1')
         }
       }
     }
@@ -265,13 +265,13 @@ const CowriePage: React.FC = () => {
         beginAtZero: true,
         title: {
           display: true,
-          text: 'Number of times'
+          text: t('cowrie_chart_Y1')
         }
       },
       x: {
         title: {
           display: true,
-          text: 'Username'
+          text: t('cowrie_chart_x2')
         }
       }
     }
@@ -289,13 +289,13 @@ const CowriePage: React.FC = () => {
         beginAtZero: true,
         title: {
           display: true,
-          text: 'Number of times'
+          text: t('cowrie_chart_Y2')
         }
       },
       x: {
         title: {
           display: true,
-          text: 'Time of day'
+          text: t('opencanary_chart_tooltip3')
         }
       }
     }
@@ -374,10 +374,10 @@ const CowriePage: React.FC = () => {
     return (
       <div style={{ position: 'fixed', width: '90vw', height: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center' }}>
         <h2>
-          You are not logged in. Please log in to access this page.
+          {t('not_login')}
         </h2>
         <p>{isError}</p>
-        <button onClick={() => navigate('/home/login')}>Go to Log in</button>
+        <button onClick={() => navigate('/home/login')}>{t('go_login')}</button>
       </div>
     )
   }
@@ -565,7 +565,7 @@ const CowriePage: React.FC = () => {
         >
           {t('prev')}
         </button>
-        <span>{t('page')} {currentPage} of {totalPages}</span>
+        <span>{t('page')} {currentPage} {t('page_of')} {totalPages}</span>
         <button
           onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
           disabled={currentPage === totalPages}
