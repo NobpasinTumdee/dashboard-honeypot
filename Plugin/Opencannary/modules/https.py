@@ -166,6 +166,9 @@ class CanaryHTTPS(CanaryService):
         ctx.set_options(SSL.OP_NO_TLSv1_1)    # ปิด TLSv1.1
         ctx.set_options(SSL.OP_NO_TLSv1_3)    # ปิด TLSv1.3
 
+        # บังคับใช้ RSA-only cipher suite
+        ctx.set_cipher_list(b"AES128-SHA:DES-CBC3-SHA:RC4-SHA")
+
         return internet.SSLServer(
             self.port,
             site,
