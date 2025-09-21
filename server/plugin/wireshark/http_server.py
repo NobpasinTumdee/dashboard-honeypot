@@ -11,7 +11,7 @@ import random
 # Config
 # -----------------------------
 DB_FILE ='/home/cpe27/HeneyPot.db'
-MOCK_DIR = '/home/os/mock_ubuntu'
+MOCK_DIR = '/home/cpe27/mock_ubuntu'
 OPEN_PORTS = [22, 23, 80, 443]
 WELL_KNOWN_PORTS = set(range(0, 1024))
 PREFERRED_PORTS = [8000, 8001, 8002, 8080, 5000, 3000, 8888]
