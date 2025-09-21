@@ -1,0 +1,9 @@
+os
+cpe
+admin
+ubuntu
+parin
+test
+server
+fourarm
+john
