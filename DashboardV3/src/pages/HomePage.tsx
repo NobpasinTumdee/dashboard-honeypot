@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { createSwapy } from 'swapy';
+import type { Swapy } from 'swapy';
 
 import Chart from '../components/Chart';
 import StatCard from '../components/StatCard';
@@ -73,6 +75,40 @@ const HomePage: React.FC = () => {
       )
     }
   ];
+
+
+  // =============
+  // drag and drop
+  // =============
+  const swapyStats = useRef<Swapy | null>(null);
+  const containerStats = useRef<HTMLDivElement>(null);
+
+  const swapyCharts = useRef<Swapy | null>(null);
+  const containerCharts = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Logic สำหรับ Swapy ชุดแรก (stats)
+    if (containerStats.current) {
+      swapyStats.current = createSwapy(containerStats.current);
+      // swapyStats.current.onSwap((event) => {
+      //   console.log('Stats swapped:', event);
+      // });
+    }
+
+    // Logic สำหรับ Swapy ชุดที่สอง (charts)
+    if (containerCharts.current) {
+      swapyCharts.current = createSwapy(containerCharts.current);
+      // swapyCharts.current.onSwap((event) => {
+      //   console.log('Charts swapped:', event);
+      // });
+    }
+
+    // Cleanup functions
+    return () => {
+      swapyStats.current?.destroy();
+      swapyCharts.current?.destroy();
+    };
+  }, [CowrieData, CanaryData, dataPacket]);
 
 
 
@@ -263,40 +299,102 @@ const HomePage: React.FC = () => {
         <p className="page-subtitle">{t('dashboard_overview')}</p><span style={{ color: isConnected ? 'var(--accent-primary)' : 'red' }}> {isConnected ? 'Online 🌐' : 'Offline 🔴'}</span> <span style={{ color: 'var(--accent-primary)' }}>{isError}</span>
       </div>
 
-      <div className="stats-grid">
-        <StatCard
-          title={t('dashboard_total_packets')}
-          value={CowrieData.length + CanaryData.length + dataPacket.length}
-          icon="⚡"
-          variant="danger"
-        />
-        <StatCard
-          title={t('dashboard_protocols')}
-          value={CowrieData.length}
-          change={CowrieData.filter(item => item.timestamp.split(' ')[0] === new Date().toISOString().split('T')[0]).length.toString()}
-          changeType="positive"
-          icon="🖥️"
-          variant="primary"
-        />
-        <StatCard
-          title={t('dashboard_web_protocols')}
-          value={CanaryData.length}
-          change={CanaryData.filter(item => item.local_time_adjusted.split(' ')[0] === new Date().toISOString().split('T')[0]).length.toString()}
-          changeType="positive"
-          icon="🛜"
-          variant="primary"
-        />
-        <StatCard
-          title={t('dashboard_wireshark')}
-          value={dataPacket.length}
-          change={dataPacket.filter(item => item.timestamp.split(' ')[0] === new Date().toISOString().split('T')[0]).length.toString()}
-          changeType="positive"
-          icon="📦"
-          variant="primary"
-        />
+      <div ref={containerStats} className="stats-grid">
+        {/* Slot 1 */}
+        <div data-swapy-slot="slot-1">
+          <div data-swapy-item="item-A">
+            <StatCard
+              title={t('dashboard_total_packets')}
+              value={CowrieData.length + CanaryData.length + dataPacket.length}
+              change={((CowrieData.filter(item => item.timestamp.split(' ')[0] === new Date().toISOString().split('T')[0]).length) + (CanaryData.filter(item => item.local_time_adjusted.split(' ')[0] === new Date().toISOString().split('T')[0]).length)).toString()}
+              icon="⚡"
+              variant="danger"
+            />
+          </div>
+        </div>
+
+        {/* Slot 2 */}
+        <div data-swapy-slot="slot-2">
+          <div data-swapy-item="item-B">
+            <StatCard
+              title={t('dashboard_protocols')}
+              value={CowrieData.length}
+              change={CowrieData.filter(item => item.timestamp.split(' ')[0] === new Date().toISOString().split('T')[0]).length.toString()}
+              changeType="positive"
+              icon="🖥️"
+              variant="primary"
+            />
+          </div>
+        </div>
+
+        {/* Slot 3 */}
+        <div data-swapy-slot="slot-3">
+          <div data-swapy-item="item-C">
+            <StatCard
+              title={t('dashboard_web_protocols')}
+              value={CanaryData.length}
+              change={CanaryData.filter(item => item.local_time_adjusted.split(' ')[0] === new Date().toISOString().split('T')[0]).length.toString()}
+              changeType="positive"
+              icon="🛜"
+              variant="primary"
+            />
+          </div>
+        </div>
+
+        {/* Slot 4 */}
+        <div data-swapy-slot="slot-4">
+          <div data-swapy-item="item-D">
+            <StatCard
+              title={t('dashboard_wireshark')}
+              value={dataPacket.length}
+              change={dataPacket.filter(item => item.timestamp.split(' ')[0] === new Date().toISOString().split('T')[0]).length.toString()}
+              changeType="positive"
+              icon="📦"
+              variant="primary"
+            />
+          </div>
+        </div>
       </div>
 
-      <div className="charts-grid">
+      <div ref={containerCharts} className="charts-grid">
+        {/* Slot 1 */}
+        <div data-swapy-slot="slot-1">
+          <div data-swapy-item="item-A">
+            <ChartCard
+              title={t('stats_top_passwords_title')}
+              subtitle={t('stats_top_passwords_desc')}
+            >
+              <Chart type="bar" data={usernameData} height={300} options={CowrieOptions} />
+            </ChartCard>
+          </div>
+        </div>
+
+        {/* Slot 2 */}
+        <div data-swapy-slot="slot-2">
+          <div data-swapy-item="item-B">
+            <ChartCard
+              title={t('stats_opencanary_title')}
+              subtitle={t('stats_opencanary_desc')}
+            >
+              <Chart type="line" data={dailyPacketsData} height={300} options={PacketsOptions} />
+            </ChartCard>
+          </div>
+        </div>
+
+        {/* Slot 3 */}
+        <div data-swapy-slot="slot-3">
+          <div data-swapy-item="item-C">
+            <ChartCard
+              title={t('stats_wireshark_title')}
+              subtitle={t('stats_wireshark_desc')}
+            >
+              <Chart type="bar" data={dailyWiresharkData} height={300} options={PacketsOptions} />
+            </ChartCard>
+          </div>
+        </div>
+      </div>
+
+      {/* <div className="charts-grid">
         <ChartCard
           title={t('stats_top_passwords_title')}
           subtitle={t('stats_top_passwords_desc')}
@@ -315,7 +413,7 @@ const HomePage: React.FC = () => {
         >
           <Chart type="bar" data={dailyWiresharkData} height={300} options={PacketsOptions} />
         </ChartCard>
-      </div>
+      </div> */}
 
       {popupMap && (
         <div className='map-container'>

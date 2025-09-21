@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { ChartData } from 'chart.js';
 import { useTranslation } from 'react-i18next';
+import { createSwapy } from 'swapy';
+import type { Swapy } from 'swapy';
 
 // components
 import Chart from '../components/Chart';
@@ -50,6 +52,39 @@ const OpenCanaryPage: React.FC = () => {
   const currentItems = IpfilteredData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
   const totalPages = Math.ceil(IpfilteredData.length / ITEMS_PER_PAGE);
 
+
+  // =============
+  // drag and drop
+  // =============
+  const swapyStats = useRef<Swapy | null>(null);
+  const containerStats = useRef<HTMLDivElement>(null);
+
+  const swapyCharts = useRef<Swapy | null>(null);
+  const containerCharts = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Logic สำหรับ Swapy ชุดแรก (stats)
+    if (containerStats.current) {
+      swapyStats.current = createSwapy(containerStats.current);
+      // swapyStats.current.onSwap((event) => {
+      //   console.log('Stats swapped:', event);
+      // });
+    }
+
+    // Logic สำหรับ Swapy ชุดที่สอง (charts)
+    if (containerCharts.current) {
+      swapyCharts.current = createSwapy(containerCharts.current);
+      // swapyCharts.current.onSwap((event) => {
+      //   console.log('Charts swapped:', event);
+      // });
+    }
+
+    // Cleanup functions
+    return () => {
+      swapyStats.current?.destroy();
+      swapyCharts.current?.destroy();
+    };
+  }, [data]);
 
 
 
@@ -369,36 +404,97 @@ const OpenCanaryPage: React.FC = () => {
         <p className="page-subtitle">{t('opencanary_desc')} </p><span style={{ color: 'var(--accent-primary)' }}>{isError}</span>
       </div>
 
-      <div className="stats-grid">
-        <StatCard
-          title={t('opencanary_total_alerts')}
-          value={data.length}
-          changeType="negative"
-          icon="⚡"
-          variant="danger"
-        />
-        <StatCard
-          title={t('opencanary_unique_attackers')}
-          value={uniqueSourceIPs}
-          changeType="negative"
-          icon="👤"
-          variant="warning"
-        />
-        <StatCard
-          title={t('opencanary_top_port')}
-          value={Object.keys(portDistribution).sort((a, b) => portDistribution[Number(b)] - portDistribution[Number(a)])[0] || 'N/A'}
-          icon="🔌"
-          variant="primary"
-        />
-        <StatCard
-          title={t('opencanary_websockets')}
-          value={isConnected ? 'Online' : 'Offline'}
-          icon="💻"
-          variant="danger"
-        />
+      <div ref={containerStats} className="stats-grid">
+        {/* Slot 1 */}
+        <div data-swapy-slot="slot-1">
+          <div data-swapy-item="item-A">
+            <StatCard
+              title={t('opencanary_total_alerts')}
+              value={data.length}
+              changeType="negative"
+              icon="⚡"
+              variant="danger"
+            />
+          </div>
+        </div>
+
+        {/* Slot 2 */}
+        <div data-swapy-slot="slot-2">
+          <div data-swapy-item="item-B">
+            <StatCard
+              title={t('opencanary_unique_attackers')}
+              value={uniqueSourceIPs}
+              changeType="negative"
+              icon="👤"
+              variant="warning"
+            />
+          </div>
+        </div>
+
+        {/* Slot 3 */}
+        <div data-swapy-slot="slot-3">
+          <div data-swapy-item="item-C">
+            <StatCard
+              title={t('opencanary_top_port')}
+              value={Object.keys(portDistribution).sort((a, b) => portDistribution[Number(b)] - portDistribution[Number(a)])[0] || 'N/A'}
+              icon="🔌"
+              variant="primary"
+            />
+          </div>
+        </div>
+
+        {/* Slot 4 */}
+        <div data-swapy-slot="slot-4">
+          <div data-swapy-item="item-D">
+            <StatCard
+              title={t('opencanary_websockets')}
+              value={isConnected ? 'Online' : 'Offline'}
+              icon="💻"
+              variant="danger"
+            />
+          </div>
+        </div>
       </div>
 
-      <div className="charts-grid">
+      <div ref={containerCharts} className="charts-grid">
+        {/* Slot 1 */}
+        <div data-swapy-slot="slot-1">
+          <div data-swapy-item="item-A">
+            <ChartCard
+              title={t('opencanary_alert_distribution')}
+              subtitle={t('opencanary_alert_types')}
+            >
+              <Chart type="bar" data={messageData} height={300} options={ListServiceCountoptions} />
+            </ChartCard>
+          </div>
+        </div>
+
+        {/* Slot 2 */}
+        <div data-swapy-slot="slot-2">
+          <div data-swapy-item="item-B">
+            <ChartCard
+              title={t('opencanary_daily_packets_title')}
+              subtitle={t('opencanary_daily_packets_desc')}
+            >
+              <Chart type="line" data={dailyPacketsData} height={300} options={options} />
+            </ChartCard>
+          </div>
+        </div>
+
+        {/* Slot 3 */}
+        <div data-swapy-slot="slot-3">
+          <div data-swapy-item="item-C">
+            <ChartCard
+              title={t('opencanary_connections_per_port')}
+              subtitle={t('opencanary_port_info')}
+            >
+              <Chart type="pie" data={portData} height={300} options={optionsPort} />
+            </ChartCard>
+          </div>
+        </div>
+      </div>
+
+      {/* <div className="charts-grid">
         <ChartCard
           title={t('opencanary_alert_distribution')}
           subtitle={t('opencanary_alert_types')}
@@ -417,7 +513,7 @@ const OpenCanaryPage: React.FC = () => {
         >
           <Chart type="pie" data={portData} height={250} options={optionsPort} />
         </ChartCard>
-      </div>
+      </div> */}
 
       <div className="charts-grid">
         <ChartCard
