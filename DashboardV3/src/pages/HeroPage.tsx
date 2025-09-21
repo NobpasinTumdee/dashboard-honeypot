@@ -208,7 +208,7 @@ const HeroPage: React.FC = () => {
                 </div>
 
                 <div className="hero-footer-language">
-                  <h4 className="hero-footer-section-title">Language</h4>
+                  <h4 className="hero-footer-section-title">{t('footer_Language')}</h4>
                   <h4 className="hero-footer-section-title">{t('welcome_message')}</h4>
                   <select
                     className="hero-footer-select"
@@ -226,7 +226,7 @@ const HeroPage: React.FC = () => {
                 </div>
 
                 <div className="hero-footer-social">
-                  <h4 className="hero-footer-section-title">Social</h4>
+                  <h4 className="hero-footer-section-title">{t('footer_Social')}</h4>
                   <div className="hero-footer-social-links">
                     <a href="#" className="hero-footer-social-link">
                       {/* <Twitter className="hero-footer-social-icon" /> */}
@@ -243,51 +243,51 @@ const HeroPage: React.FC = () => {
 
               <div className="hero-footer-links">
                 <div className="hero-footer-column">
-                  <h4 className="hero-footer-column-title">Product</h4>
+                  <h4 className="hero-footer-column-title">{t('footer_Product')}</h4>
                   <ul className="hero-footer-link-list">
-                    <li><a href="#" className="hero-footer-link">Download</a></li>
-                    <li><a href="#" className="hero-footer-link">Status</a></li>
-                    <li><a href="#" className="hero-footer-link">App Directory</a></li>
+                    <li><a href="#" className="hero-footer-link">{t('footer_Download')}</a></li>
+                    <li><a href="#" className="hero-footer-link">{t('footer_Status')}</a></li>
+                    <li><a href="#" className="hero-footer-link">{t('footer_App_Directory')}</a></li>
                   </ul>
                 </div>
 
                 <div className="hero-footer-column">
-                  <h4 className="hero-footer-column-title">Company</h4>
+                  <h4 className="hero-footer-column-title">{t('footer_Company')}</h4>
                   <ul className="hero-footer-link-list">
-                    <li><a href="#" className="hero-footer-link">About</a></li>
-                    <li><a href="#" className="hero-footer-link">Jobs</a></li>
-                    <li><a href="#" className="hero-footer-link">Brand</a></li>
-                    <li><a href="#" className="hero-footer-link">Newsroom</a></li>
+                    <li><a href="#" className="hero-footer-link">{t('footer_About')}</a></li>
+                    <li><a href="#" className="hero-footer-link">{t('footer_Jobs')}</a></li>
+                    <li><a href="#" className="hero-footer-link">{t('footer_Brand')}</a></li>
+                    <li><a href="#" className="hero-footer-link">{t('footer_Newsroom')}</a></li>
                   </ul>
                 </div>
 
                 <div className="hero-footer-column">
-                  <h4 className="hero-footer-column-title">Resources</h4>
+                  <h4 className="hero-footer-column-title">{t('footer_Resources')}</h4>
                   <ul className="hero-footer-link-list">
-                    <li><a href="#" className="hero-footer-link">College</a></li>
-                    <li><a href="#" className="hero-footer-link">Support</a></li>
-                    <li><a href="#" className="hero-footer-link">Safety</a></li>
-                    <li><a href="#" className="hero-footer-link">Blog</a></li>
-                    <li><a href="#" className="hero-footer-link">StreamKit</a></li>
-                    <li><a href="#" className="hero-footer-link">Creators</a></li>
-                    <li><a href="#" className="hero-footer-link">Community</a></li>
-                    <li><a href="#" className="hero-footer-link">Developers</a></li>
-                    <li><a href="#" className="hero-footer-link">Quests</a></li>
-                    <li><a href="#" className="hero-footer-link">Official 3rd Party Merch</a></li>
-                    <li><a href="#" className="hero-footer-link">Feedback</a></li>
+                    <li><a href="#" className="hero-footer-link">{t('footer_College')}</a></li>
+                    <li><a href="#" className="hero-footer-link">{t('footer_Support')}</a></li>
+                    <li><a href="#" className="hero-footer-link">{t('footer_Safety')}</a></li>
+                    <li><a href="#" className="hero-footer-link">{t('footer_Blog')}</a></li>
+                    <li><a href="#" className="hero-footer-link">{t('footer_StreamKit')}</a></li>
+                    <li><a href="#" className="hero-footer-link">{t('footer_Creators')}</a></li>
+                    <li><a href="#" className="hero-footer-link">{t('footer_Community')}</a></li>
+                    <li><a href="#" className="hero-footer-link">{t('footer_Developers')}</a></li>
+                    <li><a href="#" className="hero-footer-link">{t('footer_Quests')}</a></li>
+                    <li><a href="#" className="hero-footer-link">{t('footer_Official_3rd_Party_Merch')}</a></li>
+                    <li><a href="#" className="hero-footer-link">{t('footer_Feedback')}</a></li>
                   </ul>
                 </div>
 
                 <div className="hero-footer-column">
-                  <h4 className="hero-footer-column-title">Policies</h4>
+                  <h4 className="hero-footer-column-title">{t('footer_Policies')}</h4>
                   <ul className="hero-footer-link-list">
-                    <li><a href="#" className="hero-footer-link">Terms</a></li>
-                    <li><a href="#" className="hero-footer-link">Privacy</a></li>
-                    <li><a href="#" className="hero-footer-link">Cookie Settings</a></li>
-                    <li><a href="#" className="hero-footer-link">Guidelines</a></li>
-                    <li><a href="#" className="hero-footer-link">Acknowledgements</a></li>
-                    <li><a href="#" className="hero-footer-link">Licenses</a></li>
-                    <li><a href="#" className="hero-footer-link">Company Information</a></li>
+                    <li><a href="#" className="hero-footer-link">{t('footer_Terms')}</a></li>
+                    <li><a href="#" className="hero-footer-link">{t('footer_Privacy')}</a></li>
+                    <li><a href="#" className="hero-footer-link">{t('footer_Cookie_Settings')}</a></li>
+                    <li><a href="#" className="hero-footer-link">{t('footer_Guidelines')}</a></li>
+                    <li><a href="#" className="hero-footer-link">{t('footer_Acknowledgements')}</a></li>
+                    <li><a href="#" className="hero-footer-link">{t('footer_Licenses')}</a></li>
+                    <li><a href="#" className="hero-footer-link">{t('footer_Company_Information')}</a></li>
                   </ul>
                 </div>
               </div>
