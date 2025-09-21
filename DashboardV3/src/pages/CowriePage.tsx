@@ -483,7 +483,7 @@ const CowriePage: React.FC = () => {
       </div>
 
 
-      <div ref={containerCharts} className="stats-grid">
+      <div ref={containerCharts} className="charts-grid">
         {/* Slot 1 */}
         <div data-swapy-slot="slot-1">
           <div data-swapy-item="item-A">
