@@ -55,20 +55,15 @@ def append_to_cowrie_json(payload: dict):
     with open(cowrie_json_path, "a", encoding="utf-8") as f:
         f.write(json.dumps(payload, ensure_ascii=False) + "\n")
 
-# def create_payload(message: str, src_ip: str = None, session_id: str = None, eventid: str = "cowrie.custom.event"):
-#     """
-#     สร้าง log payload แบบ custom
-#     """
-#     payload = {
-#         "eventid": eventid,
-#         "timestamp": datetime.datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
-#         "src_ip": src_ip,
-#         "session": session_id,
-#         "message": message,
-#     }
-#     append_to_cowrie_json(payload)
 
-def create_payload(message: str, transport=None, session_id: str = None, eventid: str = "cowrie.custom.event"):
+def create_payload(
+    message: str,
+    transport=None,
+    session_id: str = None,
+    eventid: str = "cowrie.custom.event",
+    username: str | None = None,
+    password: str | None = None,
+):
     """
     สร้าง log payload แบบ custom สำหรับ Telnet และ SSH
     """
@@ -93,6 +88,8 @@ def create_payload(message: str, transport=None, session_id: str = None, eventid
         "session": session_id,
         "protocol": "telnet",
         "message": message,
+        "username": username,
+        "password": password,
     }
     append_to_cowrie_json(payload)
 
@@ -193,19 +190,16 @@ class HoneyPotTelnetAuthProtocol(AuthenticatingTelnetProtocol):
         self.required_login_attempts = random.randint(5, 10) 
 
         message = "จำนวนครั้งที่ต้อง login = " + str(self.required_login_attempts)
-        # try: 
-        #     create_payload(message, self.transport.getPeer().host, session_id="", eventid="cowrie.custom.login")
-        # except Exception as e:
-        #     log.msg(f"Error logging attempt to cowrie.json: {e}")
+        
         try:
             create_payload(
-                message,
+                message=message,
                 transport=self.transport,
                 session_id=getattr(self, 'session', None),
-                eventid="cowrie.custom.login"
+                eventid="cowrie.custom.auth_attempt",
             )
         except Exception as e:
-            log.msg(f"Error logging attempt to cowrie.json: {e}")
+            log.msg(f"Error logging Telnet login attempt: {e}")
         
 
     def connectionLost(self, reason: failure.Failure = connectionDone) -> None:
@@ -242,6 +236,20 @@ class HoneyPotTelnetAuthProtocol(AuthenticatingTelnetProtocol):
         def login(ignored):
             self.src_ip = self.transport.getPeer().host
             creds = UsernamePasswordIP(username, password, self.src_ip)
+
+            # เก็บ log
+            try:
+                create_payload(
+                    message= "พยายาม login ครั้งที่ " + str(self.login_attempts_made+1),
+                    transport=self.transport,
+                    session_id=getattr(self, 'session', None),
+                    eventid="cowrie.custom.login",
+                    username=normalize(username),
+                    password=normalize(password),
+                )
+            except Exception as e:
+                log.msg(f"Error logging Telnet login attempt: {e}")
+
             
             userfile_path = "/home/cowrie/users.txt"
                 
