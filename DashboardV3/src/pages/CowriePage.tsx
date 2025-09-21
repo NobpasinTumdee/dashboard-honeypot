@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { createSwapy } from 'swapy';
+import type { Swapy } from 'swapy';
 
 import Chart from '../components/Chart';
 import StatCard from '../components/StatCard';
@@ -60,6 +62,38 @@ const CowriePage: React.FC = () => {
   // =========================================================================================
 
 
+  // =============
+  // drag and drop
+  // =============
+  const swapyStats = useRef<Swapy | null>(null);
+  const containerStats = useRef<HTMLDivElement>(null);
+
+  const swapyCharts = useRef<Swapy | null>(null);
+  const containerCharts = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Logic สำหรับ Swapy ชุดแรก (stats)
+    if (containerStats.current) {
+      swapyStats.current = createSwapy(containerStats.current);
+      // swapyStats.current.onSwap((event) => {
+      //   console.log('Stats swapped:', event);
+      // });
+    }
+
+    // Logic สำหรับ Swapy ชุดที่สอง (charts)
+    if (containerCharts.current) {
+      swapyCharts.current = createSwapy(containerCharts.current);
+      // swapyCharts.current.onSwap((event) => {
+      //   console.log('Charts swapped:', event);
+      // });
+    }
+
+    // Cleanup functions
+    return () => {
+      swapyStats.current?.destroy();
+      swapyCharts.current?.destroy();
+    };
+  }, [data]);
 
 
 
@@ -395,36 +429,100 @@ const CowriePage: React.FC = () => {
         <p className="page-subtitle">{t('cowrie_desc')}</p><span style={{ color: 'var(--accent-primary)' }}>{isError}</span>
       </div>
 
-      <div className="stats-grid">
-        <StatCard
-          title={t('cowrie_total_sessions')}
-          value={totalSessions}
-          changeType="negative"
-          icon="⚡"
-          variant="primary"
-        />
-        <StatCard
-          title={t('cowrie_active_protocols')}
-          value={`SSH ${data.filter(log => log.protocol === 'ssh').length} Telnet ${data.filter(log => log.protocol === 'telnet').length}`}
-          icon="🔒"
-          variant="success"
-        />
-        <StatCard
-          title={t('cowrie_unique_ips')}
-          value={uniqueIPs}
-          changeType="negative"
-          icon="🌐"
-          variant="warning"
-        />
-        <StatCard
-          title={t('cowrie_websockets')}
-          value={isConnected ? 'Online' : 'Offline'}
-          icon="💻"
-          variant="danger"
-        />
+      <div ref={containerStats} className="stats-grid">
+        {/* Slot 1 */}
+        <div data-swapy-slot="slot-1">
+          <div data-swapy-item="item-A">
+            <StatCard
+              data-swapy-item="item-A"
+              title={t('cowrie_total_sessions')}
+              value={totalSessions}
+              changeType="negative"
+              icon="⚡"
+              variant="primary"
+            />
+          </div>
+        </div>
+
+        {/* Slot 2 */}
+        <div data-swapy-slot="slot-2">
+          <div data-swapy-item="item-B">
+            <StatCard
+              title={t('cowrie_active_protocols')}
+              value={`SSH ${data.filter(log => log.protocol === 'ssh').length} Telnet ${data.filter(log => log.protocol === 'telnet').length}`}
+              icon="🔒"
+              variant="success"
+            />
+          </div>
+        </div>
+
+        {/* Slot 3 */}
+        <div data-swapy-slot="slot-3">
+          <div data-swapy-item="item-C">
+            <StatCard
+              title={t('cowrie_unique_ips')}
+              value={uniqueIPs}
+              changeType="negative"
+              icon="🌐"
+              variant="warning"
+            />
+          </div>
+        </div>
+
+        {/* Slot 4 */}
+        <div data-swapy-slot="slot-4">
+          <div data-swapy-item="item-D">
+            <StatCard
+              title={t('cowrie_websockets')}
+              value={isConnected ? 'Online' : 'Offline'}
+              icon="💻"
+              variant="danger"
+            />
+          </div>
+        </div>
       </div>
 
-      <div className="charts-grid">
+
+      <div ref={containerCharts} className="stats-grid">
+        {/* Slot 1 */}
+        <div data-swapy-slot="slot-1">
+          <div data-swapy-item="item-A">
+            <ChartCard
+              title={t('cowrie_protocol_distribution_1')}
+              subtitle={t('cowrie_protocol_compare_1')}
+            >
+              <Chart type="pie" data={protocolData} height={250} options={PieOptions} />
+            </ChartCard>
+          </div>
+        </div>
+
+        {/* Slot 2 */}
+        <div data-swapy-slot="slot-2">
+          <div data-swapy-item="item-B">
+            <ChartCard
+              title={t('cowrie_top_passwords_title')}
+              subtitle={t('cowrie_top_passwords_desc')}
+            >
+              <Chart type="bar" data={passwordData} height={250} options={Passoptions} />
+            </ChartCard>
+          </div>
+        </div>
+
+        {/* Slot 3 */}
+        <div data-swapy-slot="slot-3">
+          <div data-swapy-item="item-C">
+            <ChartCard
+              title={t('cowrie_top_usernames_title')}
+              subtitle={t('cowrie_top_usernames_desc')}
+            >
+              <Chart type="bar" data={usernameData} height={250} options={Useroptions} />
+            </ChartCard>
+          </div>
+        </div>
+      </div>
+
+
+      {/* <div className="charts-grid">
         <ChartCard
           title={t('cowrie_protocol_distribution_1')}
           subtitle={t('cowrie_protocol_compare_1')}
@@ -443,7 +541,7 @@ const CowriePage: React.FC = () => {
         >
           <Chart type="bar" data={usernameData} height={250} options={Useroptions} />
         </ChartCard>
-      </div>
+      </div> */}
 
       <div>
         <CowrieLogTerminal logs={data} />

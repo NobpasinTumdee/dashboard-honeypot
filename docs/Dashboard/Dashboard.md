@@ -135,4 +135,5 @@ D --> E( Server ubuntu )
     npm install i18next react-i18next i18next-http-backend
     npm install @types/i18next @types/react-i18next --save-dev
     npm install i18next-browser-languagedetector
+    npm install swapy
     ```
