@@ -1,13 +1,18 @@
 import pyshark
 import csv
 import os
+import time
 from datetime import datetime
 
 # === CONFIGURATION ===
 INTERFACE = 'ztcfw2abid'
 CSV_FILE = 'scan_log.csv'
+DEDUP_WINDOW = 2  # วินาที
 
-# สร้างไฟล์ถ้ายังไม่มี และใส่ header แค่ครั้งแรก
+# เก็บเหตุการณ์ล่าสุดเพื่อป้องกัน duplicate
+recent_logs = {}
+
+# สร้างไฟล์ถ้ายังไม่มี และใส่ header (แค่ครั้งแรก)
 if not os.path.exists(CSV_FILE):
     with open(CSV_FILE, 'w', newline='') as f:
         writer = csv.writer(f)
@@ -15,6 +20,7 @@ if not os.path.exists(CSV_FILE):
             'Timestamp', 'Src_IP', 'Src_Port',
             'Type', 'Dst_IP', 'Dst_Port'
         ])
+
 
 def is_suspicious_packet(pkt):
     """Determine if packet matches known scan types."""
@@ -46,10 +52,10 @@ def is_suspicious_packet(pkt):
 
     return None
 
+
 def log_scan(src_ip, src_port, dst_ip, dst_port, scan_type):
     timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
 
-    # ใช้ append mode ("a") ตลอด
     with open(CSV_FILE, 'a', newline='') as f:
         writer = csv.writer(f)
         writer.writerow([
@@ -58,6 +64,7 @@ def log_scan(src_ip, src_port, dst_ip, dst_port, scan_type):
         ])
 
     print(f"[!!] {scan_type} from {src_ip}:{src_port} -> {dst_ip}:{dst_port}")
+
 
 def capture_packets(interface):
     print(f"[*] Capturing on interface: {interface}")
@@ -74,11 +81,18 @@ def capture_packets(interface):
             src_port = pkt[pkt.transport_layer].srcport
             dst_port = pkt[pkt.transport_layer].dstport
 
-            # log ทุก packet ที่เข้าข่าย scan
+            # ตรวจว่าซ้ำภายในเวลา DEDUP_WINDOW ไหม
+            key = (src_ip, dst_ip, dst_port, alert)
+            now = time.time()
+            if key in recent_logs and now - recent_logs[key] < DEDUP_WINDOW:
+                continue  # ข้าม ไม่ log ซ้ำ
+
+            recent_logs[key] = now
             log_scan(src_ip, src_port, dst_ip, dst_port, alert)
 
         except AttributeError:
             continue
+
 
 if __name__ == "__main__":
     capture_packets(INTERFACE)
