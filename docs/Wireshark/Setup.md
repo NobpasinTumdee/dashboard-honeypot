@@ -1,6 +1,6 @@
 # สร้างไฟล์ shell code
 ```bash
-nano /home/os/dashboard-honeypot/server/plugin/wireshark/start_all.sh
+nano /home/cpe27/dashboard-honeypot/server/plugin/wireshark/start_all.sh
 ```
 
 - ใส่โค้ดด้านล่าง
@@ -10,9 +10,9 @@ nano /home/os/dashboard-honeypot/server/plugin/wireshark/start_all.sh
 source /home/cpe27/env/bin/activate
 
 # Run scripts inside venv
-python /home/os/dashboard-honeypot/server/plugin/wireshark/https.py &
-python /home/os/dashboard-honeypot/server/plugin/wireshark/stats.py &
-python /home/os/dashboard-honeypot/server/plugin/wireshark/http_server.py &
+python /home/cpe27/dashboard-honeypot/server/plugin/wireshark/https.py &
+python /home/cpe27/dashboard-honeypot/server/plugin/wireshark/stats.py &
+python /home/cpe27/dashboard-honeypot/server/plugin/wireshark/scan.py &
 
 # Wait for background jobs
 wait
@@ -20,7 +20,7 @@ wait
 
 - ให้สิทธิ์ script
 ```bash
-chmod +x /home/os/dashboard-honeypot/server/plugin/wireshark/start_all.sh
+chmod +x /home/cpe27/dashboard-honeypot/server/plugin/wireshark/start_all.sh
 ```
 
 # สร้าง service file
@@ -36,9 +36,9 @@ After=network.target
 
 [Service]
 Type=simple
-User=os
-WorkingDirectory=/home/os/dashboard-honeypot/server/plugin/wireshark
-ExecStart=/home/os/dashboard-honeypot/server/plugin/wireshark/start_all.sh
+User=cpe27
+WorkingDirectory=/home/cpe27/dashboard-honeypot/server/plugin/wireshark
+ExecStart=/home/cpe27/dashboard-honeypot/server/plugin/wireshark/start_all.sh
 Restart=always
 
 [Install]
