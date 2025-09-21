@@ -5,6 +5,7 @@
 - user ที่เคยมีชื่อใน users.txt ต้องใช้ password เดิมถึง login ผ่าน
 - user ที่เคยมีชื่อใน users.txt หากใช้ password ไม่ตรงจะไม่มีทางผ่าน
 - การหน่วงเวลาในการ login (ตอนแสดง Prompt)
+- เพิ่มการบันทึก custom log
 
 ### Telnet
 แก้ไขไฟล์
