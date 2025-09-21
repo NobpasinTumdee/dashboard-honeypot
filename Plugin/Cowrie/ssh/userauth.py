@@ -1,5 +1,6 @@
 # Copyright (c) 2009-2014 Upi Tamminen <desaster@gmail.com>
 # See the COPYRIGHT file for more information
+# /home/cowrie/cowrie/src/cowrie/ssh
 
 # Original import 
 from __future__ import annotations
@@ -29,6 +30,7 @@ from pathlib import Path
 
 import fcntl
 import tempfile
+from typing import Any, Optional
 
 USERS_FILE = "/home/cowrie/users.txt"
 
@@ -71,16 +73,6 @@ def append_to_cowrie_json(payload: dict):
     with open(cowrie_json_path, "a", encoding="utf-8") as f:
         f.write(json.dumps(payload, ensure_ascii=False) + "\n")
 
-# def create_payload(message: str, src_ip: str = None, session_id: str = None, eventid: str = "cowrie.custom.event"):
-#     payload = {
-#         "eventid": eventid,
-#         "timestamp": datetime.datetime.utcnow().replace(microsecond=0).isoformat() + "Z",
-#         "src_ip": src_ip,
-#         "session": session_id,
-#         "protocol": "ssh",
-#         "message": message,
-#     }
-#     append_to_cowrie_json(payload)
 
 def create_payload(message: str, session_id: str = None, eventid: str = "cowrie.custom.event", transport=None):
     src_ip = src_port = dst_ip = dst_port = None
@@ -106,8 +98,8 @@ def create_payload(message: str, session_id: str = None, eventid: str = "cowrie.
         "session": session_id,
         "protocol": "ssh",
         "message": message,
-        
     }
+    
     append_to_cowrie_json(payload)
 
 
@@ -227,40 +219,54 @@ class HoneyPotSSHUserAuthServer(userauth.SSHUserAuthServer):
         d = self.portal.login(c, None, IConchUser)
         
         # ตรวจสอบแบบ asynchronous ที่จะไม่รอผลลัพธ์
-        d.addCallback(self._cb_login_success, username_str, password_str, user_dict)
-        d.addErrback(lambda f: self._deny_access())
+        # d.addCallback(self._cb_login_success, username_str, password_str, user_dict)
+        d.addCallback(self._cb_login_success, c, username_str, password_str, user_dict)
+        # d.addErrback(lambda f: self._deny_access())
+        d.addErrback(lambda f: self._deny_access(credentials=c))
         return d
 
     # ฟังก์ชันตรวจสอบการ login
-    def _cb_login_success(self, result, username_str, password_str, user_dict):
-        
+    # def _cb_login_success(self, result, username_str, password_str, user_dict):
+    def _cb_login_success(self, result, c, username_str, password_str, user_dict):  
         # หากเป็น user เก่า 
         if username_str in user_dict:
             # หากใช้ password ถูก
             if user_dict[username_str] == password_str:
                 log.msg(f"Existing user {username_str} logged in with correct password.")
-                return self._grant_access(result)
+                
+                # return self._grant_access(result)
+                return self._grant_access(result, credentials=c)
             
             # หากใช้ password ผิด
             else:
                 log.msg(f"Existing user {username_str} tried wrong password -> DENIED")
-                return self._deny_access()
+                
+                # return self._deny_access()
+                return self._deny_access(credentials=c)
 
         # หากใช้ password เดียวกับที่บันทึก
         if password_str in user_dict.values():
             log.msg(f"New user {username_str} logged in with known password '{password_str}'.")
+            
             self._save_user(username_str, password_str)
-            return self._grant_access(result)
+            # return self._grant_access(result)
+            return self._grant_access(result, credentials=c)
 
         # หากเป็น user ใหม่ให้บังคับ login
         self._current_attempts += 1
         if self._current_attempts >= self._required_attempts:
             log.msg(f"New user {username_str} logged in after {self._current_attempts} attempts.")
             self._save_user(username_str, password_str)
-            return self._grant_access(result)
+            # return self._grant_access(result)
+            return self._grant_access(result, credentials=c)
+
         else:
             log.msg(f"New user {username_str} needs {self._required_attempts - self._current_attempts} more attempts.")
-            return self._deny_access()
+            
+            # return self._deny_access()
+            return self._deny_access(credentials=c)
+
+        
 
     # บันทึก username,password
     def _save_user(self, username, password):
@@ -273,23 +279,59 @@ class HoneyPotSSHUserAuthServer(userauth.SSHUserAuthServer):
                 log.msg(f"Appended new credentials to users.txt: ({username}, {password})")
             except Exception as e:
                 log.msg(f"Cannot append to users.txt: {e}")
-
-    # login สำเร็จ
-    def _grant_access(self, result):
-        self._required_attempts = random.randint(1, 5)
-        self._current_attempts = 0
-        
-        # delay
+    
+    def _grant_access(self, result, credentials=None, pubkey=None):
+        # delay แบบเดิม
         d = defer.Deferred()
+
+        # log success
+        log_kwargs = {
+            "eventid": "cowrie.login.success",
+            "format": "login attempt for [%(username)s] succeeded",
+            "username": getattr(credentials, "username", b"?") if credentials else b"?",
+        }
+
+        # หากเป็น public key เพิ่มข้อมูล fingerprint/key/type
+        if pubkey is not None:
+            log_kwargs.update({
+                "format": "public key login attempt for [%(username)s] succeeded",
+                "fingerprint": pubkey.fingerprint(),
+                "key": pubkey.toString("OPENSSH"),
+                "type": pubkey.sshType(),
+            })
+
+        log.msg(**log_kwargs)
+
+        # ทำ delay ก่อน callback result
         reactor.callLater(random.uniform(1.0, 1.5), d.callback, result)
         return d
 
-    # login ไม่สำเร็จ
-    def _deny_access(self):
+
+    def _deny_access(self, credentials=None, pubkey=None):
         d = defer.Deferred()
         msg = "Authentication failed. Please try again."
+
+        # เตรียม log
+        log_kwargs = {
+            "eventid": "cowrie.login.failed",
+            "format": "login attempt for [%(username)s] failed",
+            "username": getattr(credentials, "username", b"?") if credentials else b"?",
+        }
+
+        # หากเป็น public key เพิ่มข้อมูล fingerprint/key/type
+        if pubkey is not None:
+            log_kwargs.update({
+                "format": "public key login attempt for [%(username)s] failed",
+                "fingerprint": pubkey.fingerprint(),
+                "key": pubkey.toString("OPENSSH"),
+                "type": pubkey.sshType(),
+            })
+
+        log.msg(**log_kwargs)
+
         reactor.callLater(random.uniform(1, 1.5),d.errback,error.UnauthorizedLogin(msg),)
         return d
+
 
     # การ login ด้วยคีย์บอร์ดแบบโต้ตอบ (PAM)
     def auth_keyboard_interactive(self, _packet: bytes) -> Any:
