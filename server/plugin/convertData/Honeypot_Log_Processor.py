@@ -261,7 +261,7 @@ if __name__ == "__main__":
         try:
             while True:
                 monitor_log_file(COWRIE_JSON_LOG_PATH, cursor, process_cowrie_log_entry, last_file_positions)
-                monitor_log_file(OPENCANARY_LOG_PATH, cursor, process_opencanary_log_entry, last_file_positions)
+                monitor_log_file(CUSTOM_JSON_LOG_PATH, cursor, process_opencanary_log_entry, last_file_positions)
                 monitor_log_file(OPENCANARY_LOG_PATH, cursor, process_opencanary_log_entry, last_file_positions)
 
                 conn.commit() 
