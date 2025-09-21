@@ -25,3 +25,9 @@ getcap /usr/bin/tshark
 ```bash
 sudo apt install wireshark -y
 ```
+```bash
+sudo dpkg-reconfigure wireshark-common
+```
+```bash
+sudo usermod -aG wireshark $USER
+```

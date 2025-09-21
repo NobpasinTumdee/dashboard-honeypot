@@ -65,3 +65,72 @@ journalctl -u wireshark-plugins.service -f
 ```bash
 systemctl status wireshark-plugins.service
 ```
+
+## http folder sharing
+- สร้าง service file
+```bash
+sudo nano /etc/systemd/system/adapt_http_server.service
+```
+
+- nano /etc/systemd/system/adapt_http_server.service
+```bash
+[Unit]
+Description=HTTP Server(file sharing)
+After=network.target
+
+[Service]
+Type=simple
+User=cpe27
+WorkingDirectory=/home/cpe27/dashboard-honeypot/server/plugin/wireshark
+ExecStart=/home/cpe27/env/bin/python /home/cpe27/dashboard-honeypot/server/plugin/wireshark/http_server.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+
+- สร้าง timer
+```bash
+sudo nano /etc/systemd/system/adapt_http_server.timer
+```
+
+- /etc/systemd/system/adapt_http_server.timer
+```bash
+[Unit]
+Description=Restart HTTP Honeypot Server daily
+
+[Timer]
+OnBootSec=5min
+OnUnitActiveSec=1d
+Persistent=true
+
+[Install]
+WantedBy=timers.target
+```
+
+- reload and enable
+```bash
+sudo systemctl daemon-reload
+```
+```bash
+sudo systemctl enable adapt_http_server.service
+```
+```bash
+sudo systemctl enable adapt_http_server.timer
+```
+
+- start
+```bash
+sudo systemctl start adapt_http_server.service
+```
+```bash
+sudo systemctl start adapt_http_server.timer
+```
+
+-  check
+```bash
+systemctl status adapt_http_server.service
+```
+```bash
+systemctl status adapt_http_server.timer
+```
