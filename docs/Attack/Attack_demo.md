@@ -11,9 +11,8 @@ hydra -L users.txt -P passwords.txt ssh://172.29.169.27 -t 4
 
 - สำหรับเชื่อมต่อ
 ```bash
-
-```
 ssh username@172.29.169.27
+```
 
 ## Telnet brute force
 - สำหรับทดสอบ
