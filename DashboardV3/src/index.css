@@ -93,6 +93,10 @@ body {
   z-index: 1000;
 }
 
+.sidebar:hover {
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 900px -1px;
+}
+
 .main-content {
   margin-left: 75px;
   flex: 1;
@@ -253,7 +257,7 @@ body {
   background: var(--card-hover);
   color: var(--text-primary);
   border-left-color: var(--accent-primary);
-  transform: translateX(10px);
+  transform: translateX(10px) scale(1.1);
 }
 
 .nav-link.active {
