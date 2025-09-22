@@ -82,8 +82,8 @@ const UsersPage: React.FC = () => {
   ];
 
   // Calculate stats
-  const activeUsers = user.filter(user => user.Status === 'Authenticated').length;
-  const inactiveUsers = user.filter(user => user.Status === 'Unauthenticated').length;
+  const activeUsers = user ? user.filter(user => user.Status === 'Authenticated').length : 0;
+  const inactiveUsers = user ? user.filter(user => user.Status === 'Unauthenticated').length : 0;
 
   // ==================
   // export users

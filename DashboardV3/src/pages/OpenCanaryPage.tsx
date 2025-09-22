@@ -184,7 +184,8 @@ const OpenCanaryPage: React.FC = () => {
   // ========================
   const dailyCounts: Record<string, number> = {};
   data.forEach(item => {
-    const date = item.local_time_adjusted.split(' ')[0]; // แยกวันที่จาก 'YYYY-MM-DD HH:mm:ss'
+    const localTimeAdjusted = item.local_time_adjusted || '';
+    const date = localTimeAdjusted.split(' ')[0]; // แยกวันที่จาก 'YYYY-MM-DD HH:mm:ss'
     dailyCounts[date] = (dailyCounts[date] || 0) + 1;
   });
 

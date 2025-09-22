@@ -51,71 +51,57 @@ let ProtocolStatsCount = 0;
 let SrcIpStatsCount = 0;
 let DstPortStatsCount = 0;
 try {
-  const logs = await prisma.honeypot_logs.findMany({
-    take: 1000,
-  });
-  CowrieCount = logs.length;
+  const logs = await prisma.honeypot_logs.count();
+  CowrieCount = logs;
   console.log(`[Initial] Cowrie logs Total: ${CowrieCount} `);
 } catch (error) {
   console.error('Error fetching Cowrie logs :', error);
 }
 try {
-  const logs = await prisma.opencanary_logs.findMany({
-    take: 1000,
-  });
-  OpenCanaryCount = logs.length;
+  const logs = await prisma.opencanary_logs.count();
+  OpenCanaryCount = logs;
   console.log(`[Initial] OpenCanary logs Total: ${OpenCanaryCount} `);
 } catch (error) {
   console.error('Error fetching OpenCanary logs :', error);
 }
 try {
-  const logs = await prisma.users.findMany();
-  UserCount = logs.length;
+  const logs = await prisma.users.count();
+  UserCount = logs;
   console.log(`[Initial] User logs Total: ${UserCount} `);
 } catch (error) {
   console.error('Error fetching User logs :', error);
 }
 try {
-  const logs = await prisma.HttpsPackets.findMany({
-    take: 1000,
-  });
-  HttpsPacketsCount = logs.length;
+  const logs = await prisma.HttpsPackets.count();
+  HttpsPacketsCount = logs;
   console.log(`[Initial] HttpsPackets logs Total: ${HttpsPacketsCount} `);
 } catch (error) {
   console.error('Error fetching HttpsPackets logs :', error);
 }
 try {
-  const logs = await prisma.TimeSeriesPackets.findMany({
-    take: 1000,
-  });
-  TimeSeriesPacketsCount = logs.length;
+  const logs = await prisma.TimeSeriesPackets.count();
+  TimeSeriesPacketsCount = logs;
   console.log(`[Initial] TimeSeriesPackets logs Total: ${TimeSeriesPacketsCount} `);
 } catch (error) {
   console.error('Error fetching TimeSeriesPackets logs :', error);
 }
 try {
-  const logs = await prisma.ProtocolStats.findMany({
-    take: 1000,
-  });
-  ProtocolStatsCount = logs.length;
+  const logs = await prisma.ProtocolStats.count();
+  ProtocolStatsCount = logs;
   console.log(`[Initial] ProtocolStats logs Total: ${ProtocolStatsCount} `);
 } catch (error) {
   console.error('Error fetching ProtocolStats logs :', error);
 }
 try {
-  const logs = await prisma.SrcIpStats.findMany({
-    take: 1000,
-  });
-  SrcIpStatsCount = logs.length;
+  const logs = await prisma.SrcIpStats.count();
+  SrcIpStatsCount = logs;
   console.log(`[Initial] SrcIpStats logs Total: ${SrcIpStatsCount} `);
 } catch (error) {
   console.error('Error fetching SrcIpStats logs :', error);
 }
 try {
-  const logs = await prisma.DstPortStats.findMany({
-    take: 1000,
-  });
-  DstPortStatsCount = logs.length;
+  const logs = await prisma.DstPortStats.count();
+  DstPortStatsCount = logs;
   console.log(`[Initial] DstPortStats logs Total: ${DstPortStatsCount} `);
 } catch (error) {
   console.error('Error fetching DstPortStats logs :', error);
@@ -163,8 +149,6 @@ io.on('connection', (socket) => {
         orderBy: { id: 'desc' },
         take: 1000,
       });
-      // Update the CowrieCount with the initial number of logs
-      CowrieCount = logs.length;
       socket.emit('Update-cowrie-logs', logs);
       console.log(`Initial Cowrie logs sent to ${socket.user.UserName}. Total: ${logs.length}`);
     } catch (error) {
@@ -186,8 +170,6 @@ io.on('connection', (socket) => {
         orderBy: { id: 'desc' },
         take: 1000,
       });
-      // Update the OpenCanaryCount with the initial number of logs
-      OpenCanaryCount = logs.length;
       socket.emit('Update-opencanary-logs', logs);
       console.log(`Initial OpenCanary logs sent to ${socket.user.UserName}. Total: ${logs.length}`);
     } catch (error) {
@@ -206,8 +188,6 @@ io.on('connection', (socket) => {
   const sendInitialUserLogs = async () => {
     try {
       const logs = await prisma.users.findMany();
-      // Update the UserCount with the initial number of logs
-      UserCount = logs.length;
       socket.emit('Update-users', logs);
       console.log(`Initial users logs sent to ${socket.user.UserName}. Total: ${logs.length}`);
     } catch (error) {
@@ -229,7 +209,6 @@ io.on('connection', (socket) => {
         orderBy: { id: 'desc' },
         take: 1000,
       });
-      HttpsPacketsCount = logs.length;
       socket.emit('Updatelogs', logs);
       console.log(`Initial HttpsPackets logs sent to ${socket.user.UserName}. Total: ${logs.length}`);
     } catch (error) {
@@ -251,7 +230,6 @@ io.on('connection', (socket) => {
         orderBy: { id: 'desc' },
         take: 1000,
       });
-      TimeSeriesPacketsCount = logs.length;
       socket.emit('Update-packet-overtime', logs);
       console.log(`Initial TimeSeriesPackets logs sent to ${socket.user.UserName}. Total: ${logs.length}`);
     } catch (error) {
@@ -273,7 +251,6 @@ io.on('connection', (socket) => {
         orderBy: { id: 'desc' },
         take: 1000,
       });
-      ProtocolStatsCount = logs.length;
       socket.emit('Update-protocol', logs);
       console.log(`Initial ProtocolStats logs sent to ${socket.user.UserName}. Total: ${logs.length}`);
     } catch (error) {
@@ -295,7 +272,6 @@ io.on('connection', (socket) => {
         orderBy: { id: 'desc' },
         take: 1000,
       });
-      SrcIpStatsCount = logs.length;
       socket.emit('Update-source-ip', logs);
       console.log(`Initial SrcIpStats logs sent to ${socket.user.UserName}. Total: ${logs.length}`);
     } catch (error) {
@@ -317,7 +293,6 @@ io.on('connection', (socket) => {
         orderBy: { id: 'desc' },
         take: 1000,
       });
-      DstPortStatsCount = logs.length;
       socket.emit('Update-dest-port', logs);
       console.log(`Initial DstPortStats logs sent to ${socket.user.UserName}. Total: ${logs.length}`);
     } catch (error) {
@@ -328,49 +303,52 @@ io.on('connection', (socket) => {
   socket.on('request-dest-port-logs', sendInitialDstPortStatsLogs);
 
   socket.on('disconnect', () => {
-    console.log('[-] A client disconnected [-]');
+    console.log(`[-] ${socket.user.UserName} disconnected [-]`);
   });
 });
 
 
 setInterval(async () => {
   try {
-    const logs = await prisma.honeypot_logs.findMany({
-      orderBy: { id: 'desc' },
-      take: 1000,
-    });
+    const logs = await prisma.honeypot_logs.count();
     // Check if the number of logs has changed
-    if (logs.length !== CowrieCount) {
-      CowrieCount = logs.length;
-      io.emit('real-time-cowrie', logs);
-      console.log(`New Cowrie logs detected and sent. Total: ${logs.length}`);
+    if (logs !== CowrieCount) {
+      const Newlogs = await prisma.honeypot_logs.findMany({
+        orderBy: { id: 'desc' },
+        take: 1000,
+      });
+      CowrieCount = logs;
+      io.emit('real-time-cowrie', Newlogs);
+      console.log(`New Cowrie logs detected and sent. Total: ${CowrieCount}`);
     }
   } catch (error) {
     console.error('Error fetching real-time honeypot logs cowrie:', error);
   }
 
   try {
-    const logs = await prisma.opencanary_logs.findMany({
-      orderBy: { id: 'desc' },
-      take: 1000,
-    });
+    const logs = await prisma.opencanary_logs.count();
     // Check if the number of logs has changed
-    if (logs.length !== OpenCanaryCount) {
-      OpenCanaryCount = logs.length;
-      io.emit('real-time-canary', logs);
-      console.log(`New OpenCanary logs detected and sent. Total: ${logs.length}`);
+    if (logs !== OpenCanaryCount) {
+      const Newlogs = await prisma.opencanary_logs.findMany({
+        orderBy: { id: 'desc' },
+        take: 1000,
+      });
+      OpenCanaryCount = logs;
+      io.emit('real-time-canary', Newlogs);
+      console.log(`New OpenCanary logs detected and sent. Total: ${OpenCanaryCount}`);
     }
   } catch (error) {
     console.error('Error fetching real-time honeypot logs opencanary:', error);
   }
 
   try {
-    const logs = await prisma.users.findMany();
+    const logs = await prisma.users.count();
     // Check if the number of logs has changed
-    if (logs.length !== UserCount) {
-      UserCount = logs.length;
-      io.emit('real-time-users', logs);
-      console.log(`New users logs detected and sent. Total: ${logs.length}`);
+    if (logs !== UserCount) {
+      const Newlogs = await prisma.users.findMany();
+      UserCount = logs;
+      io.emit('real-time-users', Newlogs);
+      console.log(`New users logs detected and sent. Total: ${UserCount}`);
     }
   } catch (error) {
     console.error('Error fetching real-time users :', error);

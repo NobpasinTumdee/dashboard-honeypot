@@ -40,7 +40,7 @@ const HomePage: React.FC = () => {
   const recentActivities = [
     ...CowrieData.slice(0, 2).map(item => ({
       source: 'Cowrie',
-      timestamp: item.timestamp.replace("Z", ""),
+      timestamp: item.timestamp ? item.timestamp.replace("Z", "") : '',
       activity: `SSH connection from ${item.src_ip}`,
       C: `Confidentiality (C)`,
       I: `Integrity (I)`,
@@ -49,7 +49,7 @@ const HomePage: React.FC = () => {
     })),
     ...CanaryData.slice(0, 2).map(item => ({
       source: 'OpenCanary',
-      timestamp: item.local_time.replace("Z", ""),
+      timestamp: item.local_time ? item.local_time.replace("Z", "") : '',
       activity: `${item.logdata_msg_logdata}`,
       C: `Confidentiality (C)`,
       I: `none`,
@@ -58,14 +58,14 @@ const HomePage: React.FC = () => {
     })),
     ...dataPacket.slice(0, 2).map(item => ({
       source: 'Wireshark',
-      timestamp: item.timestamp.replace("Z", ""),
+      timestamp: item.timestamp ? item.timestamp.replace("Z", "") : '',
       activity: `${item.method} request to ${item.request_uri}`,
       C: `Confidentiality (C)`,
       I: `none`,
       A: `none`,
       severity: 'low'
     }))
-  ].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+  ].sort((a, b) => new Date(b.timestamp || 0).getTime() - new Date(a.timestamp || 0).getTime());
 
   const activityColumns = [
     { key: 'source', header: 'Source' },
@@ -192,7 +192,8 @@ const HomePage: React.FC = () => {
   // ========================
   const dailyCounts: Record<string, number> = {};
   CanaryData.forEach(item => {
-    const date = item.local_time_adjusted.split(' ')[0]; // แยกวันที่จาก 'YYYY-MM-DD HH:mm:ss'
+    const localTimeAdjusted = item.local_time_adjusted || '';
+    const date = localTimeAdjusted.split(' ')[0]; // แยกวันที่จาก 'YYYY-MM-DD HH:mm:ss'
     dailyCounts[date] = (dailyCounts[date] || 0) + 1;
   });
 
@@ -227,7 +228,8 @@ const HomePage: React.FC = () => {
   // ========================
   const dailyPacketCounts: Record<string, number> = {};
   dataPacket.forEach(item => {
-    const date = item.timestamp.split(' ')[0]; // แยกวันที่จาก 'YYYY-MM-DD HH:mm:ss'
+    const localTimeAdjusted = item.timestamp || '';
+    const date = localTimeAdjusted.split(' ')[0]; // แยกวันที่จาก 'YYYY-MM-DD HH:mm:ss'
     dailyPacketCounts[date] = (dailyPacketCounts[date] || 0) + 1;
   });
 
@@ -326,7 +328,7 @@ const HomePage: React.FC = () => {
             <StatCard
               title={t('dashboard_total_packets')}
               value={CowrieData.length + CanaryData.length + dataPacket.length}
-              change={((CowrieData.filter(item => item.timestamp.split(' ')[0] === new Date().toISOString().split('T')[0]).length) + (CanaryData.filter(item => item.local_time_adjusted.split(' ')[0] === new Date().toISOString().split('T')[0]).length)).toString()}
+              change={(CowrieData.filter(item => item?.timestamp?.split(' ')[0] === new Date().toISOString().split('T')[0]).length + (CanaryData.filter(item => item?.local_time_adjusted?.split(' ')[0] === new Date().toISOString().split('T')[0]).length)).toString()}
               icon="⚡"
               variant="danger"
             />
@@ -339,7 +341,7 @@ const HomePage: React.FC = () => {
             <StatCard
               title={t('dashboard_protocols')}
               value={CowrieData.length}
-              change={CowrieData.filter(item => item.timestamp.split(' ')[0] === new Date().toISOString().split('T')[0]).length.toString()}
+              change={(CowrieData.filter(item => item?.timestamp?.split(' ')[0] === new Date().toISOString().split('T')[0]).length).toString()}
               changeType="positive"
               icon="🖥️"
               variant="primary"
@@ -353,7 +355,7 @@ const HomePage: React.FC = () => {
             <StatCard
               title={t('dashboard_web_protocols')}
               value={CanaryData.length}
-              change={CanaryData.filter(item => item.local_time_adjusted.split(' ')[0] === new Date().toISOString().split('T')[0]).length.toString()}
+              change={(CanaryData.filter(item => item?.local_time_adjusted?.split(' ')[0] === new Date().toISOString().split('T')[0]).length).toString()}
               changeType="positive"
               icon="🛜"
               variant="primary"
@@ -367,7 +369,7 @@ const HomePage: React.FC = () => {
             <StatCard
               title={t('dashboard_wireshark')}
               value={dataPacket.length}
-              change={dataPacket.filter(item => item.timestamp.split(' ')[0] === new Date().toISOString().split('T')[0]).length.toString()}
+              change={(dataPacket.filter(item => item?.timestamp?.split(' ')[0] === new Date().toISOString().split('T')[0]).length).toString()}
               changeType="positive"
               icon="📦"
               variant="primary"
