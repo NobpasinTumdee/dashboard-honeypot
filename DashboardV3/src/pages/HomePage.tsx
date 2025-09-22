@@ -42,18 +42,27 @@ const HomePage: React.FC = () => {
       source: 'Cowrie',
       timestamp: item.timestamp.replace("Z", ""),
       activity: `SSH connection from ${item.src_ip}`,
+      C: `Confidentiality (C)`,
+      I: `Integrity (I)`,
+      A: `Availability (A)`,
       severity: 'high'
     })),
     ...CanaryData.slice(0, 2).map(item => ({
       source: 'OpenCanary',
       timestamp: item.local_time.replace("Z", ""),
       activity: `${item.logdata_msg_logdata}`,
+      C: `Confidentiality (C)`,
+      I: `none`,
+      A: `Availability (A)`,
       severity: 'medium'
     })),
     ...dataPacket.slice(0, 2).map(item => ({
       source: 'Wireshark',
       timestamp: item.timestamp.replace("Z", ""),
       activity: `${item.method} request to ${item.request_uri}`,
+      C: `Confidentiality (C)`,
+      I: `none`,
+      A: `none`,
       severity: 'low'
     }))
   ].sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
@@ -62,6 +71,9 @@ const HomePage: React.FC = () => {
     { key: 'source', header: 'Source' },
     { key: 'timestamp', header: 'Timestamp', render: (value: string) => new Date(value).toLocaleString() },
     { key: 'activity', header: 'Activity' },
+    { key: 'C', header: 'Confidentiality', render: (value: string) => <p style={{ opacity: `${value === 'none' ? '0.4' : '1'}` }}>{value.toLocaleUpperCase()}</p> },
+    { key: 'I', header: 'Integrity', render: (value: string) => <p style={{ opacity: `${value === 'none' ? '0.4' : '1'}` }}>{value.toLocaleUpperCase()}</p> },
+    { key: 'A', header: 'Availability', render: (value: string) => <p style={{ opacity: `${value === 'none' ? '0.4' : '1'}` }}>{value.toLocaleUpperCase()}</p> },
     {
       key: 'severity',
       header: 'Severity',

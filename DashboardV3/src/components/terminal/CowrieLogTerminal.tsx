@@ -28,7 +28,7 @@ const CowrieLogTerminal: React.FC<CowrieLogTerminalProps> = ({ logs }) => {
           <>
             <div className="terminal-line">
               <span className="terminal-system-info" style={{ color: '#27c93f' }}>
-                [+] New SSH connection from {log.src_ip}
+                [+] New SSH/Telnet connection from {log.src_ip}
               </span>
             </div>
             <div className="terminal-line">
