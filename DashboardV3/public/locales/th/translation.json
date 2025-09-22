@@ -71,7 +71,7 @@
     "cowrie_top_passwords_desc": "รหัสผ่านที่ถูกใช้งานบ่อยที่สุด",
     "cowrie_top_usernames_title": "ชื่อผู้ใช้ 10 อันดับยอดนิยม",
     "cowrie_top_usernames_desc": "ชื่อผู้ใช้ที่ถูกใช้งานบ่อยที่สุด",
-    "cowrie_daily_activity_title": "กิจกรรมรายวัน",
+    "cowrie_daily_activity_title": "กิจกรรมรายวัน (ค่าโดยเฉลี่ย)",
     "cowrie_close_chart": "ปิดแผนภูมิ",
     "cowrie_activity_per_day": "กิจกรรมต่อวัน",
     "cowrie_protocol_distribution_2": "พิมพ์คอมมานถูกต้องแค่ไหน?",

@@ -194,7 +194,15 @@ const HomePage: React.FC = () => {
       label: t('opencanary_chart_tooltip2'),
       data: countsDaily,
       borderColor: '#b2b5b8ff',
-      backgroundColor: '#b2b5b834',
+      backgroundColor: (ctx: any) => {
+        const chart = ctx.chart;
+        const { ctx: canvas } = chart;
+        const gradient = canvas.createLinearGradient(0, 0, 0, 200);
+        gradient.addColorStop(0, "#b2b5b8ff");
+        gradient.addColorStop(1, "#484849ff");
+        return gradient;
+      },
+      borderRadius: 4,
       fill: true,
       tension: 0.4,
     }]
@@ -376,7 +384,7 @@ const HomePage: React.FC = () => {
               title={t('stats_opencanary_title')}
               subtitle={t('stats_opencanary_desc')}
             >
-              <Chart type="line" data={dailyPacketsData} height={300} options={PacketsOptions} />
+              <Chart type="bar" data={dailyPacketsData} height={300} options={PacketsOptions} />
             </ChartCard>
           </div>
         </div>

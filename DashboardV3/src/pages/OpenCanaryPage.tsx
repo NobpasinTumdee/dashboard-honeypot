@@ -198,7 +198,7 @@ const OpenCanaryPage: React.FC = () => {
       label: t('opencanary_chart_tooltip2'),
       data: countsDaily,
       borderColor: '#aeaeafff',
-      backgroundColor: '#aeaeaf30',
+      backgroundColor: '#aeaeafff',
       fill: true,
       tension: 0.4,
     }]
@@ -278,14 +278,27 @@ const OpenCanaryPage: React.FC = () => {
     return portCounts;
   };
 
+  const backgroundColors = [
+    '#BFBFBF',
+    '#8B8B8D',
+    '#3F464C',
+    '#69686D',
+    '#4B4E55',
+    '#4A4E50',
+    '#8D867C',
+    '#A99F93',
+    '#868E91',
+    '#677077',
+  ];
+
   const countedData = countPorts();
   const portData = {
     labels: Object.keys(countedData),
     datasets: [{
       label: 'Number of ports',
       data: Object.values(countedData),
-      borderColor: '#aeaeafff',
-      backgroundColor: '#aeaeaf30',
+      borderColor: backgroundColors.map(color => color.replace('0.6', '1')),
+      backgroundColor: backgroundColors.slice(0, countedData.length),
       fill: true,
       tension: 0.4,
       pointRadius: 5,
@@ -476,7 +489,7 @@ const OpenCanaryPage: React.FC = () => {
               title={t('opencanary_daily_packets_title')}
               subtitle={t('opencanary_daily_packets_desc')}
             >
-              <Chart type="line" data={dailyPacketsData} height={300} options={options} />
+              <Chart type="bar" data={dailyPacketsData} height={300} options={options} />
             </ChartCard>
           </div>
         </div>
