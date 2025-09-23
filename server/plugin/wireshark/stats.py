@@ -5,6 +5,7 @@ import pyshark
 
 DB_FILE ='/home/cpe27/HeneyPot.db'
 SERVER_IP = "172.29.169.27"
+INTERFACE = 'ztcfw2abid'
 
 lock = threading.Lock()
 
@@ -108,7 +109,7 @@ def update_db(pkt):
 # =========================
 # Thread capture packet
 # =========================
-def capture_thread(interface="ztcfw2abid"):
+def capture_thread(interface=INTERFACE):
     print(f"Starting packet capture on {interface}...")
     capture = pyshark.LiveCapture(
         interface=interface,
