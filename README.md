@@ -1,27 +1,3 @@
-# Table of Contents
-* [Raspberry Pi Setup](/docs/raspberry_pi_setup.md)
-* [Get Started](/docs/Get_Started.md)
-### Cowrie
-* [Cowrie Installation](/docs/Cowrie.md)
-* [Cowrie Plugin Login](/docs/Cowrie_Plugin[1].md)
-* [Cowrie Plugin Fake file system](/docs/Cowrie_Plugin[2].md)
-* [Cowrie Plugin Create User home directory](/docs/Cowrie_Plugin[3].md)
-### OpenCanary
-* [OpenCanary Installation](/docs/OpenCanary.md)
-* [OpenCanary Plugin Http/Https Mockup](/docs/Opencanary_Plugin[1].md)
-### dashboard-honeypot
-* [Dashborad Frontend](/docs/Dashboard/Dashboard.md)
-* [Dashborad Backend](/docs/Dashboard/Backend.md)
-* [Auto Run Server](/docs/Dashboard/AutoRun.md)
-### AI
-* [AI Setup](/docs/AI/AI_Setup.md)
-* [AI Run](/docs/AI/AI_Run.md)
-### Wireshark
-* [Wireshark Setup](/docs/Wireshark/Wireshark.md)
-* [Exploit Demo](/docs/Wireshark/Attack_demo.md)
-### AutoNmapLog and discord bot
-* [NmapBot Setup](/docs/BotDiscord/NmapLog.md)
-
 # Graph ระบบโดยรวม
 ```mermaid
 graph LR
@@ -43,3 +19,27 @@ K --> L3( http )
 K --> L4( https )
 K --> L5( FTP )
 ```
+# Table of Contents
+* [Raspberry Pi Setup](/docs/raspberry_pi_setup.md)
+### Cowrie
+* [Cowrie Installation](/docs/Cowrie/Cowrie.md)
+* [Cowrie Plugin Login](/docs/Cowrie/Cowrie_Plugin[1].md)
+* [Cowrie Plugin Fake file system](/docs/Cowrie/Cowrie_Plugin[2].md)
+* [Cowrie Plugin Create User home directory](/docs/Cowrie/Cowrie_Plugin[3].md)
+* [Cowrie Teletype](/docs/Cowrie/teletype.md)
+* [Cowrie Auto Run](/docs/Cowrie/AutoRun.md)
+### OpenCanary
+* [OpenCanary Installation](/docs/OpenCanary/OpenCanary.md)
+* [OpenCanary Plugin Http/Https Mockup](/docs/OpenCanary/Opencanary_Plugin[1].md)
+### dashboard-honeypot
+* [Dashborad Frontend](/docs/Dashboard/Dashboard.md)
+* [Dashborad Backend](/docs/Dashboard/Backend.md)
+* [Auto Run Server](/docs/Dashboard/AutoRun.md)
+### AI
+* [AI Setup](/docs/AI/AI_Setup.md)
+* [AI Run](/docs/AI/AI_Run.md)
+### Wireshark
+* [Wireshark Setup](/docs/Wireshark/Wireshark.md)
+* [Exploit Demo](/docs/Wireshark/Attack_demo.md)
+### AutoNmapLog and discord bot
+* [NmapBot Setup](/docs/BotDiscord/NmapLog.md)
