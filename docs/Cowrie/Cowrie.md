@@ -102,4 +102,4 @@ ssh cowrie@localhost -p 22
 tail -f /home/cowrie/cowrie/var/log/cowrie/cowrie.log
 ```
 
-
+## ผู้เขียนคู่มือ นาย รามณรงค์ พันธเดช
