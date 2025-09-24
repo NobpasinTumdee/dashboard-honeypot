@@ -84,3 +84,6 @@ nano ping.py
   * [ip.py](/Plugin/Cowrie/command/ip.py)
   * [nano.py](/Plugin/Cowrie/command/nano.py)
   * [ss.py](/Plugin/Cowrie/command/ss.py)
+
+
+## ผู้เขียนคู่มือ นาย รามณรงค์ พันธเดช

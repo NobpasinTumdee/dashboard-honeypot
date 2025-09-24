@@ -86,3 +86,4 @@ rm -f /home/cowrie/cowrie/src/cowrie/data/fs.pickle"
 /home/cowrie/cowrie/bin/createfs -l honeyfs -o /home/cowrie/cowrie/src/cowrie/data/fs.pickle"
 ```
 
+## ผู้เขียนคู่มือ นาย รามณรงค์ พันธเดช

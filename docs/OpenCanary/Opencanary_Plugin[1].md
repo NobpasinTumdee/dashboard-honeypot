@@ -88,3 +88,5 @@ rm /home/admin/Honeypot/Opencanary_env/bin/opencanaryd.pid
 ```bash
 ftp localhost
 ```
+
+## ผู้เขียนคู่มือ นาย รามณรงค์ พันธเดช

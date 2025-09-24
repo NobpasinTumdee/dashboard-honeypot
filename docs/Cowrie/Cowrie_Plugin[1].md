@@ -30,3 +30,5 @@ nano userauth.py
 cd /home/cowrie/cowrie/src/cowrie/core/
 ```
 * [checkers.py](/Plugin/Cowrie/ssh/checkers.py)
+
+## ผู้เขียนคู่มือ นาย รามณรงค์ พันธเดช
