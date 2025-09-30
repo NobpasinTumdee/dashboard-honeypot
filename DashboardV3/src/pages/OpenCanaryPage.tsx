@@ -30,6 +30,8 @@ const OpenCanaryPage: React.FC = () => {
   // Custom hook to manage WebSocket connection
   // ==========================================
   useCanarySocket(setData, setIsConnected, setIsLogin, setIsError);
+
+
   // Filter by eventid
   const [protocolFilter, setProtocolFilter] = useState("");
   const handleSelectChange = (event: any) => {
@@ -40,9 +42,39 @@ const OpenCanaryPage: React.FC = () => {
       ? (item.logdata_msg_logdata && item.logdata_msg_logdata.toLowerCase() === protocolFilter.toLowerCase())
       : true
   );
-  // Filter by src_ip (case insensitive)
+
+
   const [srcIpFilter, setSrcIpFilter] = useState("");
-  const IpfilteredData = filteredData.filter(item => !srcIpFilter || (item.src_host && item.src_host.includes(srcIpFilter)));
+  const [logtypeFilter, setLogtypeFilter] = useState<number | string>("");
+  const [dstPortFilter, setDstPortFilter] = useState<number | string>("");
+
+  const handleLogtypeSelectChange = (event: any) => {
+    const value = event.target.value === "" ? "" : Number(event.target.value);
+    setLogtypeFilter(value);
+  };
+  const handleDstPortSelectChange = (event: any) => {
+    const value = event.target.value === "" ? "" : Number(event.target.value);
+    setDstPortFilter(value);
+  };
+
+  // ดึงค่า logtype ที่ไม่ซ้ำกันทั้งหมดจาก data
+  const uniqueLogtypes = Array.from(new Set(data.map(item => item.logtype))).sort((a, b) => a - b);
+  const uniqueDstPorts = Array.from(new Set(data.map(item => item.dst_port))).sort((a, b) => a - b);
+
+  // Filter by src_ip (case insensitive) and Logtype
+  const IpfilteredData = filteredData.filter(item => {
+    // 1. Source IP Filter
+    const isSrcIpMatch = !srcIpFilter || (item.src_host && item.src_host.includes(srcIpFilter));
+
+    // 2. Logtype Filter
+    const isLogtypeMatch = logtypeFilter === "" || item.logtype === logtypeFilter;
+
+    // 3. Destination Port Filter
+    const isDstPortMatch = dstPortFilter === "" || item.dst_port === dstPortFilter;
+
+    return isSrcIpMatch && isLogtypeMatch && isDstPortMatch;
+  });
+
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const ITEMS_PER_PAGE = 15;
@@ -543,13 +575,44 @@ const OpenCanaryPage: React.FC = () => {
           <input type="text" id="searchInput" placeholder="Source IP..." onChange={(e) => setSrcIpFilter(e.target.value)} style={{ padding: '0.3rem 1rem', borderRadius: '4px', border: '1px solid #ccc' }} />
           <button style={{ padding: '0.3rem 1rem', borderRadius: '4px', border: '1px solid #ccc', marginLeft: '10px' }}>{t('search')}</button>
         </div>
-        <select value={protocolFilter} onChange={handleSelectChange} style={{ padding: '0.3rem 1rem', borderRadius: '4px', border: '1px solid #ccc' }}>
-          <option value="">All</option>
-          <option value="Canary running!!!">Running</option>
-          <option value="Added service from class CanaryHTTPS in opencanary.modules.https to fake">Canary HTTPS</option>
-          <option value="Added service from class CanaryHTTP in opencanary.modules.http to fake">Canary HTTP</option>
-          <option value="Added service from class CanaryFTP in opencanary.modules.ftp to fake">Canary FTP</option>
-        </select>
+
+        <div style={{ display: 'flex', gap: '10px' }}>
+          <select value={protocolFilter} onChange={handleSelectChange} style={{ padding: '0.3rem 1rem', borderRadius: '4px', border: '1px solid #ccc' }}>
+            <option value="">All</option>
+            <option value="Canary running!!!">Running</option>
+            <option value="Added service from class CanaryHTTPS in opencanary.modules.https to fake">Canary HTTPS</option>
+            <option value="Added service from class CanaryHTTP in opencanary.modules.http to fake">Canary HTTP</option>
+            <option value="Added service from class CanaryFTP in opencanary.modules.ftp to fake">Canary FTP</option>
+          </select>
+
+          <select
+            value={logtypeFilter}
+            onChange={handleLogtypeSelectChange}
+            style={{ padding: '0.3rem 1rem', borderRadius: '4px', border: '1px solid #ccc' }}
+          >
+            <option value="">All Logtypes</option>
+            {/* Map through unique logtypes to create options */}
+            {uniqueLogtypes.map((logtype) => (
+              <option key={logtype} value={logtype}>
+                Logtype: {logtype}
+              </option>
+            ))}
+          </select>
+          
+          <select
+            value={dstPortFilter}
+            onChange={handleDstPortSelectChange}
+            style={{ padding: '0.3rem 1rem', borderRadius: '4px', border: '1px solid #ccc' }}
+          >
+            <option value="">All Destination Ports</option>
+            {/* Map through unique destination ports to create options */}
+            {uniqueDstPorts.map((port) => (
+              <option key={port} value={port}>
+                Port: {port}
+              </option>
+            ))}
+          </select>
+        </div>
       </div>
 
       <div className="table-container">

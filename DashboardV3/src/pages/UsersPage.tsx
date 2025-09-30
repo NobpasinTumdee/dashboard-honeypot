@@ -6,7 +6,6 @@ import StatCard from '../components/StatCard';
 import Loader from '../components/loader/Loader';
 
 import type { Users } from '../types';
-import { mockUsersData } from '../mockData';
 import { UsersSocket } from '../service/websocket';
 import { AuthNewUser, DeAuthNewUser } from '../service/api';
 
@@ -49,7 +48,6 @@ const UsersPage: React.FC = () => {
   }
 
 
-  const [users] = useState<Users[]>(mockUsersData);
 
   const userColumns = [
     { key: 'UserID', header: 'User ID' },
@@ -145,14 +143,14 @@ const UsersPage: React.FC = () => {
       <div className="stats-grid">
         <StatCard
           title={t('user_mgmt_total_users')}
-          value={users.length}
+          value={user.length}
           icon="👥"
           variant="primary"
         />
         <StatCard
           title={t('user_mgmt_admin_users')}
           value={activeUsers}
-          change={`${Math.round((activeUsers / (users.length)) * 100)}%`}
+          change={`${Math.round((activeUsers / (user.length)) * 100)}%`}
           changeType="positive"
           icon="✅"
           variant="success"
@@ -160,7 +158,7 @@ const UsersPage: React.FC = () => {
         <StatCard
           title={t('user_mgmt_guest_users')}
           value={inactiveUsers}
-          change={`${Math.round((inactiveUsers / users.length) * 100)}%`}
+          change={`${Math.round((inactiveUsers / user.length) * 100)}%`}
           changeType="negative"
           icon="⏸️"
           variant="warning"
