@@ -11,13 +11,16 @@ sudo nano /etc/systemd/system/cowrie.service
 
 ```bash
 [Unit]
-Description=Cowrie SSH Telnet Honeypot
+Description=Cowrie SSH/Telnet Honeypot
 After=network.target
 
 [Service]
-User=[ user name]
+User=cpe27
+Group=cpe27
 WorkingDirectory=/home/cowrie/cowrie
 ExecStart=/home/cowrie/cowrie/bin/cowrie start -n
+ExecStop=/home/cowrie/cowrie/bin/cowrie stop
+ExecStartPre=-/home/cowrie/cowrie/bin/cowrie stop
 Restart=always
 
 [Install]
