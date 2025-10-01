@@ -38,6 +38,7 @@ const getToken = (): string | null => {
 // cowrie
 export const useCowrieSocket = (
     setData: (data: CowrieLog[]) => void,
+    setDataCount: (count: number) => void,
     setIsConnected: (status: boolean) => void,
     setIsLogin: (status: boolean) => void,
     setIsError: (status: string) => void
@@ -107,6 +108,11 @@ export const useCowrieSocket = (
             console.log("New data cowrie:", new Date().toString());
         });
 
+        socket.on("Cowrie-logs-count", (count: number) => {
+            setDataCount(count);
+            console.log("Total Cowrie logs:", count);
+        });
+
         socket.on("Welcome-Message", (msg) => {
             console.log("Message:", msg);
         });
@@ -123,6 +129,7 @@ export const useCowrieSocket = (
 // opencanary
 export const useCanarySocket = (
     setData: (data: CanaryLog[]) => void,
+    setDataCount: (count: number) => void,
     setIsConnected: (status: boolean) => void,
     setIsLogin: (status: boolean) => void,
     setIsError: (status: string) => void
@@ -192,6 +199,11 @@ export const useCanarySocket = (
             console.log("New data opencanary:", new Date().toString());
         });
 
+        socket.on("OpenCanary-logs-count", (count: number) => {
+            setDataCount(count);
+            console.log("Total Canary logs:", count);
+        });
+
         socket.on("Welcome-Message", (msg) => {
             console.log("Message:", msg);
         });
@@ -208,6 +220,7 @@ export const useCanarySocket = (
 // packets
 export const usePacketSocket = (
     setData: (data: HttpsPacket[]) => void,
+    setDataCount: (count: number) => void,
     setIsConnected: (status: boolean) => void,
     setIsLogin: (status: boolean) => void
 ) => {
@@ -242,6 +255,11 @@ export const usePacketSocket = (
         socket.on("real-time", (newLogs: HttpsPacket[]) => {
             setData(newLogs);
             console.log("New data:", new Date().toString());
+        });
+
+        socket.on("HttpsPackets-logs-count", (count: number) => {
+            setDataCount(count);
+            console.log("Total Packet logs:", count);
         });
 
         socket.on("Welcome-Message", (msg) => {

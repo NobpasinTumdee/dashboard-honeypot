@@ -149,6 +149,8 @@ io.on('connection', (socket) => {
         orderBy: { id: 'desc' },
         take: 1000,
       });
+      const logsCount = await prisma.honeypot_logs.count();
+      socket.emit('Cowrie-logs-count', logsCount);
       socket.emit('Update-cowrie-logs', logs);
       console.log(`Initial Cowrie logs sent to ${socket.user.UserName}. Total: ${logs.length}`);
     } catch (error) {
@@ -170,6 +172,8 @@ io.on('connection', (socket) => {
         orderBy: { id: 'desc' },
         take: 1000,
       });
+      const logsCount = await prisma.opencanary_logs.count();
+      socket.emit('OpenCanary-logs-count', logsCount);
       socket.emit('Update-opencanary-logs', logs);
       console.log(`Initial OpenCanary logs sent to ${socket.user.UserName}. Total: ${logs.length}`);
     } catch (error) {
@@ -209,6 +213,8 @@ io.on('connection', (socket) => {
         orderBy: { id: 'desc' },
         take: 1000,
       });
+      const logsCount = await prisma.HttpsPackets.count();
+      socket.emit('HttpsPackets-logs-count', logsCount);
       socket.emit('Updatelogs', logs);
       console.log(`Initial HttpsPackets logs sent to ${socket.user.UserName}. Total: ${logs.length}`);
     } catch (error) {
@@ -318,6 +324,7 @@ setInterval(async () => {
         take: 1000,
       });
       CowrieCount = logs;
+      io.emit('Cowrie-logs-count', logs);
       io.emit('real-time-cowrie', Newlogs);
       console.log(`New Cowrie logs detected and sent. Total: ${CowrieCount}`);
     }
@@ -334,6 +341,7 @@ setInterval(async () => {
         take: 1000,
       });
       OpenCanaryCount = logs;
+      io.emit('OpenCanary-logs-count', logs);
       io.emit('real-time-canary', Newlogs);
       console.log(`New OpenCanary logs detected and sent. Total: ${OpenCanaryCount}`);
     }
@@ -361,6 +369,8 @@ setInterval(async () => {
       orderBy: { id: 'desc' },
       take: 1000,
     });
+    const logsCount = await prisma.HttpsPackets.count();
+    io.emit('HttpsPackets-logs-count', logsCount);
     io.emit('real-time', logs);
   } catch (error) {
     console.error('Error fetching real-time honeypot logs HttpsPackets:', error);

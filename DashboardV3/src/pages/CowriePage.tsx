@@ -21,6 +21,7 @@ const CowriePage: React.FC = () => {
   const navigate = useNavigate();
   // data services
   const [data, setData] = useState<CowrieLog[]>([]);
+  const [dataCount, setDataCount] = useState<number>(0);
   const [IpMap, setUniqueIPs] = useState<string[]>([]);
 
   // status and popup
@@ -31,7 +32,7 @@ const CowriePage: React.FC = () => {
   const [isError, setIsError] = useState<string>('');
 
   // Custom hook to manage WebSocket connection
-  useCowrieSocket(setData, setIsConnected, setIsLogin, setIsError);
+  useCowrieSocket(setData, setDataCount, setIsConnected, setIsLogin, setIsError);
 
 
 
@@ -118,7 +119,7 @@ const CowriePage: React.FC = () => {
   ];
 
   // Calculate stats
-  const totalSessions = data.length;
+  const totalSessions = dataCount;
   const uniqueIPs = new Set(data.map(log => log.src_ip)).size;
 
 

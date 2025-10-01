@@ -35,6 +35,7 @@ const WiresharkPage: React.FC = () => {
 
   // ================== State ==================
   const [dataPacket, setDataPacket] = useState<HttpsPacket[]>([]);
+  const [dataCount, setDataCount] = useState<number>(0);
   const [data, setData] = useState<TimeSeriesPackets[]>([]);
   const [protocol, setProtocol] = useState<ProtocolStats[]>([]);
   const [ip, setSrcIp] = useState<SrcIpStats[]>([]);
@@ -52,7 +53,7 @@ const WiresharkPage: React.FC = () => {
 
   // ================== Hooks ==================
   usePacketStatsSocket(setData, setProtocol, setSrcIp, setDstPort, setIsConnected, setIsLogin);
-  usePacketSocket(setDataPacket, setIsConnected, setIsLogin);
+  usePacketSocket(setDataPacket, setDataCount, setIsConnected, setIsLogin);
 
 
 
@@ -448,7 +449,7 @@ const WiresharkPage: React.FC = () => {
       </div>
 
       {/* Data Table */}
-      <DataTable title={t('wireshark_captured_http')} data={currentItems} columns={wiresharkColumns} />
+      <DataTable title={`${t('wireshark_captured_http')} "${dataCount}"`} data={currentItems} columns={wiresharkColumns} />
 
       {/* Pagination */}
       <div style={{ margin: "2% 0 10%", textAlign: "center", display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px' }}>

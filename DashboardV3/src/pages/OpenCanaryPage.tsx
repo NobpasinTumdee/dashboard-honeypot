@@ -21,6 +21,7 @@ const OpenCanaryPage: React.FC = () => {
   const navigate = useNavigate();
   // data services
   const [data, setData] = useState<CanaryLog[]>([]);
+  const [dataCount, setDataCount] = useState<number>(0);
   const [isConnected, setIsConnected] = useState(false);
   const [isLogin, setIsLogin] = useState(false);
   const [isError, setIsError] = useState<string>('');
@@ -29,7 +30,7 @@ const OpenCanaryPage: React.FC = () => {
   // ==========================================
   // Custom hook to manage WebSocket connection
   // ==========================================
-  useCanarySocket(setData, setIsConnected, setIsLogin, setIsError);
+  useCanarySocket(setData, setDataCount, setIsConnected, setIsLogin, setIsError);
 
 
   // Filter by eventid
@@ -456,7 +457,7 @@ const OpenCanaryPage: React.FC = () => {
           <div data-swapy-item="item-A">
             <StatCard
               title={t('opencanary_total_alerts')}
-              value={data.length}
+              value={dataCount}
               changeType="negative"
               icon="⚡"
               variant="danger"

@@ -21,8 +21,11 @@ const HomePage: React.FC = () => {
   const navigate = useNavigate();
   // data services
   const [CowrieData, setCowrieData] = useState<CowrieLog[]>([]);
+  const [CowrieCount, setCowrieCount] = useState<number>(0);
   const [CanaryData, setCanaryData] = useState<CanaryLog[]>([]);
+  const [CanaryCount, setCanaryCount] = useState<number>(0);
   const [dataPacket, setDataPacket] = useState<HttpsPacket[]>([]);
+  const [PacketCount, setPacketCount] = useState<number>(0);
   const [IpMap, setUniqueIPs] = useState<string[]>([]);
   // status
   const [isConnected, setIsConnected] = useState(false);
@@ -30,9 +33,9 @@ const HomePage: React.FC = () => {
   const [isError, setIsError] = useState<string>('');
   const [popupMap, setPopupMap] = useState(false);
 
-  useCowrieSocket(setCowrieData, setIsConnected, setIsLogin, setIsError);
-  useCanarySocket(setCanaryData, setIsConnected, setIsLogin, setIsError);
-  usePacketSocket(setDataPacket, setIsConnected, setIsLogin);
+  useCowrieSocket(setCowrieData, setCowrieCount, setIsConnected, setIsLogin, setIsError);
+  useCanarySocket(setCanaryData, setCanaryCount, setIsConnected, setIsLogin, setIsError);
+  usePacketSocket(setDataPacket, setPacketCount, setIsConnected, setIsLogin);
 
 
 
@@ -327,7 +330,7 @@ const HomePage: React.FC = () => {
           <div data-swapy-item="item-A">
             <StatCard
               title={t('dashboard_total_packets')}
-              value={CowrieData.length + CanaryData.length + dataPacket.length}
+              value={CowrieCount + CanaryCount + PacketCount}
               change={(CowrieData.filter(item => item?.timestamp?.split(' ')[0] === new Date().toISOString().split('T')[0]).length + (CanaryData.filter(item => item?.local_time_adjusted?.split(' ')[0] === new Date().toISOString().split('T')[0]).length)).toString()}
               icon="⚡"
               variant="danger"
@@ -340,7 +343,7 @@ const HomePage: React.FC = () => {
           <div data-swapy-item="item-B">
             <StatCard
               title={t('dashboard_protocols')}
-              value={CowrieData.length}
+              value={CowrieCount}
               change={(CowrieData.filter(item => item?.timestamp?.split(' ')[0] === new Date().toISOString().split('T')[0]).length).toString()}
               changeType="positive"
               icon="🖥️"
@@ -354,7 +357,7 @@ const HomePage: React.FC = () => {
           <div data-swapy-item="item-C">
             <StatCard
               title={t('dashboard_web_protocols')}
-              value={CanaryData.length}
+              value={CanaryCount}
               change={(CanaryData.filter(item => item?.local_time_adjusted?.split(' ')[0] === new Date().toISOString().split('T')[0]).length).toString()}
               changeType="positive"
               icon="🛜"
@@ -368,7 +371,7 @@ const HomePage: React.FC = () => {
           <div data-swapy-item="item-D">
             <StatCard
               title={t('dashboard_wireshark')}
-              value={dataPacket.length}
+              value={PacketCount}
               change={(dataPacket.filter(item => item?.timestamp?.split(' ')[0] === new Date().toISOString().split('T')[0]).length).toString()}
               changeType="positive"
               icon="📦"
