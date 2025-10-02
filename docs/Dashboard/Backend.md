@@ -18,7 +18,7 @@ Note right of SQLiteDatabase: And the database will take the data <br /> and cre
 
 เริ่มจากการติดตั้ง Library ที่จำเป็นสำหรับโปรเจกต์:
 
-1.  ไปที่ Path ของโปรเจกต์: `cd /server/API/socket`
+1.  ไปที่ Path ของโปรเจกต์: `cd /server/socket`
     
 2.  ทำการติดตั้งแพ็กเกจที่จำเป็นสำหรับ Node.js:
     
@@ -55,7 +55,7 @@ Note right of SQLiteDatabase: And the database will take the data <br /> and cre
 -   **SQLite**: `npx prisma init --datasource-provider sqlite`
     
 
-หลังจากตั้งค่าประเภทฐานข้อมูลแล้ว ให้ไปที่ไฟล์ `.env` ที่ path `/server/API/socket/.env` และตั้งค่าตามตัวอย่าง:
+หลังจากตั้งค่าประเภทฐานข้อมูลแล้ว ให้ไปที่ไฟล์ `.env` ที่ path `/server/socket/.env` และตั้งค่าตามตัวอย่าง:
 
 -   **JWT_SEC**: ใช้สำหรับ Sign Token สามารถเปลี่ยนเป็นรหัสลับของคุณเองได้
     
