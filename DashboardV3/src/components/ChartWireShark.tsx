@@ -32,19 +32,15 @@ const generateChartData = (data: any[] | undefined, labelKey: string, chartLabel
 
     const labels = aggregatedArray.map(item => item.label);
     const counts = aggregatedArray.map(item => item.count);
-
-    const backgroundColors = [
-        '#BFBFBF',
-        '#8B8B8D',
-        '#3F464C',
-        '#69686D',
-        '#4B4E55',
-        '#4A4E50',
-        '#8D867C',
-        '#A99F93',
-        '#868E91',
-        '#677077',
-    ];
+    
+    // คำนวณสีอัตโนมัติตามจำนวนข้อมูลที่ถูกหั่นมาแล้ว (สูงสุด 10 อันดับ)
+    const count = labels.length;
+    const backgroundColors = Array.from({ length: count }, (_, i) => 
+        `hsla(${(i * 360) / count}, 70%, 60%, 0.6)`
+    );
+    const borderColors = Array.from({ length: count }, (_, i) => 
+        `hsla(${(i * 360) / count}, 70%, 50%, 1)`
+    );
 
     return {
         labels,
@@ -52,8 +48,8 @@ const generateChartData = (data: any[] | undefined, labelKey: string, chartLabel
             {
                 label: chartLabel,
                 data: counts,
-                backgroundColor: backgroundColors.slice(0, labels.length),
-                borderColor: backgroundColors.map(color => color.replace('0.6', '1')),
+                backgroundColor: backgroundColors,
+                borderColor: borderColors,
                 borderWidth: 1,
             },
         ],

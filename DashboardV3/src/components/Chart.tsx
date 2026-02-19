@@ -35,6 +35,28 @@ interface ChartProps {
 }
 
 const Chart: React.FC<ChartProps> = ({ type, data, options, height = 300 }) => {
+  const processedData = {
+    ...data,
+    datasets: data.datasets?.map((dataset: any, index: number) => {
+      const isMultiColor = type === 'pie' || type === 'bar';
+      
+      const count = isMultiColor ? dataset.data.length : data.datasets.length;
+      
+      const backgroundColors = Array.from({ length: count }, (_, i) => 
+        `hsla(${(i * 360) / count}, 70%, 60%, 0.6)`
+      );
+      const borderColors = Array.from({ length: count }, (_, i) => 
+        `hsla(${(i * 360) / count}, 70%, 50%, 1)`
+      );
+
+      return {
+        ...dataset,
+        backgroundColor: isMultiColor ? backgroundColors : backgroundColors[index],
+        borderColor: isMultiColor ? borderColors : borderColors[index],
+      };
+    })
+  };
+
   const defaultOptions = {
     responsive: true,
     maintainAspectRatio: false,
@@ -82,11 +104,11 @@ const Chart: React.FC<ChartProps> = ({ type, data, options, height = 300 }) => {
 
   switch (type) {
     case 'bar':
-      return <div style={chartStyle}><Bar data={data} options={defaultOptions} /></div>;
+      return <div style={chartStyle}><Bar data={processedData} options={defaultOptions} /></div>;
     case 'pie':
-      return <div style={chartStyle}><Pie data={data} options={defaultOptions} /></div>;
+      return <div style={chartStyle}><Pie data={processedData} options={defaultOptions} /></div>;
     case 'line':
-      return <div style={chartStyle}><Line data={data} options={defaultOptions} /></div>;
+      return <div style={chartStyle}><Line data={processedData} options={defaultOptions} /></div>;
     default:
       return null;
   }
